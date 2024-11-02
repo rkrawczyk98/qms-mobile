@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qms_mobile/data/providers/user_provider.dart';
 import 'package:qms_mobile/views/widgets/language_switcher.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key});
+  final String? title;
+
+  const CustomAppBar({super.key, this.title});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLoggedIn = true; //ref.watch(userProvider);
-    final localizations = AppLocalizations.of(context)!;
+    final user = ref.watch(userProvider);
+    // final localizations = AppLocalizations.of(context)!;
 
     return AppBar(
-      automaticallyImplyLeading: false, // Disable the back arrow
+      // automaticallyImplyLeading: false, // Disable the back arrow
       backgroundColor:
           Theme.of(context).appBarTheme.backgroundColor ?? Colors.black,
-      leading: isLoggedIn
+      leading: user != null
           ? Builder(
               builder: (BuildContext context) {
                 return IconButton(
@@ -28,16 +30,18 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
               },
             )
           : null, // If not logged in, hide the leading icon
-      title: const Row(
-        mainAxisAlignment:
-            MainAxisAlignment.spaceBetween, // This spaces out the elements
-        children: [
-          const Row(
-            children: [],
-          ),
-          LanguageSwitcher(),
-        ],
-      ),
+      title: title != null
+          ? Text(
+              title ?? '',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium
+                  ?.copyWith(color: Colors.white),
+            )
+          : const SizedBox.shrink(), // Empty widget when title is empty
+      actions: const [
+        LanguageSwitcher(),
+      ],
     );
   }
 

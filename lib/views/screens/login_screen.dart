@@ -12,14 +12,14 @@ import 'package:qms_mobile/views/widgets/custom_checkbox.dart';
 import 'package:qms_mobile/views/widgets/custom_logo.dart';
 import 'package:qms_mobile/views/widgets/custom_text_field.dart';
 
-class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  ConsumerState<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _rememberMe = false;
@@ -48,12 +48,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     }
 
     if (isLoggedIn) {
-      ref.read(isLoggedInProvider.notifier).state = true;
+      ref.read(isLoggedInProvider.notifier).update((state) => true);
 
       // Download user data after logging in
       final userInfo = await authService.fetchUserInfo();
       if (userInfo != null) {
-        ref.read(userProvider.notifier).state = userInfo;
+        ref.read(userProvider.notifier).setUser(userInfo);
         // Go to the home screen
         navigationService.navigateAndReplace('/home');
       }

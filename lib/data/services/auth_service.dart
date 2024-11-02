@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:qms_mobile/data/models/user_info.dart';
 import 'package:qms_mobile/data/services/api_service.dart';
@@ -28,7 +29,7 @@ class AuthService {
       }
       return false;
     } catch (e) {
-      print("Login failed: $e");
+      debugPrint("Login failed: $e");
       return false;
     }
   }
@@ -40,7 +41,8 @@ class AuthService {
         return UserInfo.fromJson(response.data);
       }
     } catch (e) {
-      print("Failed to fetch user info: $e");
+      debugPrint("Login failed: $e");
+      ("Failed to fetch user info: $e");
     }
     return null;
   }

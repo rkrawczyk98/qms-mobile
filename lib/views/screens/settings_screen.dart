@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:qms_mobile/routes/navigation_service.dart';
+import 'package:qms_mobile/views/widgets/custom_app_bar.dart';
+import 'package:qms_mobile/views/widgets/side_panel.dart';
+import 'package:qms_mobile/views/widgets/theme_toggle_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -8,31 +13,24 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _darkTheme = true;
   bool _notificationsEnabled = true;
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ustawienia'),
+      appBar: CustomAppBar(
+        title: localizations.settingsTitle,
       ),
+      drawer: const SidePanelWidget(),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const ThemeToggleButton(),
           SwitchListTile(
-            title: const Text('Ciemny motyw'),
-            subtitle: const Text('Włącz lub wyłącz ciemny motyw'),
-            value: _darkTheme,
-            onChanged: (bool value) {
-              setState(() {
-                _darkTheme = value;
-              });
-            },
-          ),
-          SwitchListTile(
-            title: const Text('Powiadomienia'),
-            subtitle: const Text('Zarządzaj powiadomieniami aplikacji'),
+            title: Text(localizations.notifications),
+            subtitle: Text(localizations.manageNotifications),
             value: _notificationsEnabled,
             onChanged: (bool value) {
               setState(() {
@@ -41,16 +39,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           ListTile(
-            title: const Text('Zarządzaj kontem'),
-            subtitle: const Text('Przejdź do ustawień konta'),
+            title: Text(localizations.manageAccount),
+            subtitle: Text(localizations.goToAccountSettings),
             trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () {
-            },
+            onTap: () {},
           ),
           ListTile(
-            title: const Text('Informacje o aplikacji'),
+            title: Text(localizations.aboutApp),
             trailing: const Icon(Icons.info_outline),
             onTap: () {
+              navigationService.navigateTo('/about');
             },
           ),
         ],
