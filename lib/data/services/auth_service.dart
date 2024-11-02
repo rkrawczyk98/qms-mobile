@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:qms_mobile/data/models/user_info.dart';
 import 'package:qms_mobile/data/services/api_service.dart';
 import 'package:qms_mobile/utils/helpers/auth_storage.dart';
 
@@ -32,9 +33,21 @@ class AuthService {
     }
   }
 
+  Future<UserInfo?> fetchUserInfo() async {
+    try {
+      final response = await _apiService.dio.get('/users/user-info');
+      if (response.statusCode == 200) {
+        return UserInfo.fromJson(response.data);
+      }
+    } catch (e) {
+      print("Failed to fetch user info: $e");
+    }
+    return null;
+  }
+
   Future<void> logout() async {
     await _secureStorage.delete(key: 'access_token');
-  await AuthStorage.deleteLoginData();
+    await AuthStorage.deleteLoginData();
   }
 
   Future<String?> getAccessToken() async {

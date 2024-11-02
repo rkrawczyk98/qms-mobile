@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qms_mobile/data/providers/auth_provider.dart';
+import 'package:qms_mobile/data/providers/user_provider.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
 import 'package:qms_mobile/utils/helpers/auth_storage.dart';
 import 'package:qms_mobile/views/widgets/centered_container.dart';
@@ -24,19 +25,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   bool _rememberMe = false;
   bool _isLoading = false;
 
-Future<void> _login() async {
-  setState(() => _isLoading = true);
+  Future<void> _login() async {
+    setState(() => _isLoading = true);
 
-  final authService = ref.read(authServiceProvider);
-  final isLoggedIn = await authService.login(
-    _usernameController.text,
-    _passwordController.text,
-  );
+    final authService = ref.read(authServiceProvider);
+    final isLoggedIn = await authService.login(
+      _usernameController.text,
+      _passwordController.text,
+    );
 
-  setState(() => _isLoading = false);
-
-  if (isLoggedIn) {
-    ref.read(isLoggedInProvider.notifier).state = true;
+    setState(() => _isLoading = false);
 
     // Save login details if "Remember Me" is checked
     if (_rememberMe) {
@@ -49,10 +47,18 @@ Future<void> _login() async {
       await AuthStorage.deleteLoginData();
     }
 
-    // Go to the home screen
-    navigationService.navigateAndReplace('/home');
+    if (isLoggedIn) {
+      ref.read(isLoggedInProvider.notifier).state = true;
+
+      // Download user data after logging in
+      final userInfo = await authService.fetchUserInfo();
+      if (userInfo != null) {
+        ref.read(userProvider.notifier).state = userInfo;
+        // Go to the home screen
+        navigationService.navigateAndReplace('/home');
+      }
+    }
   }
-}
 
   @override
   void initState() {
