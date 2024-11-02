@@ -28,16 +28,20 @@ class CustomTextField extends StatelessWidget {
 
   final double? fontSize;
 
+  final TextEditingController? controller;
+
   const CustomTextField({
     super.key,
     required this.label,
     required this.hint,
-    this.isObscure = false, // Default value is false, meaning text is not obscured.
+    this.isObscure =
+        false, // Default value is false, meaning text is not obscured.
     this.validator, // Validator function for custom validation logic.
     this.onChanged, // onChanged function to be triggered on text change.
     this.autofillHint,
     this.keyboardType,
     this.fontSize,
+    this.controller,
   });
 
   @override
@@ -45,6 +49,7 @@ class CustomTextField extends StatelessWidget {
     final theme = Theme.of(context); // Pobierz aktualny motyw
 
     return TextFormField(
+      controller: controller,
       // Determines if the text should be obscured (e.g., for password fields).
       obscureText: isObscure,
 
@@ -67,7 +72,8 @@ class CustomTextField extends StatelessWidget {
         hintText: hint,
 
         // The style of the label text.
-        labelStyle: GoogleFonts.inter(fontSize: fontSize ?? 14, color: theme.textTheme.bodySmall?.color),
+        labelStyle: GoogleFonts.inter(
+            fontSize: fontSize ?? 14, color: theme.textTheme.bodySmall?.color),
 
         // The border of the text field when it is enabled but not focused.
         enabledBorder: OutlineInputBorder(

@@ -20,5 +20,16 @@
   "loginButton": "Zaloguj się",
   "lightTheme": "Jasny Motyw",
   "darkTheme": "Ciemny Motyw",
-  "theme": "Motyw"
+  "theme": "Motyw",
+  "loading": "Ładowanie",
+  "loginFailed": "Logowanie nie powiodło się",
+  "success": "Sukces!",
+  "operationFailed": "Operacja nie powiodła się!",
+  "details": "Szczegóły",
+  "errorDetails": "Szczegóły błędu",
+  "message": "Wiadomość: {message}",
+  "errorCode": "Kod błędu: {code}",
+  "close": "Zamknij",
+  "failedToConnect": "Nie udało się połączyć z serwerem",
+  "unknownError": "Wystąpił nieznany błąd"
 }

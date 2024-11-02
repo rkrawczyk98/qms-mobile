@@ -20,5 +20,16 @@
   "loginButton": "Log In",
   "lightTheme": "Light Theme",
   "darkTheme": "Dark Theme",
-  "theme": "Motyw"
+  "theme": "Theme",
+  "loading": "Loading",
+  "loginFailed": "Login failed",
+  "success": "Success!",
+  "operationFailed": "Operation failed!",
+  "details": "Details",
+  "errorDetails": "Error Details",
+  "message": "Message: {message}",
+  "errorCode": "Error Code: {code}",
+  "close": "Close",
+  "failedToConnect": "Failed to connect to the server",
+  "unknownError": "An unknown error occurred"
 }
