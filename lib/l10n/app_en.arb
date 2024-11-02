@@ -1,0 +1,24 @@
+{
+  "appTitle": "Quality Management System",
+  "settings": "Settings",
+  "darkMode": "Dark Mode",
+  "@appTitle": {
+    "description": "Title of the application"
+  },
+  "settingsTitle": "Settings",
+  "language": "Language",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeSystem": "System",
+  "languageEnglish": "English",
+  "languagePolish": "Polish",
+  "loginLabel": "Login",
+  "loginHint": "Enter your username",
+  "passwordLabel": "Password",
+  "passwordHint": "Enter your password",
+  "rememberMe": "Remember me",
+  "loginButton": "Log In",
+  "lightTheme": "Light Theme",
+  "darkTheme": "Dark Theme",
+  "theme": "Motyw"
+}

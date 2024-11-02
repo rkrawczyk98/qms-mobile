@@ -1,0 +1,24 @@
+{
+  "appTitle": "System Zarządzania Jakością",
+  "settings": "Ustawienia",
+  "darkMode": "Tryb ciemny",
+  "@appTitle": {
+    "description": "Title of the application"
+  },
+  "settingsTitle": "Ustawienia",
+  "language": "Język",
+  "themeLight": "Jasny",
+  "themeDark": "Ciemny",
+  "themeSystem": "Systemowy",
+  "languageEnglish": "Angielski",
+  "languagePolish": "Polski",
+  "loginLabel": "Nazwa użytkownika",
+  "loginHint": "Wprowadź nazwę użytkownika",
+  "passwordLabel": "Hasło",
+  "passwordHint": "Wprowadź swoje hasło",
+  "rememberMe": "Zapamiętaj mnie",
+  "loginButton": "Zaloguj się",
+  "lightTheme": "Jasny Motyw",
+  "darkTheme": "Ciemny Motyw",
+  "theme": "Motyw"
+}
