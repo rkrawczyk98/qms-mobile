@@ -3,6 +3,7 @@ import 'package:qms_mobile/views/screens/settings/about_app_screen.dart';
 import 'package:qms_mobile/views/screens/settings/change_password_screen.dart';
 import 'package:qms_mobile/views/screens/settings/settings_screen.dart';
 import 'package:qms_mobile/views/screens/login_screen.dart';
+import 'package:qms_mobile/views/screens/settings/user_profile_screen.dart';
 import 'package:qms_mobile/views/widgets/log_viewer.dart';
 
 class AppRoutes {
@@ -12,6 +13,7 @@ class AppRoutes {
   static const String settings = '/settings';
   static const String logs = '/logs';
   static const String changePassword = '/change-password';
+  static const String profile = '/profile';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -21,6 +23,7 @@ class AppRoutes {
       settings: (context) => const SettingsScreen(),
       logs: (context) => const LogViewer(),
       changePassword: (context) => const ChangePasswordScreen(),
+      profile: (context) => const UserProfileScreen(),
     };
   }
 }

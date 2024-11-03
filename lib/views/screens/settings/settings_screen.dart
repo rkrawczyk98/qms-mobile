@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qms_mobile/routes/app_routes.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
 import 'package:qms_mobile/views/widgets/custom_app_bar.dart';
 import 'package:qms_mobile/views/widgets/side_panel.dart';
@@ -45,19 +46,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           ListTile(
-            contentPadding: const EdgeInsets.all(0), // Not sure what to do with it ?
+            contentPadding:
+                const EdgeInsets.all(0), // Not sure what to do with it ?
             title: Text(localizations.manageAccount),
             subtitle: Text(localizations.goToAccountSettings),
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
-              navigationService.navigateTo('/change-password');},
+              navigationService.navigateTo(AppRoutes.changePassword);
+            },
           ),
           ListTile(
             contentPadding: const EdgeInsets.all(0),
             title: Text(localizations.aboutApp),
             trailing: const Icon(Icons.info_outline),
             onTap: () {
-              navigationService.navigateTo('/about');
+              navigationService.navigateTo(AppRoutes.about);
+            },
+          ),
+          ListTile(
+            contentPadding: const EdgeInsets.all(0),
+            title: Text(localizations.logs),
+            subtitle: Text(localizations.appLogs),
+            trailing: const Icon(Icons.bug_report),
+            onTap: () {
+              navigationService.navigateTo(AppRoutes.logs);
             },
           ),
         ],
