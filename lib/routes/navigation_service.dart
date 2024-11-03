@@ -17,6 +17,14 @@ class NavigationService {
   Future<void> navigateAndReplace(String routeName) {
     return navigatorKey.currentState!.pushReplacementNamed(routeName);
   }
+
+  // Clears the navigation stack and navigates to a new screen
+  Future<void> navigateAndClearStack(String routeName) {
+    return navigatorKey.currentState!.pushNamedAndRemoveUntil(
+      routeName,
+      (route) => false, // This removes all previous routes
+    );
+  }
 }
 
 final NavigationService navigationService = NavigationService();

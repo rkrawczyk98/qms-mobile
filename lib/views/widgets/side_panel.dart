@@ -11,7 +11,7 @@ class SidePanelWidget extends ConsumerWidget {
 
   Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
     await ref.read(userProvider.notifier).logOut();
-    navigationService.navigateAndReplace(AppRoutes.login);
+    navigationService.navigateAndClearStack(AppRoutes.login);
   }
 
   @override
@@ -66,6 +66,16 @@ class SidePanelWidget extends ConsumerWidget {
                 navigationService.navigateTo(AppRoutes.settings);
               },
             ),
+            if (user.permissions
+                .contains('MASTER_PERMISSION')) // Check for permission
+              ListTile(
+                leading: const Icon(Icons.admin_panel_settings),
+                title: Text(localizations.adminPanel),
+                onTap: () {
+                  navigationService
+                      .navigateTo(AppRoutes.adminPanel); // Route to log viewer
+                },
+              ),
             if (user.permissions
                 .contains('MASTER_PERMISSION')) // Check for permission
               ListTile(

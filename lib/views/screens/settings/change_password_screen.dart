@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qms_mobile/data/providers/auth_provider.dart';
-import 'package:qms_mobile/routes/navigation_service.dart';
 import 'package:qms_mobile/views/widgets/centered_container.dart';
 import 'package:qms_mobile/views/widgets/custom_text_field.dart';
 import 'package:qms_mobile/views/widgets/custom_button.dart';
@@ -25,9 +24,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   
 
   Future<void> _changePassword() async {
-    final context = navigationService.navigatorKey.currentContext;
-    if (context == null) return;
-    final localizations = AppLocalizations.of(context)!;
+  if (!mounted) return;
 
     setState(() {
       _isLoading = true;
@@ -44,7 +41,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
 
     setState(() => _isLoading = false);
 
-    if (message == localizations.passwordChangedSuccessfully ) {
+    if (message == AppLocalizations.of(context)!.passwordChangedSuccessfully ) {
       CustomSnackbar.showSuccessSnackbar(
         context,
         message ?? '',

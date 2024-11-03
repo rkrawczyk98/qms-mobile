@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qms_mobile/routes/app_routes.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
-import 'package:qms_mobile/views/widgets/custom_app_bar.dart';
-import 'package:qms_mobile/views/widgets/side_panel.dart';
+import 'package:qms_mobile/views/widgets/language_switcher.dart';
+// import 'package:qms_mobile/views/widgets/side_panel.dart';
 import 'package:qms_mobile/views/widgets/theme_toggle_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -21,10 +21,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: CustomAppBar(
-        title: localizations.settingsTitle,
+      appBar: AppBar(
+        title: Text(localizations.settingsTitle),
       ),
-      drawer: const SidePanelWidget(),
+      // drawer: const SidePanelWidget(),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -34,6 +34,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: Text(localizations.selectThemeMode),
             trailing: const ThemeToggleButton(useIcons: true),
           ),
+          ListTile(
+            contentPadding: const EdgeInsets.all(0),
+            title: Text(localizations.language),
+            subtitle: Text(localizations.selectLanguage),
+            trailing: const LanguageSwitcher()
+            ),
           SwitchListTile(
             contentPadding: const EdgeInsets.all(0),
             title: Text(localizations.notifications),
