@@ -4,6 +4,7 @@ import 'package:qms_mobile/data/providers/user_provider.dart';
 import 'package:qms_mobile/routes/app_routes.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:qms_mobile/views/widgets/custom_logo.dart';
 
 class SidePanelWidget extends ConsumerWidget {
   const SidePanelWidget({super.key});
@@ -25,9 +26,23 @@ class SidePanelWidget extends ConsumerWidget {
           if (user != null) ...[
             DrawerHeader(
               decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-              child: Text(
-                localizations!.welcome,
-                style: const TextStyle(color: Colors.white, fontSize: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Flexible(
+                    child: CustomLogoWidget(
+                      logoPath: 'images/logo.svg',
+                      width: 80,
+                      height: 100,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    localizations!.menu,
+                    style: const TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ],
               ),
             ),
             ListTile(

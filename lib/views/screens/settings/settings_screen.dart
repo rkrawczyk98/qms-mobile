@@ -45,11 +45,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           ListTile(
-            contentPadding: const EdgeInsets.all(0),
+            contentPadding: const EdgeInsets.all(0), // Not sure what to do with it ?
             title: Text(localizations.manageAccount),
             subtitle: Text(localizations.goToAccountSettings),
             trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () {},
+            onTap: () {
+              navigationService.navigateTo('/change-password');},
           ),
           ListTile(
             contentPadding: const EdgeInsets.all(0),

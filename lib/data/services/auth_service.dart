@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:qms_mobile/data/models/user_info.dart';
 import 'package:qms_mobile/data/services/api_service.dart';
+import 'package:qms_mobile/routes/navigation_service.dart';
 import 'package:qms_mobile/utils/helpers/auth_storage.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AuthService {
   final ApiService _apiService;
@@ -32,6 +34,34 @@ class AuthService {
       debugPrint("Login failed: $e");
       return false;
     }
+  }
+
+  Future<String?> changePassword(
+      String currentPassword, String newPassword) async {
+    final context = navigationService.navigatorKey.currentContext;
+    if (context == null) return null;
+
+    final localizations = AppLocalizations.of(context)!;
+
+    try {
+      final response =
+          await _apiService.dio.patch('/users/change-password', data: {
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+      });
+      if (response.statusCode == 200) {
+        return response.data['message'];
+      }
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.statusCode == 400) {
+        return localizations.changePasswordErrorInvalidCurrentPassword;
+      } else if (e.response != null && e.response?.statusCode == 404) {
+        return localizations.changePasswordErrorUserNotFound;
+      } else {
+        return localizations.changePasswordErrorGeneral;
+      }
+    }
+    return null;
   }
 
   Future<UserInfo?> fetchUserInfo() async {

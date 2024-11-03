@@ -57,5 +57,19 @@
   "featuresList": "• Adding new deliveries and components\n• Tracking component status\n• Managing clients and component types\n• Automatic status updates for deliveries and components based on subcomponent statuses",
   "authorTitle": "Author:",
   "authorInfo": "Rafał Krawczyk\nIndex Number: 13950",
-  "selectThemeMode": "Choose app theme"
+  "selectThemeMode": "Choose app theme",
+  "changePasswordTitle": "Change Password",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "enterCurrentPassword": "Enter Current Password",
+  "enterNewPassword": "Enter New Password",
+  "changePassword": "Change Password",
+  "passwordChangedSuccessfully": "Password changed successfully.",
+  "incorrectCurrentPassword": "Incorrect Current Password.",
+  "userNotFound": "User not found.",
+  "errorChangingPassword": "An error occurred while changing password.",
+  "changePasswordErrorInvalidCurrentPassword": "Invalid current password.",
+  "changePasswordErrorUserNotFound": "User not found.",
+  "changePasswordErrorGeneral": "An error occurred while changing the password.",
+  "menu": "Menu"
 }
