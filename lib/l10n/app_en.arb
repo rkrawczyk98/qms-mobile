@@ -22,7 +22,7 @@
   "lightTheme": "Light Theme",
   "darkTheme": "Dark Theme",
   "theme": "Theme",
-  "loading": "Loading",
+  "loading": "Loading...",
   "loginFailed": "Login failed",
   "success": "Success!",
   "operationFailed": "Operation failed!",

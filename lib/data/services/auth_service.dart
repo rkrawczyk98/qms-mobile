@@ -20,8 +20,7 @@ class AuthService {
         data: {
           'username': username,
           'password': password,
-        },
-        options: Options(sendTimeout: const Duration(seconds: 5)),
+        }
       );
 
       if (response.statusCode == 201 && response.data['access_token'] != null) {

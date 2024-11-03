@@ -21,14 +21,14 @@ class ErrorDetailsDialog extends StatelessWidget {
         child: ListBody(
           children: <Widget>[
             Text(localizations.message(errorMessage)),
-            if (errorCode.isNotEmpty)
-              Text(localizations.errorCode(errorCode)),
+            if (errorCode.isNotEmpty) Text(localizations.errorCode(errorCode)),
           ],
         ),
       ),
       actions: <Widget>[
         TextButton(
-          child: Text(localizations.close),
+          child: Text(localizations.close,
+              style: Theme.of(context).textTheme.bodySmall),
           onPressed: () {
             Navigator.of(context).pop();
           },
