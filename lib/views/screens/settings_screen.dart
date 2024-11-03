@@ -27,8 +27,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const ThemeToggleButton(),
+          ListTile(
+            contentPadding: const EdgeInsets.all(0),
+            title: Text(localizations.theme),
+            subtitle: Text(localizations.selectThemeMode),
+            trailing: const ThemeToggleButton(useIcons: true),
+          ),
           SwitchListTile(
+            contentPadding: const EdgeInsets.all(0),
             title: Text(localizations.notifications),
             subtitle: Text(localizations.manageNotifications),
             value: _notificationsEnabled,
@@ -39,12 +45,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           ListTile(
+            contentPadding: const EdgeInsets.all(0),
             title: Text(localizations.manageAccount),
             subtitle: Text(localizations.goToAccountSettings),
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {},
           ),
           ListTile(
+            contentPadding: const EdgeInsets.all(0),
             title: Text(localizations.aboutApp),
             trailing: const Icon(Icons.info_outline),
             onTap: () {

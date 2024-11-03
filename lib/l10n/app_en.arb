@@ -56,5 +56,6 @@
   "featuresTitle": "Features:",
   "featuresList": "• Adding new deliveries and components\n• Tracking component status\n• Managing clients and component types\n• Automatic status updates for deliveries and components based on subcomponent statuses",
   "authorTitle": "Author:",
-  "authorInfo": "Rafał Krawczyk\nIndex Number: 13950"
+  "authorInfo": "Rafał Krawczyk\nIndex Number: 13950",
+  "selectThemeMode": "Choose app theme"
 }

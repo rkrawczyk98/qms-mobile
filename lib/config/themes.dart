@@ -12,8 +12,8 @@ final ThemeData lightTheme = ThemeData(
     bodyLarge: TextStyle(color: Colors.black),
     bodySmall: TextStyle(color: Colors.grey),
   ),
-  hintColor: Colors.grey[600], // Kolor podpowiedzi
-  dividerColor: Colors.grey[400], // Kolor ramki
+  hintColor: Colors.grey[600], // Tooltip color
+  dividerColor: Colors.grey[400], // Frame color
 );
 
 final ThemeData darkTheme = ThemeData(
@@ -28,6 +28,6 @@ final ThemeData darkTheme = ThemeData(
     bodyLarge: const TextStyle(color: Colors.white),
     bodySmall: TextStyle(color: Colors.grey[300]),
   ),
-  hintColor: Colors.white, // Kolor podpowiedzi
-  dividerColor: Colors.grey[600], // Kolor ramki
+  hintColor: Colors.white, // Tooltip color
+  dividerColor: Colors.grey[600], // Frame color
 );

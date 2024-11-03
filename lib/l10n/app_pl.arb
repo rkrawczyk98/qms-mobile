@@ -56,5 +56,6 @@
   "featuresTitle": "Funkcjonalności:",
   "featuresList": "• Dodawanie nowych dostaw i komponentów\n• Śledzenie statusu komponentów\n• Zarządzanie klientami i typami komponentów\n• Automatyczne zmiany statusów dostaw oraz komponentów w opraciu o statusy podkomponentów",
   "authorTitle": "Autor:",
-  "authorInfo": "Rafał Krawczyk\nNumer indexu: 13950"
+  "authorInfo": "Rafał Krawczyk\nNumer indexu: 13950",
+  "selectThemeMode": "Wybierz motyw aplikacji"
 }
