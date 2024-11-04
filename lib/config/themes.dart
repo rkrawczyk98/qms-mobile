@@ -4,17 +4,19 @@ final ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   primaryColor: Colors.blue,
   scaffoldBackgroundColor: Colors.white,
-  colorScheme: const ColorScheme.light(
+  colorScheme: ColorScheme.light(
     primary: Colors.blue,
+    secondary: Colors.lightBlue[50]!,
     onPrimary: Colors.white, // For icons or text on primary color
   ),
   appBarTheme: const AppBarTheme(
     color: Colors.blue,
     iconTheme: IconThemeData(color: Colors.white),
+    foregroundColor: Colors.black,
   ),
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: Colors.black),
-    bodySmall: TextStyle(color: Colors.grey),
+    bodySmall: TextStyle(color: Colors.black),
   ),
   iconTheme: const IconThemeData(color: Colors.blue),
   hintColor: Colors.grey[600], // Tooltip color
@@ -27,11 +29,13 @@ final ThemeData darkTheme = ThemeData(
   scaffoldBackgroundColor: Colors.black,
   colorScheme: ColorScheme.dark(
     primary: Colors.grey[900]!,
+    secondary: Colors.grey[600]!,
     onPrimary: Colors.white, // For icons or text on primary color
   ),
   appBarTheme: const AppBarTheme(
     color: Colors.grey,
     iconTheme: IconThemeData(color: Colors.white),
+    foregroundColor: Colors.white,
   ),
   textTheme: TextTheme(
     bodyLarge: const TextStyle(color: Colors.white),

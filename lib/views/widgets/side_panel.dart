@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qms_mobile/data/providers/auth_provider.dart';
 import 'package:qms_mobile/data/providers/user_provider.dart';
 import 'package:qms_mobile/routes/app_routes.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
@@ -10,6 +11,9 @@ class SidePanelWidget extends ConsumerWidget {
   const SidePanelWidget({super.key});
 
   Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
+    final authService = ref.read(authServiceProvider);
+    await authService.logout();
+    
     await ref.read(userProvider.notifier).logOut();
     navigationService.navigateAndClearStack(AppRoutes.login);
   }

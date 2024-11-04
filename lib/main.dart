@@ -42,7 +42,7 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp(
       navigatorKey: navigationService.navigatorKey,
-      title: 'Flutter Demo',
+      title: 'QMS',
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeMode, // Theme mode from provider

@@ -15,13 +15,10 @@ class AuthService {
 
   Future<bool> login(String username, String password) async {
     try {
-      final response = await _apiService.dio.post(
-        '/auth/login',
-        data: {
-          'username': username,
-          'password': password,
-        }
-      );
+      final response = await _apiService.dio.post('/auth/login', data: {
+        'username': username,
+        'password': password,
+      });
 
       if (response.statusCode == 201 && response.data['access_token'] != null) {
         final accessToken = response.data['access_token'];
@@ -76,9 +73,22 @@ class AuthService {
     return null;
   }
 
-  Future<void> logout() async {
-    await _secureStorage.delete(key: 'access_token');
-    await AuthStorage.deleteLoginData();
+  Future<bool> logout() async {
+    try {
+      final response = await _apiService.dio.post(
+        '/auth/logout',
+        options: Options(extra: {'withCredentials': true}),
+      );
+      if (response.statusCode == 200) {
+        await _secureStorage.delete(key: 'access_token');
+        await AuthStorage.deleteLoginData();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint("Logout failed: $e");
+      return false;
+    }
   }
 
   Future<String?> getAccessToken() async {

@@ -11,9 +11,13 @@ class ThemeToggleButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
+    final themeModeNotifier = ref.watch(themeModeProvider.notifier);
     final localizations = AppLocalizations.of(context)!;
 
     return ToggleButtons(
+      borderColor: Theme.of(context).colorScheme.secondary,
+      selectedBorderColor: Theme.of(context).colorScheme.secondary,
+      borderWidth: 2.0,
       isSelected: [
         themeMode == ThemeMode.light,
         themeMode == ThemeMode.system,
@@ -28,7 +32,7 @@ class ThemeToggleButton extends ConsumerWidget {
         } else {
           selectedMode = ThemeMode.dark;
         }
-        ref.read(themeModeProvider.notifier).state = selectedMode;
+        themeModeNotifier.setThemeMode(selectedMode);
       },
       borderRadius: BorderRadius.circular(15),
       children: [
