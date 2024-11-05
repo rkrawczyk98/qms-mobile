@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:qms_mobile/views/screens/admin_panel/admin_panel.dart';
-import 'package:qms_mobile/views/screens/admin_panel/client_management_screen.dart';
-import 'package:qms_mobile/views/screens/admin_panel/component_management_screen.dart';
-import 'package:qms_mobile/views/screens/admin_panel/delivery_management_screen.dart';
-import 'package:qms_mobile/views/screens/admin_panel/inventory_management_screen.dart';
-import 'package:qms_mobile/views/screens/admin_panel/user_management_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/managment/create_user_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/managment/user_managment_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/navigation/admin_panel.dart';
+import 'package:qms_mobile/views/screens/admin_panel/navigation/client_management_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/navigation/component_management_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/navigation/delivery_management_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/navigation/inventory_management_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/navigation/user_management_screen.dart';
 import 'package:qms_mobile/views/screens/home_screen.dart';
 import 'package:qms_mobile/views/screens/settings/about_app_screen.dart';
 import 'package:qms_mobile/views/screens/settings/change_password_screen.dart';
@@ -27,6 +29,8 @@ class AppRoutes {
   static const String clientManagement = '/admin-panel/client-management';
   static const String componentManagement = '/admin-panel/component-management';
   static const String inventoryManagement = '/admin-panel/inventory-management';
+  static const String createUser = '/admin-panel/create-user';
+  static const String manageUser = '/admin-panel/manage-user';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -43,6 +47,8 @@ class AppRoutes {
       clientManagement: (context) => const ClientManagementScreen(),
       componentManagement: (context) => const ComponentManagementScreen(),
       inventoryManagement: (context) => const InventoryManagementScreen(),
+      createUser: (context) => const CreateUserScreen(),
+      manageUser: (context) => const ManageUserScreen(),
     };
   }
 }

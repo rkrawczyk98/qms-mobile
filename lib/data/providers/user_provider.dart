@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qms_mobile/data/models/user_info.dart';
+import 'package:qms_mobile/data/models/DTOs/auth/user_info.dart';
+import 'package:qms_mobile/data/providers/api_service_provider.dart';
+import 'package:qms_mobile/data/services/user_service.dart';
 import 'package:qms_mobile/utils/helpers/auth_storage.dart';
 
 class UserNotifier extends StateNotifier<UserInfo?> {
@@ -21,4 +23,10 @@ class UserNotifier extends StateNotifier<UserInfo?> {
 
 final userProvider = StateNotifierProvider<UserNotifier, UserInfo?>((ref) {
   return UserNotifier();
+});
+
+
+final userServiceProvider = Provider<UserService>((ref) {
+  final apiService = ref.read(apiServiceProvider);
+  return UserService(apiService);
 });

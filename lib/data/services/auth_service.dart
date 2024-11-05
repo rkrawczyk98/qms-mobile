@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:qms_mobile/data/models/user_info.dart';
 import 'package:qms_mobile/data/services/api_service.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
 import 'package:qms_mobile/utils/helpers/auth_storage.dart';
@@ -56,19 +55,6 @@ class AuthService {
       } else {
         return localizations.changePasswordErrorGeneral;
       }
-    }
-    return null;
-  }
-
-  Future<UserInfo?> fetchUserInfo() async {
-    try {
-      final response = await _apiService.dio.get('/users/user-info');
-      if (response.statusCode == 200) {
-        return UserInfo.fromJson(response.data);
-      }
-    } catch (e) {
-      debugPrint("Login failed: $e");
-      ("Failed to fetch user info: $e");
     }
     return null;
   }

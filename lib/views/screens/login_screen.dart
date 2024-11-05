@@ -29,6 +29,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     setState(() => _isLoading = true);
 
     final authService = ref.read(authServiceProvider);
+    final userService = ref.read(userServiceProvider);
     final isLoggedIn = await authService.login(
       _usernameController.text,
       _passwordController.text,
@@ -51,7 +52,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ref.read(isLoggedInProvider.notifier).update((state) => true);
 
       // Download user data after logging in
-      final userInfo = await authService.fetchUserInfo();
+      final userInfo = await userService.fetchUserInfo();
       if (userInfo != null) {
         ref.read(userProvider.notifier).setUser(userInfo);
         // Go to the home screen
@@ -127,7 +128,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     });
                   },
                   fontSize: 16,
-                  textColor: Colors.grey[600],
+                  // textColor: Colors.grey[600],
                 ),
                 const SizedBox(height: 30),
                 CustomButton(

@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// A custom checkbox widget with a label.
-///
-/// This widget allows you to create a checkbox with an associated text label.
-/// The text label will automatically resize to fit within the available space,
+/// The text label automatically resizes to fit within the available space,
 /// using the AutoSizeText package to ensure it fits within the provided constraints.
 class CustomCheckbox extends StatelessWidget {
   /// The text label to display next to the checkbox.
@@ -18,15 +16,9 @@ class CustomCheckbox extends StatelessWidget {
   final ValueChanged<bool?> onChanged;
 
   /// The maximum number of lines for the text label.
-  /// If not provided, it defaults to 1 line.
   final int? maxLines;
 
-  /// The color of the text label.
-  /// If not provided, it defaults to black.
-  final Color? textColor;
-
   /// The font size of the text label.
-  /// If not provided, it defaults to 14.
   final double? fontSize;
 
   const CustomCheckbox({
@@ -35,41 +27,38 @@ class CustomCheckbox extends StatelessWidget {
     required this.onChanged,
     required this.text,
     this.maxLines,
-    this.textColor,
     this.fontSize,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Row(
-      // Ensures the Row only takes up as much space as it needs.
-      // mainAxisSize: MainAxisSize.min,
-      
       children: [
-        // A fixed-size Checkbox widget.
         SizedBox(
           height: 30,
           width: 30,
           child: Checkbox(
-            value: isChecked, // Indicates whether the checkbox is checked.
-            onChanged: onChanged, // Callback function to handle state changes.
+            value: isChecked,
+            onChanged: onChanged,
+            activeColor: colorScheme.primary,
+            checkColor: colorScheme.onPrimary,
           ),
         ),
 
-        // A small gap between the checkbox and the text label.
         const SizedBox(width: 8),
 
-        // Flexible text label that resizes to fit the available space.
-        // The text will automatically shrink to fit within its constraints.
         Flexible(
           child: AutoSizeText(
-            text, // The text label to display next to the checkbox.
+            text,
             style: GoogleFonts.inter(
-              fontSize: fontSize ?? 18, // Default font size is 14 if not provided.
-              color: textColor ?? Colors.black, // Default text color is black if not provided.
+              fontSize: fontSize ?? 18,
+              color: theme.textTheme.bodyLarge?.color,
             ),
-            maxLines: maxLines ?? 1, // Limits the number of lines to the provided value or defaults to 1.
-            wrapWords: false, // Prevents word wrapping to keep text on one line if possible.
+            maxLines: maxLines ?? 1,
+            wrapWords: false,
           ),
         ),
       ],
