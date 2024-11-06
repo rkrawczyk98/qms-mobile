@@ -33,7 +33,7 @@ class UserManagementScreen extends StatelessWidget {
             leading: const Icon(Icons.group),
             title: Text(localizations.manageRolesPermissions),
             onTap: () {
-              // Role and Permission Management Logic
+              navigationService.navigateTo(AppRoutes.rolePermissionManagment);
             },
           ),
         ],

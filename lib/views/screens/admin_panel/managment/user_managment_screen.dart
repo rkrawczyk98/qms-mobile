@@ -11,13 +11,13 @@ import 'package:qms_mobile/views/widgets/custom_text_field.dart';
 import 'package:qms_mobile/views/dialogs/error_details_dialog.dart';
 
 class ManageUserScreen extends ConsumerStatefulWidget {
-  const ManageUserScreen({Key? key}) : super(key: key);
+  const ManageUserScreen({super.key});
 
   @override
-  _ManageUserScreenState createState() => _ManageUserScreenState();
+  ManageUserScreenState createState() => ManageUserScreenState();
 }
 
-class _ManageUserScreenState extends ConsumerState<ManageUserScreen> {
+class ManageUserScreenState extends ConsumerState<ManageUserScreen> {
   List<UserRoleResponseDto>? _users;
   UserRoleResponseDto? _selectedUser;
   final TextEditingController _newPasswordController = TextEditingController();

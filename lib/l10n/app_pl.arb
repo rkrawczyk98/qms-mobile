@@ -132,5 +132,21 @@
   "deleteUserButton": "Usuń użytkownika",
   "passwordResetSuccess": "Hasło zostało pomyślnie zresetowane",
   "userDeletedSuccess": "Użytkownik został pomyślnie usunięty",
-  "deleteUserError": "Nie udało się usunąć użytkownika"
+  "deleteUserError": "Nie udało się usunąć użytkownika",
+  "roleCreated": "Rola została pomyślnie utworzona.",
+  "roleUpdated": "Rola została pomyślnie zaktualizowana.",
+  "roleDeleted": "Rola została pomyślnie usunięta.",
+  "permissionCreated": "Uprawnienie zostało pomyślnie utworzone.",
+  "permissionUpdated": "Uprawnienie zostało pomyślnie zaktualizowane.",
+  "permissionDeleted": "Uprawnienie zostało pomyślnie usunięte.",
+  "enterRoleName": "Wprowadź nazwę roli",
+  "enterPermissionName": "Wprowadź nazwę uprawnienia",
+  "editRoleName": "Edytuj nazwę roli",
+  "editPermissionName": "Edytuj nazwę uprawnienia",
+  "ok": "OK",
+  "rolePermissionManagement": "Zarządzanie rolami i uprawnieniami",
+  "failedToLoadRoles": "Nie udało się wczytać ról",
+  "noRolesFound": "Nie znaleziono ról.",
+  "failedToLoadPermissions": "Nie udało się wczytać uprawnień",
+  "noPermissionsFound": "Nie znaleziono uprawnień."
 }

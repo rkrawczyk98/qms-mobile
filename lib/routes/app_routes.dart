@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qms_mobile/views/screens/admin_panel/managment/create_user_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/managment/role_permission_managment_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/managment/user_managment_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/navigation/admin_panel.dart';
 import 'package:qms_mobile/views/screens/admin_panel/navigation/client_management_screen.dart';
@@ -31,6 +32,7 @@ class AppRoutes {
   static const String inventoryManagement = '/admin-panel/inventory-management';
   static const String createUser = '/admin-panel/create-user';
   static const String manageUser = '/admin-panel/manage-user';
+  static const String rolePermissionManagment = '/admin-panel/role-permission-managment';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -49,6 +51,7 @@ class AppRoutes {
       inventoryManagement: (context) => const InventoryManagementScreen(),
       createUser: (context) => const CreateUserScreen(),
       manageUser: (context) => const ManageUserScreen(),
+      rolePermissionManagment: (context) => const RolePermissionManagementScreen(),
     };
   }
 }

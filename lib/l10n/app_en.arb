@@ -132,5 +132,21 @@
   "deleteUserButton": "Delete User",
   "passwordResetSuccess": "Password reset successfully.",
   "userDeletedSuccess": "User deleted successfully.",
-  "deleteUserError": "Failed to delete user."
+  "deleteUserError": "Failed to delete user.",
+  "roleCreated": "Role successfully created.",
+  "roleUpdated": "Role successfully updated.",
+  "roleDeleted": "Role successfully deleted.",
+  "permissionCreated": "Permission successfully created.",
+  "permissionUpdated": "Permission successfully updated.",
+  "permissionDeleted": "Permission successfully deleted.",
+  "enterRoleName": "Enter Role Name",
+  "enterPermissionName": "Enter Permission Name",
+  "editRoleName": "Edit Role Name",
+  "editPermissionName": "Edit Permission Name",
+  "ok": "OK",
+  "rolePermissionManagement": "Role & Permission Management",
+  "failedToLoadRoles": "Failed to load roles",
+  "noRolesFound": "No roles found.",
+  "failedToLoadPermissions": "Failed to load permissions",
+  "noPermissionsFound": "No permissions found."
 }

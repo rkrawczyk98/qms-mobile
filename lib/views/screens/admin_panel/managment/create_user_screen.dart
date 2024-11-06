@@ -9,13 +9,13 @@ import 'package:qms_mobile/views/widgets/centered_container.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CreateUserScreen extends ConsumerStatefulWidget {
-  const CreateUserScreen({Key? key}) : super(key: key);
+  const CreateUserScreen({super.key});
 
   @override
-  _CreateUserScreenState createState() => _CreateUserScreenState();
+  CreateUserScreenState createState() => CreateUserScreenState();
 }
 
-class _CreateUserScreenState extends ConsumerState<CreateUserScreen> {
+class CreateUserScreenState extends ConsumerState<CreateUserScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
