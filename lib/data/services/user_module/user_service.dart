@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:qms_mobile/data/models/DTOs/auth/user_info.dart';
-import 'package:qms_mobile/data/models/DTOs/user/user_role_response_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/auth_module/user_info.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user/user_role_response_dto.dart';
 import 'package:qms_mobile/data/services/api_service.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

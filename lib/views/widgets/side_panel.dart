@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qms_mobile/data/providers/auth_provider.dart';
-import 'package:qms_mobile/data/providers/user_provider.dart';
+import 'package:qms_mobile/data/providers/auth_module/auth_provider.dart';
+import 'package:qms_mobile/data/providers/user_module/user_provider.dart';
 import 'package:qms_mobile/routes/app_routes.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

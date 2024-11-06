@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qms_mobile/data/models/DTOs/user/user_role_response_dto.dart';
-import 'package:qms_mobile/data/providers/user_provider.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user/user_role_response_dto.dart';
+import 'package:qms_mobile/data/providers/user_module/user_provider.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qms_mobile/views/dialogs/custom_snackbar.dart';

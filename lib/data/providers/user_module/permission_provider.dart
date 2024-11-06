@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qms_mobile/data/models/DTOs/permission/create_permission_dto.dart';
-import 'package:qms_mobile/data/models/DTOs/permission/permission.dart';
-import 'package:qms_mobile/data/models/DTOs/permission/update_permission_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/permission/create_permission_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/permission/permission.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/permission/update_permission_dto.dart';
 import 'package:qms_mobile/data/providers/api_service_provider.dart';
-import 'package:qms_mobile/data/services/permission_service.dart';
+import 'package:qms_mobile/data/services/user_module/permission_service.dart';
 
 class PermissionNotifier extends StateNotifier<List<Permission>> {
   final PermissionService _permissionService;

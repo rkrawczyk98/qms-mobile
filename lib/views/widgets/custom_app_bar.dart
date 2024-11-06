@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qms_mobile/data/providers/user_provider.dart';
+import 'package:qms_mobile/data/providers/user_module/user_provider.dart';
 import 'package:qms_mobile/views/widgets/language_switcher.dart';
 
 class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {

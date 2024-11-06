@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qms_mobile/data/models/DTOs/permission/permission.dart';
-import 'package:qms_mobile/data/models/DTOs/user_permission/delete_permission_from_user.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/permission/permission.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user_permission/delete_permission_from_user.dart';
 import 'package:qms_mobile/data/providers/api_service_provider.dart';
-import '../models/DTOs/user_permission/add_permission_to_user_dto.dart';
-import '../services/user_permission_service.dart';
+import '../../models/DTOs/user_module/user_permission/add_permission_to_user_dto.dart';
+import '../../services/user_module/user_permission_service.dart';
 
 class UserPermissionNotifier extends StateNotifier<List<Permission>> {
   final UserPermissionService _userPermissionService;

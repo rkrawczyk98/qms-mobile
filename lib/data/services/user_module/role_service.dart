@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:qms_mobile/data/models/DTOs/role/create_role_dto.dart';
-import 'package:qms_mobile/data/models/DTOs/role/role.dart';
-import 'package:qms_mobile/data/models/DTOs/role/update_role_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/role/create_role_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/role/role.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/role/update_role_dto.dart';
 import 'package:qms_mobile/data/services/api_service.dart';
 
 class RoleService {

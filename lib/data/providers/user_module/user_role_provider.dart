@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qms_mobile/data/models/DTOs/user_role/user_role_response_dto.dart';
-import 'package:qms_mobile/data/models/DTOs/user_role/add_role_to_user_dto.dart';
-import 'package:qms_mobile/data/models/DTOs/user_role/delete_role_from_user_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user_role/user_role_response_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user_role/add_role_to_user_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user_role/delete_role_from_user_dto.dart';
 import 'package:qms_mobile/data/providers/api_service_provider.dart';
-import 'package:qms_mobile/data/services/user_role_service.dart';
+import 'package:qms_mobile/data/services/user_module/user_role_service.dart';
 
 class UserRoleNotifier extends StateNotifier<List<UserRoleResponseDto>> {
   final UserRoleService _userRoleService;

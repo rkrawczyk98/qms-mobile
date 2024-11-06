@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:qms_mobile/data/models/DTOs/permission/create_permission_dto.dart';
-import 'package:qms_mobile/data/models/DTOs/permission/permission.dart';
-import 'package:qms_mobile/data/models/DTOs/permission/update_permission_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/permission/create_permission_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/permission/permission.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/permission/update_permission_dto.dart';
 import 'package:qms_mobile/data/services/api_service.dart';
 
 class PermissionService {

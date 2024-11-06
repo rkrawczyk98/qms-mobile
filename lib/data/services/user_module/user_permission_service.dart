@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:qms_mobile/data/models/DTOs/permission/permission.dart';
-import 'package:qms_mobile/data/models/DTOs/user_permission/delete_permission_from_user.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/permission/permission.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user_permission/delete_permission_from_user.dart';
 import 'package:qms_mobile/data/services/api_service.dart';
-import '../models/DTOs/user_permission/add_permission_to_user_dto.dart';
+import '../../models/DTOs/user_module/user_permission/add_permission_to_user_dto.dart';
 
 class UserPermissionService {
   final ApiService _apiService;

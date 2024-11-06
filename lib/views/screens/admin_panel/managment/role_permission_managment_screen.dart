@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qms_mobile/data/models/DTOs/permission/create_permission_dto.dart';
-import 'package:qms_mobile/data/models/DTOs/permission/update_permission_dto.dart';
-import 'package:qms_mobile/data/models/DTOs/role/create_role_dto.dart';
-import 'package:qms_mobile/data/models/DTOs/role/update_role_dto.dart';
-import 'package:qms_mobile/data/providers/permission_provider.dart';
-import 'package:qms_mobile/data/providers/role_provider.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/permission/create_permission_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/permission/update_permission_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/role/create_role_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/role/update_role_dto.dart';
+import 'package:qms_mobile/data/providers/user_module/permission_provider.dart';
+import 'package:qms_mobile/data/providers/user_module/role_provider.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
 import 'package:qms_mobile/views/dialogs/custom_snackbar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

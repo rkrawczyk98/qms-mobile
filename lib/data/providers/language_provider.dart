@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qms_mobile/data/services/preferences_service.dart';
+import 'package:qms_mobile/data/services/user_module/preferences_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 extension Translate on BuildContext {

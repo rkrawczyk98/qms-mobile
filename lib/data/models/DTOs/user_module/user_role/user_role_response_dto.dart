@@ -1,5 +1,5 @@
-import 'package:qms_mobile/data/models/DTOs/user/role_response_dto.dart';
-import 'package:qms_mobile/data/models/DTOs/user/user_response_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user/role_response_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user/user_response_dto.dart';
 
 class UserRoleResponseDto {
   final int id;

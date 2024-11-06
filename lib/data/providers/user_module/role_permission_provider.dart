@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qms_mobile/data/models/DTOs/permission/permission.dart';
-import 'package:qms_mobile/data/models/DTOs/role_permission/add_permission_to_role_dto.dart';
-import 'package:qms_mobile/data/models/DTOs/role_permission/delete_permission_from_role_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/permission/permission.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/role_permission/add_permission_to_role_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/role_permission/delete_permission_from_role_dto.dart';
 import 'package:qms_mobile/data/providers/api_service_provider.dart';
-import 'package:qms_mobile/data/services/role_permission_service.dart';
+import 'package:qms_mobile/data/services/user_module/role_permission_service.dart';
 
 class RolePermissionNotifier extends StateNotifier<List<Permission>> {
   final RolePermissionService _rolePermissionService;

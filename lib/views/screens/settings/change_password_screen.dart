@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qms_mobile/data/providers/auth_provider.dart';
+import 'package:qms_mobile/data/providers/auth_module/auth_provider.dart';
 import 'package:qms_mobile/views/widgets/centered_container.dart';
 import 'package:qms_mobile/views/widgets/custom_text_field.dart';
 import 'package:qms_mobile/views/widgets/custom_button.dart';
