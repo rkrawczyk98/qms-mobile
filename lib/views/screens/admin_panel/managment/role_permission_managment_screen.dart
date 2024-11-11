@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qms_mobile/data/models/DTOs/user_module/permission/create_permission_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/permission/permission.dart';
 import 'package:qms_mobile/data/models/DTOs/user_module/permission/update_permission_dto.dart';
 import 'package:qms_mobile/data/models/DTOs/user_module/role/create_role_dto.dart';
 import 'package:qms_mobile/data/models/DTOs/user_module/role/update_role_dto.dart';
@@ -98,13 +99,24 @@ class RolePermissionManagementScreenState
   Future<void> _managePermissionsForRole(
       BuildContext context, int roleId) async {
     final rolePermissionService = ref.read(rolePermissionServiceProvider);
-
     final assignedPermissions =
         await rolePermissionService.getPermissionsByRoleId(roleId);
     final allPermissions = ref.watch(permissionNotifierProvider);
 
+    final TextEditingController searchController = TextEditingController();
+    List<Permission> filteredPermissions = List.from(allPermissions);
+
     List<int> selectedPermissions =
         assignedPermissions?.map((p) => p.id).toList() ?? [];
+
+    void filterPermissions(String query) {
+      setState(() {
+        filteredPermissions = allPermissions
+            .where((permission) =>
+                permission.name.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      });
+    }
 
     await showDialog(
       context: context,
@@ -115,33 +127,81 @@ class RolePermissionManagementScreenState
               title: Text(AppLocalizations.of(context)!.managePermissions),
               content: SizedBox(
                 width: double.maxFinite,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: allPermissions.length,
-                  itemBuilder: (context, index) {
-                    final permission = allPermissions[index];
-                    return CheckboxListTile(
-                      title: Text(permission.name),
-                      value: selectedPermissions.contains(permission.id),
-                      onChanged: (bool? isChecked) {
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        labelText:
+                            AppLocalizations.of(context)!.searchPermissions,
+                        labelStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary),
+                        prefixIcon: Icon(Icons.search,
+                            color: Theme.of(context).hintColor),
+                        border: const OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).dividerColor,
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        filled: true,
+                        fillColor: Theme.of(context)
+                            .scaffoldBackgroundColor
+                            .withOpacity(0.05),
+                      ),
+                      onChanged: (query) {
                         setState(() {
-                          if (isChecked == true) {
-                            selectedPermissions.add(permission.id);
-                            rolePermissionService.addPermissionToRole(
-                                AddPermissionToRoleDto(
-                                    roleId: roleId,
-                                    permissionId: permission.id));
-                          } else {
-                            selectedPermissions.remove(permission.id);
-                            rolePermissionService.deletePermissionFromRole(
-                                DeletePermissionFromRoleDto(
-                                    roleId: roleId,
-                                    permissionId: permission.id));
-                          }
+                          filterPermissions(query);
                         });
                       },
-                    );
-                  },
+                      cursorColor: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: filteredPermissions.length,
+                        itemBuilder: (context, index) {
+                          final permission = filteredPermissions[index];
+                          return CheckboxListTile(
+                            title: Text(permission.name),
+                            value: selectedPermissions.contains(permission.id),
+                            onChanged: (bool? isChecked) {
+                              setState(() {
+                                if (isChecked == true) {
+                                  selectedPermissions.add(permission.id);
+                                  rolePermissionService.addPermissionToRole(
+                                    AddPermissionToRoleDto(
+                                      roleId: roleId,
+                                      permissionId: permission.id,
+                                    ),
+                                  );
+                                } else {
+                                  selectedPermissions.remove(permission.id);
+                                  rolePermissionService
+                                      .deletePermissionFromRole(
+                                    DeletePermissionFromRoleDto(
+                                      roleId: roleId,
+                                      permissionId: permission.id,
+                                    ),
+                                  );
+                                }
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
               actions: [
@@ -222,42 +282,47 @@ class RolePermissionManagementScreenState
     }
   }
 
-Future<void> _deletePermission(int permissionId) async {
-  final context = navigationService.navigatorKey.currentContext;
-  if (context == null) return;
+  Future<void> _deletePermission(int permissionId) async {
+    final context = navigationService.navigatorKey.currentContext;
+    if (context == null) return;
 
-  // Show confirmation box
-  final confirm = await showDialog<bool>(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(AppLocalizations.of(context)!.confirmDeletion),
-        content: Text(AppLocalizations.of(context)!.confirmDeletePermission),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(AppLocalizations.of(context)!.delete, style: const TextStyle(color: Colors.red)),
-          ),
-        ],
-      );
-    },
-  );
-
-  if (confirm != true) return;
-
-  // Remove permission after confirmation
-  final success = await ref.read(permissionNotifierProvider.notifier).removePermission(permissionId);
-  if (mounted && success) {
-    CustomSnackbar.showSuccessSnackbar(
-      context,
-      AppLocalizations.of(context)!.permissionDeleted,
+    // Show confirmation box
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.confirmDeletion),
+          content: Text(AppLocalizations.of(context)!.confirmDeletePermission),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(AppLocalizations.of(context)!.cancel,
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.bodySmall?.color)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(AppLocalizations.of(context)!.delete,
+                  style: const TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
     );
+
+    if (confirm != true) return;
+
+    // Remove permission after confirmation
+    final success = await ref
+        .read(permissionNotifierProvider.notifier)
+        .removePermission(permissionId);
+    if (mounted && success) {
+      CustomSnackbar.showSuccessSnackbar(
+        context,
+        AppLocalizations.of(context)!.permissionDeleted,
+      );
+    }
   }
-}
 
   Future<String?> _showInputDialog(BuildContext context, String title,
       [String? initialValue]) async {
@@ -294,7 +359,7 @@ Future<void> _deletePermission(int permissionId) async {
         title: Text(AppLocalizations.of(context)!.rolePermissionManagement),
         bottom: TabBar(
           controller: _tabController,
-          labelStyle: TextStyle(color: theme.textTheme.bodySmall?.color),
+          labelStyle: TextStyle(color: theme.appBarTheme.titleTextStyle!.color),
           tabs: [
             Tab(text: AppLocalizations.of(context)!.roles),
             Tab(text: AppLocalizations.of(context)!.permissions),

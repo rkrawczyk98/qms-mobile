@@ -5,8 +5,13 @@ import 'package:qms_mobile/views/widgets/language_switcher.dart';
 
 class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final String? title;
+  final bool showLanguageSwitcher;
 
-  const CustomAppBar({super.key, this.title});
+  const CustomAppBar({
+    super.key,
+    this.title,
+    this.showLanguageSwitcher = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,8 +44,9 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   ?.copyWith(color: Colors.white),
             )
           : const SizedBox.shrink(), // Empty widget when title is empty
-      actions: const [
-        LanguageSwitcher(),
+      actions: [
+        if (showLanguageSwitcher)
+          const LanguageSwitcher(),
       ],
     );
   }

@@ -12,6 +12,11 @@ final ThemeData lightTheme = ThemeData(
   appBarTheme: const AppBarTheme(
     color: Colors.blue,
     iconTheme: IconThemeData(color: Colors.white),
+    titleTextStyle: TextStyle(
+      color: Colors.white,
+      fontSize: 20,
+      fontWeight: FontWeight.w500,
+    ),
     foregroundColor: Colors.black,
   ),
   textTheme: const TextTheme(
@@ -35,6 +40,11 @@ final ThemeData darkTheme = ThemeData(
   appBarTheme: const AppBarTheme(
     color: Colors.grey,
     iconTheme: IconThemeData(color: Colors.white),
+    titleTextStyle: TextStyle(
+      color: Colors.white,
+      fontSize: 20,
+      fontWeight: FontWeight.w500,
+    ),
     foregroundColor: Colors.white,
   ),
   textTheme: TextTheme(

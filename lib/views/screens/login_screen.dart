@@ -84,7 +84,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: const CustomAppBar(showLanguageSwitcher: true),
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: isMobile ? 20 : 40),

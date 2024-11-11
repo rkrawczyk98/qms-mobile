@@ -18,6 +18,7 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       appBar: CustomAppBar(
         title: localizations.homeTitle,
+        showLanguageSwitcher: true,
       ),
       drawer: const SidePanelWidget(),
       body: Padding(

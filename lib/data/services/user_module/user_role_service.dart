@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:qms_mobile/data/models/DTOs/user_module/role/role.dart';
 import 'package:qms_mobile/data/models/DTOs/user_module/user_role/add_role_to_user_dto.dart';
 import 'package:qms_mobile/data/models/DTOs/user_module/user_role/delete_role_from_user_dto.dart';
-import 'package:qms_mobile/data/models/DTOs/user_module/user_role/user_role_response_dto.dart';
 import '../api_service.dart';
 
 class UserRoleService {
