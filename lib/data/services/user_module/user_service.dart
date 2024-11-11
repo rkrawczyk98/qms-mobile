@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:qms_mobile/data/models/DTOs/auth_module/user_info.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user/create_user_with_roles_and_permissions_dto.dart';
 import 'package:qms_mobile/data/models/DTOs/user_module/user/user_role_response_dto.dart';
 import 'package:qms_mobile/data/services/api_service.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
@@ -13,9 +14,9 @@ class UserService {
   UserService(this._apiService);
 
   // Creating a new user
-  Future<bool> createUser(String username, String password) async {
+  Future<int?> createUser(String username, String password) async {
     final context = navigationService.navigatorKey.currentContext;
-    if (context == null) return false;
+    if (context == null) return null;
     final localizations = AppLocalizations.of(context)!;
 
     try {
@@ -23,7 +24,7 @@ class UserService {
         'username': username,
         'password': password,
       });
-      return response.statusCode == 201;
+      return response.data['id'];
     } on DioException catch (e) {
       debugPrint("Create user failed: $e");
       if (e.response?.statusCode == 409) {
@@ -32,6 +33,30 @@ class UserService {
         throw Exception(localizations.unexpectedError);
       }
     }
+  }
+
+  Future<UserInfo?> createUserWithRolesAndPermissions(
+      CreateUserWithRolesAndPermissionsDto dto) async {
+    final context = navigationService.navigatorKey.currentContext;
+    final localizations = AppLocalizations.of(context!)!;
+
+    try {
+      final response = await _apiService.dio.post(
+        '/users/create-with-roles-permissions',
+        data: dto.toJson(),
+      );
+
+      if (response.statusCode == 201) {
+        return UserInfo.fromJson(response.data);
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 409) {
+        throw ConflictException(localizations.userAlreadyExists(dto.user.username));
+      } else {
+        throw Exception(localizations.unexpectedError);
+      }
+    }
+    return null;
   }
 
   // Downloading a list of users with assigned roles

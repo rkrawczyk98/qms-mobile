@@ -52,3 +52,8 @@ final permissionNotifierProvider =
   final permissionService = PermissionService(apiService);
   return PermissionNotifier(permissionService);
 });
+
+final permissionServiceProvider = Provider<PermissionService>((ref) {
+  final apiService = ref.read(apiServiceProvider);
+  return PermissionService(apiService);
+});

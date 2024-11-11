@@ -1,10 +1,10 @@
-import 'package:qms_mobile/data/models/DTOs/user_module/user/role_response_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/role/role.dart';
 import 'package:qms_mobile/data/models/DTOs/user_module/user/user_response_dto.dart';
 
 class UserRoleResponseDto {
   final int id;
   final UserResponseDto user;
-  final RoleResponseDto role;
+  final Role role;
   final DateTime creationDate;
   final DateTime lastModified;
   final DateTime? deletedAt;
@@ -22,7 +22,7 @@ class UserRoleResponseDto {
     return UserRoleResponseDto(
       id: json['id'] as int,
       user: UserResponseDto.fromJson(json['user']),
-      role: RoleResponseDto.fromJson(json['role']),
+      role: Role.fromJson(json['role']),
       creationDate: DateTime.parse(json['creationDate']),
       lastModified: DateTime.parse(json['lastModified']),
       deletedAt: json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,

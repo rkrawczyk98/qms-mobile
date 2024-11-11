@@ -148,5 +148,21 @@
   "failedToLoadRoles": "Nie udało się wczytać ról",
   "noRolesFound": "Nie znaleziono ról.",
   "failedToLoadPermissions": "Nie udało się wczytać uprawnień",
-  "noPermissionsFound": "Nie znaleziono uprawnień."
+  "noPermissionsFound": "Nie znaleziono uprawnień.",
+  "useCustomPassword": "Przypisz niestandardowe hasło",
+  "enterNewUsername": "Wpisz nazwę nowego użytkownika",
+  "managePermissions": "Zarządzaj uprawnieniami",
+  "confirmDeleteRole": "Czy na pewno chcesz usunać wybraną rolę?",
+  "confirmDeletePermission": "Czy na pewno chcesz usunać wybrane uprawnienie?",
+  "userPermissions": "Uprawnienia użytkownika",
+  "passwordResetFailure": "Nie udało się zresetować hasła.",
+  "userDeletionFailure": "Nie udało się usunąć użytkownika.",
+  "confirmDeleteUser": "Czy na pewno chcesz usunąć tego użytkownika?",
+  "resetPassword": "Zresetuj hasła",
+  "noUsersAvailable": "Brak dostępnych użytkowników.",
+  "manageRoles": "Zarządzaj rolami",
+  "manage": "Zarządzaj",
+  "searchRoles": "Szukaj ról",
+  "searchPermissions": "Szukaj uprawnień",
+  "reset": "Zresetuj"
 }

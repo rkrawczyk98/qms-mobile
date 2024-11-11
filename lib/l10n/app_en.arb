@@ -148,5 +148,21 @@
   "failedToLoadRoles": "Failed to load roles",
   "noRolesFound": "No roles found.",
   "failedToLoadPermissions": "Failed to load permissions",
-  "noPermissionsFound": "No permissions found."
+  "noPermissionsFound": "No permissions found.",
+  "useCustomPassword": "Assign a custom password",
+  "enterNewUsername": "Enter the new username",
+  "managePermissions": "Manage permissions",
+  "confirmDeleteRole": "Are you sure you want to delete the selected role?",
+  "confirmDeletePermission": "Are you sure you want to delete the selected permission?",
+  "userPermissions": "User Permissions",
+  "passwordResetFailure": "Failed to reset password.",
+  "userDeletionFailure": "Failed to delete user.",
+  "confirmDeleteUser": "Are you sure you want to delete this user?",
+  "resetPassword": "Reset password",
+  "noUsersAvailable": "No users available.",
+  "manageRoles": "Manage roles",
+  "manage": "Manage",
+  "searchRoles": "Search roles",
+  "searchPermissions": "Search permissions",
+  "reset": "Reset"
 }

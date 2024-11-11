@@ -50,3 +50,8 @@ final roleNotifierProvider =
   final roleService = RoleService(apiService);
   return RoleNotifier(roleService);
 });
+
+final roleServiceProvider = Provider<RoleService>((ref) {
+  final apiService = ref.read(apiServiceProvider);
+  return RoleService(apiService);
+});

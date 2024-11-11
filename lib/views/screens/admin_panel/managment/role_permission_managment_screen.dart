@@ -4,7 +4,10 @@ import 'package:qms_mobile/data/models/DTOs/user_module/permission/create_permis
 import 'package:qms_mobile/data/models/DTOs/user_module/permission/update_permission_dto.dart';
 import 'package:qms_mobile/data/models/DTOs/user_module/role/create_role_dto.dart';
 import 'package:qms_mobile/data/models/DTOs/user_module/role/update_role_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/role_permission/add_permission_to_role_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/role_permission/delete_permission_from_role_dto.dart';
 import 'package:qms_mobile/data/providers/user_module/permission_provider.dart';
+import 'package:qms_mobile/data/providers/user_module/role_permission_provider.dart';
 import 'package:qms_mobile/data/providers/user_module/role_provider.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
 import 'package:qms_mobile/views/dialogs/custom_snackbar.dart';
@@ -92,6 +95,72 @@ class RolePermissionManagementScreenState
     }
   }
 
+  Future<void> _managePermissionsForRole(
+      BuildContext context, int roleId) async {
+    final rolePermissionService = ref.read(rolePermissionServiceProvider);
+
+    final assignedPermissions =
+        await rolePermissionService.getPermissionsByRoleId(roleId);
+    final allPermissions = ref.watch(permissionNotifierProvider);
+
+    List<int> selectedPermissions =
+        assignedPermissions?.map((p) => p.id).toList() ?? [];
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(AppLocalizations.of(context)!.managePermissions),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: allPermissions.length,
+                  itemBuilder: (context, index) {
+                    final permission = allPermissions[index];
+                    return CheckboxListTile(
+                      title: Text(permission.name),
+                      value: selectedPermissions.contains(permission.id),
+                      onChanged: (bool? isChecked) {
+                        setState(() {
+                          if (isChecked == true) {
+                            selectedPermissions.add(permission.id);
+                            rolePermissionService.addPermissionToRole(
+                                AddPermissionToRoleDto(
+                                    roleId: roleId,
+                                    permissionId: permission.id));
+                          } else {
+                            selectedPermissions.remove(permission.id);
+                            rolePermissionService.deletePermissionFromRole(
+                                DeletePermissionFromRoleDto(
+                                    roleId: roleId,
+                                    permissionId: permission.id));
+                          }
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    AppLocalizations.of(context)!.close,
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.bodySmall?.color),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future<void> _editPermission(int permissionId, String currentName) async {
     final context = navigationService.navigatorKey.currentContext;
     if (context == null) return;
@@ -116,6 +185,33 @@ class RolePermissionManagementScreenState
     final context = navigationService.navigatorKey.currentContext;
     if (context == null) return;
 
+    // Show confirmation box
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.confirmDeletion),
+          content: Text(AppLocalizations.of(context)!.confirmDeleteRole),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(AppLocalizations.of(context)!.cancel,
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.bodySmall?.color)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(AppLocalizations.of(context)!.delete,
+                  style: const TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm != true) return;
+
+    // Delete role after confirmation
     final success =
         await ref.read(roleNotifierProvider.notifier).removeRole(roleId);
     if (mounted && success) {
@@ -126,20 +222,42 @@ class RolePermissionManagementScreenState
     }
   }
 
-  Future<void> _deletePermission(int permissionId) async {
-    final context = navigationService.navigatorKey.currentContext;
-    if (context == null) return;
+Future<void> _deletePermission(int permissionId) async {
+  final context = navigationService.navigatorKey.currentContext;
+  if (context == null) return;
 
-    final success = await ref
-        .read(permissionNotifierProvider.notifier)
-        .removePermission(permissionId);
-    if (mounted && success) {
-      CustomSnackbar.showSuccessSnackbar(
-        context,
-        AppLocalizations.of(context)!.permissionDeleted,
+  // Show confirmation box
+  final confirm = await showDialog<bool>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(AppLocalizations.of(context)!.confirmDeletion),
+        content: Text(AppLocalizations.of(context)!.confirmDeletePermission),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(AppLocalizations.of(context)!.delete, style: const TextStyle(color: Colors.red)),
+          ),
+        ],
       );
-    }
+    },
+  );
+
+  if (confirm != true) return;
+
+  // Remove permission after confirmation
+  final success = await ref.read(permissionNotifierProvider.notifier).removePermission(permissionId);
+  if (mounted && success) {
+    CustomSnackbar.showSuccessSnackbar(
+      context,
+      AppLocalizations.of(context)!.permissionDeleted,
+    );
   }
+}
 
   Future<String?> _showInputDialog(BuildContext context, String title,
       [String? initialValue]) async {
@@ -152,11 +270,15 @@ class RolePermissionManagementScreenState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, null),
-            child: Text(AppLocalizations.of(context)!.cancel),
+            child: Text(AppLocalizations.of(context)!.cancel,
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodySmall?.color)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, controller.text),
-            child: Text(AppLocalizations.of(context)!.ok),
+            child: Text(AppLocalizations.of(context)!.ok,
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodySmall?.color)),
           ),
         ],
       ),
@@ -165,11 +287,14 @@ class RolePermissionManagementScreenState
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.rolePermissionManagement),
         bottom: TabBar(
           controller: _tabController,
+          labelStyle: TextStyle(color: theme.textTheme.bodySmall?.color),
           tabs: [
             Tab(text: AppLocalizations.of(context)!.roles),
             Tab(text: AppLocalizations.of(context)!.permissions),
@@ -210,6 +335,11 @@ class RolePermissionManagementScreenState
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    IconButton(
+                      icon: const Icon(Icons.security),
+                      onPressed: () =>
+                          _managePermissionsForRole(context, role.id),
+                    ),
                     IconButton(
                       icon: const Icon(Icons.edit),
                       onPressed: () => _editRole(role.id, role.name),

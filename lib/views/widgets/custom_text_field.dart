@@ -46,7 +46,7 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context); // Pobierz aktualny motyw
+    final theme = Theme.of(context);
 
     return TextFormField(
       controller: controller,

@@ -52,8 +52,7 @@ class RolePermissionNotifier extends StateNotifier<List<Permission>> {
   }
 }
 
-final rolePermissionNotifierProvider = StateNotifierProvider<RolePermissionNotifier, List<Permission>>((ref) {
+final rolePermissionServiceProvider = Provider<RolePermissionService>((ref) {
   final apiService = ref.read(apiServiceProvider);
-  final rolePermissionService = RolePermissionService(apiService);
-  return RolePermissionNotifier(rolePermissionService);
+  return RolePermissionService(apiService);
 });

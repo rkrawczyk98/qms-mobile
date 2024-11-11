@@ -1,189 +1,498 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qms_mobile/data/models/DTOs/user_module/user/user_role_response_dto.dart';
-import 'package:qms_mobile/data/providers/user_module/user_provider.dart';
-import 'package:qms_mobile/routes/navigation_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:qms_mobile/data/models/DTOs/auth_module/user_info.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/permission/permission.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/role/role.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user/user_role_response_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user_permission/add_permission_to_user_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user_permission/delete_permission_from_user.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user_role/add_role_to_user_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/user_role/delete_role_from_user_dto.dart';
+import 'package:qms_mobile/data/providers/user_module/permission_provider.dart';
+import 'package:qms_mobile/data/providers/user_module/role_provider.dart';
+import 'package:qms_mobile/data/providers/user_module/user_permission_provider.dart';
+import 'package:qms_mobile/data/providers/user_module/user_provider.dart';
+import 'package:qms_mobile/data/providers/user_module/user_role_provider.dart';
 import 'package:qms_mobile/views/dialogs/custom_snackbar.dart';
-import 'package:qms_mobile/views/widgets/centered_container.dart';
-import 'package:qms_mobile/views/widgets/custom_button.dart';
 import 'package:qms_mobile/views/widgets/custom_text_field.dart';
-import 'package:qms_mobile/views/dialogs/error_details_dialog.dart';
+import 'package:qms_mobile/views/widgets/section_card.dart';
 
 class ManageUserScreen extends ConsumerStatefulWidget {
   const ManageUserScreen({super.key});
 
   @override
-  ManageUserScreenState createState() => ManageUserScreenState();
+  ConsumerState<ManageUserScreen> createState() => _ManageUserScreenState();
 }
 
-class ManageUserScreenState extends ConsumerState<ManageUserScreen> {
-  List<UserRoleResponseDto>? _users;
-  UserRoleResponseDto? _selectedUser;
-  final TextEditingController _newPasswordController = TextEditingController();
-  bool _isLoading = false;
-  String? _errorMessage;
+class _ManageUserScreenState extends ConsumerState<ManageUserScreen> {
+  List<UserRoleResponseDto>? usersWithRoles;
+  UserInfo? selectedUser;
+  List<Role>? availableRoles;
+  List<Permission>? availablePermissions;
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _fetchUsers();
+    _fetchUsersWithRoles();
+    _fetchAvailableRoles();
+    _fetchAvailablePermissions();
   }
 
-  Future<void> _fetchUsers() async {
+  Future<void> _fetchUsersWithRoles() async {
     final userService = ref.read(userServiceProvider);
-
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
     final users = await userService.getUsersWithRoles();
-
     setState(() {
-      _isLoading = false;
-      _users = users;
+      usersWithRoles = users?.cast<UserRoleResponseDto>();
     });
   }
 
-Future<void> _resetPassword() async {
-  if (_selectedUser == null) return;
-  final userService = ref.read(userServiceProvider);
-  final context = navigationService.navigatorKey.currentContext;
-  final localizations = AppLocalizations.of(context!)!;
-
-  setState(() => _isLoading = true);
-
-  final success = await userService.resetPassword(
-    _selectedUser!.user.id,
-    _newPasswordController.text,
-  );
-
-  setState(() => _isLoading = false);
-
-  if (success) {
-    CustomSnackbar.showSuccessSnackbar(
-      context,
-      localizations.passwordResetSuccess,
-    );
-    _newPasswordController.clear();
+  Future<void> _fetchAvailableRoles() async {
+    final roleService = ref.read(roleServiceProvider);
+    final roles = await roleService.getAllRoles();
+    setState(() {
+      availableRoles = roles;
+    });
   }
-}
 
-  Future<void> _deleteUser() async {
-    if (_selectedUser == null) return;
+  Future<void> _fetchAvailablePermissions() async {
+    final permissionService = ref.read(permissionServiceProvider);
+    final permissions = await permissionService.findAllPermissions();
+    setState(() {
+      availablePermissions = permissions;
+    });
+  }
+
+  Future<void> _fetchUserInfo(int userId) async {
     final userService = ref.read(userServiceProvider);
-    final context = navigationService.navigatorKey.currentContext;
-    final localizations = AppLocalizations.of(context!)!;
+    final userRoleService = ref.read(userRoleServiceProvider);
+    final userPermissionService = ref.read(userPermissionServiceProvider);
 
-    setState(() => _isLoading = true);
+    final userInfo = await userService.fetchUserInfo(userId: userId);
+    final userRoles = await userRoleService.findAllRolesForUser(userId);
+    final userPermissions =
+        await userPermissionService.findPermissionsByUserId(userId);
 
-    final success = await userService.deleteUser(_selectedUser!.user.id);
+    if (!mounted) return;
 
-    setState(() => _isLoading = false);
+    setState(() {
+      selectedUser = userInfo;
+      availableRoles = userRoles;
+      availablePermissions = userPermissions;
+    });
+  }
 
+  Future<void> _manageRolesForUser(BuildContext context) async {
+    final userRoleService = ref.read(userRoleServiceProvider);
+    final allRoles = ref.watch(roleNotifierProvider);
+    final assignedRoles = availableRoles?.map((role) => role.id).toList() ?? [];
+
+    final TextEditingController searchController = TextEditingController();
+    List<Role> filteredRoles = List.from(allRoles);
+
+    void filterRoles(String query) {
+      filteredRoles = allRoles
+          .where(
+              (role) => role.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(AppLocalizations.of(context)!.manageRoles),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Search roles',
+                        labelStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary),
+                        prefixIcon: Icon(Icons.search,
+                            color: Theme.of(context).hintColor),
+                        border: const OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).dividerColor,
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        filled: true,
+                        fillColor: Theme.of(context)
+                            .scaffoldBackgroundColor
+                            .withOpacity(0.05),
+                      ),
+                      onChanged: (query) {
+                        setState(() {
+                          filterRoles(query);
+                        });
+                      },
+                      cursorColor: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: filteredRoles.length,
+                        itemBuilder: (context, index) {
+                          final role = filteredRoles[index];
+                          return CheckboxListTile(
+                            title: Text(role.name),
+                            value: assignedRoles.contains(role.id),
+                            onChanged: (bool? isChecked) {
+                              setState(() {
+                                if (isChecked == true) {
+                                  assignedRoles.add(role.id);
+                                  userRoleService.addRoleToUser(
+                                    AddRoleToUserDto(
+                                      userId: selectedUser!.id,
+                                      roleId: role.id,
+                                    ),
+                                  );
+                                } else {
+                                  assignedRoles.remove(role.id);
+                                  userRoleService.deleteRoleFromUser(
+                                    DeleteRoleFromUserDto(
+                                      userId: selectedUser!.id,
+                                      roleId: role.id,
+                                    ),
+                                  );
+                                }
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    AppLocalizations.of(context)!.close,
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodySmall?.color,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+    await _fetchUserInfo(selectedUser!.id);
+  }
+
+  Future<void> _managePermissionsForUser(BuildContext context) async {
+    final userPermissionService = ref.read(userPermissionServiceProvider);
+    final allPermissions = ref.watch(permissionNotifierProvider);
+    final assignedPermissions =
+        availablePermissions?.map((perm) => perm.id).toList() ?? [];
+
+    final TextEditingController searchController = TextEditingController();
+    List<Permission> filteredPermissions = List.from(allPermissions);
+
+    void filterPermissions(String query) {
+      filteredPermissions = allPermissions
+          .where((permission) =>
+              permission.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(AppLocalizations.of(context)!.managePermissions),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Search permissions',
+                        labelStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: Theme.of(context).hintColor,
+                        ),
+                        border: const OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).dividerColor,
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        filled: true,
+                        fillColor: Theme.of(context)
+                            .scaffoldBackgroundColor
+                            .withOpacity(0.05),
+                      ),
+                      onChanged: (query) {
+                        setState(() {
+                          filterPermissions(query);
+                        });
+                      },
+                      cursorColor: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: filteredPermissions.length,
+                        itemBuilder: (context, index) {
+                          final permission = filteredPermissions[index];
+                          return CheckboxListTile(
+                            title: Text(permission.name),
+                            value: assignedPermissions.contains(permission.id),
+                            onChanged: (bool? isChecked) {
+                              setState(() {
+                                if (isChecked == true) {
+                                  assignedPermissions.add(permission.id);
+                                  userPermissionService.addPermissionToUser(
+                                      AddPermissionToUserDto(
+                                          userId: selectedUser!.id,
+                                          permissionId: permission.id));
+                                } else {
+                                  assignedPermissions.remove(permission.id);
+                                  userPermissionService
+                                      .deletePermissionFromUser(
+                                          DeletePermissionFromUserDto(
+                                              userId: selectedUser!.id,
+                                              permissionId: permission.id));
+                                }
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    AppLocalizations.of(context)!.close,
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodySmall?.color,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+    await _fetchUserInfo(
+        selectedUser!.id);
+  }
+
+  Future<void> _manageDialog({
+    required BuildContext context,
+    required String title,
+    required String searchHint,
+    required List<dynamic> allItems,
+    required List<int> assignedItems,
+    required Future<void> Function(int) onAdd,
+    required Future<void> Function(int) onRemove,
+  }) async {
+    final TextEditingController searchController = TextEditingController();
+    List<dynamic> filteredItems = List.from(allItems);
+
+    void filterItems(String query) {
+      setState(() {
+        filteredItems = allItems
+            .where(
+                (item) => item.name.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      });
+    }
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(title),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      labelText: searchHint,
+                      prefixIcon: const Icon(Icons.search),
+                      border: const OutlineInputBorder(),
+                    ),
+                    onChanged: (query) => filterItems(query),
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: filteredItems.length,
+                      itemBuilder: (context, index) {
+                        final item = filteredItems[index];
+                        return CheckboxListTile(
+                          title: Text(item.name),
+                          value: assignedItems.contains(item.id),
+                          onChanged: (bool? isChecked) {
+                            if (isChecked == true) {
+                              onAdd(item.id);
+                              assignedItems.add(item.id);
+                            } else {
+                              onRemove(item.id);
+                              assignedItems.remove(item.id);
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(AppLocalizations.of(context)!.close),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _resetPassword() async {
+    if (selectedUser == null || passwordController.text.isEmpty) return;
+
+    final userService = ref.read(userServiceProvider);
+    final success = await userService.resetPassword(
+      selectedUser!.id,
+      passwordController.text,
+    );
+    if (!mounted) return;
     if (success) {
       CustomSnackbar.showSuccessSnackbar(
         context,
-        localizations.userDeletedSuccess,
+        AppLocalizations.of(context)!.passwordResetSuccess,
       );
-      _fetchUsers();
-      setState(() => _selectedUser = null);
-    } else {
-      CustomSnackbar.showErrorSnackbar(
-        context,
-        localizations.deleteUserError,
-        onActionTap: () => showDialog(
-          context: context,
-          builder: (_) => ErrorDetailsDialog(
-            errorMessage: localizations.deleteUserError,
-            errorCode: "500",
-          ),
-        ),
-      );
+      passwordController.clear();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(localizations.userManagementTitle),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: CenteredContainerWidget(
-          screenWidth: screenWidth,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                localizations.selectUser,
-                style: Theme.of(context).textTheme.headlineSmall,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DropdownButtonFormField<UserRoleResponseDto>(
+              decoration: InputDecoration(
+                labelText: localizations.selectUser,
+                border: const OutlineInputBorder(),
               ),
-              const SizedBox(height: 10),
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : DropdownButton<UserRoleResponseDto>(
-                      isExpanded: true,
-                      hint: Text(localizations.selectUserHint),
-                      value: _selectedUser,
-                      onChanged: (UserRoleResponseDto? newUser) {
-                        setState(() {
-                          _selectedUser = newUser;
-                        });
-                      },
-                      items: _users?.map((user) {
-                        return DropdownMenuItem<UserRoleResponseDto>(
-                          value: user,
-                          child: Text(user.user.username),
-                        );
-                      }).toList(),
-                    ),
-              const SizedBox(height: 20),
-              if (_selectedUser != null) ...[
-                Text(
-                  localizations.userRoles,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 5),
-                Column(
-                  children: _selectedUser!.roles
-                      .map((role) => Text(role.name))
-                      .toList(),
-                ),
-                const SizedBox(height: 20),
-                CustomTextField(
-                  controller: _newPasswordController,
-                  label: localizations.newPassword,
-                  hint: localizations.enterNewPassword,
-                  isObscure: true,
-                ),
-                const SizedBox(height: 16),
-                CustomButton(
-                  text: localizations.resetPasswordButton,
-                  onPressed: _isLoading ? null : _resetPassword,
-                ),
-                const SizedBox(height: 16),
-                CustomButton(
-                  text: localizations.deleteUserButton,
-                  onPressed: _isLoading ? null : _deleteUser,
-                ),
-                if (_errorMessage != null) ...[
-                  const SizedBox(height: 10),
-                  Text(
-                    _errorMessage!,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                ],
-              ],
+              items: usersWithRoles?.map((user) {
+                return DropdownMenuItem<UserRoleResponseDto>(
+                  value: user,
+                  child: Text(user.user.username),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedUser = null;
+                });
+                if (value != null) {
+                  _fetchUserInfo(value.user.id);
+                }
+              },
+            ),
+            if (selectedUser != null) ...[
+              SectionCard(
+                title: localizations.roles,
+                icon: Icons.account_circle,
+                content: availableRoles
+                        ?.map((role) => Chip(label: Text(role.name)))
+                        .toList() ??
+                    [],
+                onManagePressed: () => _manageRolesForUser(context),
+                manageLabel: localizations.manage,
+              ),
+              SectionCard(
+                title: localizations.permissions,
+                icon: Icons.security,
+                content: availablePermissions
+                        ?.map((perm) => Chip(label: Text(perm.name)))
+                        .toList() ??
+                    [],
+                onManagePressed: () => _managePermissionsForUser(context),
+                manageLabel: localizations.manage,
+              ),
+              _buildPasswordResetCard(context),
             ],
-          ),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget _buildPasswordResetCard(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    return SectionCard(
+      title: localizations.resetPassword,
+      icon: Icons.lock_reset_outlined,
+      content: [
+        CustomTextField(
+          label: localizations.newPassword,
+          hint: localizations.enterNewPassword,
+          isObscure: true,
+          controller: passwordController,
+        ),
+      ],
+      onManagePressed: _resetPassword,
+      manageLabel: localizations.reset,
     );
   }
 }

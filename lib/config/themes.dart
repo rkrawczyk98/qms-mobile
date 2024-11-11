@@ -5,9 +5,9 @@ final ThemeData lightTheme = ThemeData(
   primaryColor: Colors.blue,
   scaffoldBackgroundColor: Colors.white,
   colorScheme: ColorScheme.light(
-    primary: Colors.blue,
+    primary: Colors.white,
     secondary: Colors.lightBlue[50]!,
-    onPrimary: Colors.white, // For icons or text on primary color
+    onPrimary: Colors.blue, // For icons or text on primary color
   ),
   appBarTheme: const AppBarTheme(
     color: Colors.blue,

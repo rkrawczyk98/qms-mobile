@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qms_mobile/data/models/DTOs/user_module/user_role/user_role_response_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/user_module/role/role.dart';
 import 'package:qms_mobile/data/models/DTOs/user_module/user_role/add_role_to_user_dto.dart';
 import 'package:qms_mobile/data/models/DTOs/user_module/user_role/delete_role_from_user_dto.dart';
 import 'package:qms_mobile/data/providers/api_service_provider.dart';
 import 'package:qms_mobile/data/services/user_module/user_role_service.dart';
 
-class UserRoleNotifier extends StateNotifier<List<UserRoleResponseDto>> {
+class UserRoleNotifier extends StateNotifier<List<Role>> {
   final UserRoleService _userRoleService;
 
   UserRoleNotifier(this._userRoleService) : super([]);
@@ -34,8 +34,13 @@ class UserRoleNotifier extends StateNotifier<List<UserRoleResponseDto>> {
   }
 }
 
-final userRoleNotifierProvider = StateNotifierProvider<UserRoleNotifier, List<UserRoleResponseDto>>((ref) {
+final userRoleNotifierProvider = StateNotifierProvider<UserRoleNotifier, List<Role>>((ref) {
   final apiService = ref.read(apiServiceProvider);
   final userRoleService = UserRoleService(apiService);
   return UserRoleNotifier(userRoleService);
+});
+
+final userRoleServiceProvider = Provider<UserRoleService>((ref) {
+  final apiService = ref.read(apiServiceProvider);
+  return UserRoleService(apiService);
 });

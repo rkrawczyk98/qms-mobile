@@ -49,3 +49,8 @@ final userPermissionNotifierProvider = StateNotifierProvider<UserPermissionNotif
   final userPermissionService = UserPermissionService(apiService);
   return UserPermissionNotifier(userPermissionService);
 });
+
+final userPermissionServiceProvider = Provider<UserPermissionService>((ref) {
+  final apiService = ref.read(apiServiceProvider);
+  return UserPermissionService(apiService);
+});
