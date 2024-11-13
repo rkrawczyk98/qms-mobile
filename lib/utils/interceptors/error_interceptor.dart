@@ -13,13 +13,43 @@ class ErrorInterceptor extends Interceptor {
 
     final localizations = AppLocalizations.of(context)!;
 
-    // Extracting error message from server response or setting default message
+    // If the error is `401` with "ACCESS_TOKEN_EXPIRED", we don't show the error,
+    // since AuthInterceptor will take care of refreshing the token.
+    if (err.response?.statusCode == 401 &&
+        err.response?.data['error'] == 'ACCESS_TOKEN_EXPIRED') {
+      return; // We ignore the error because it is handled by AuthInterceptor
+    }
+
+    // If the error is `403` with "REFRESH TOKEN EXPIRED" or "Forbidden", a session expiration message is displayed.
+    if (err.response?.statusCode == 403 &&
+        (err.response?.data['error'] == 'REFRESH_TOKEN_EXPIRED' ||
+            err.response?.data['error'] == 'Forbidden')) {
+      final sessionExpiredMessage = localizations.sessionExpired;
+
+      // We display a custom snackbar informing about session expiration
+      CustomSnackbar.showErrorSnackbar(
+        context,
+        sessionExpiredMessage,
+        onActionTap: () {
+          showDialog(
+            context: context,
+            builder: (context) => ErrorDetailsDialog(
+              errorMessage: sessionExpiredMessage,
+              errorCode: err.response?.statusCode?.toString() ?? '',
+            ),
+          );
+        },
+      );
+      return; // We ignore further processing of the error.
+    }
+
+    // Default error handling - we display a message for other errors
     String errorMessage;
     if (err.response != null && err.response?.data != null) {
       final message = err.response?.data['message'];
 
       if (message is List) {
-        // If 'message' is a list, combine messages into one
+        // If 'message' is a list, we concatenate the messages into one string
         errorMessage = message.join(', \n');
       } else if (message is String) {
         errorMessage = message;
@@ -30,7 +60,7 @@ class ErrorInterceptor extends Interceptor {
       errorMessage = localizations.failedToConnect;
     }
 
-    // Displaying a custom snackbar with error information
+    // Display custom snackbar for general errors
     CustomSnackbar.showErrorSnackbar(
       context,
       errorMessage,
@@ -45,6 +75,6 @@ class ErrorInterceptor extends Interceptor {
       },
     );
 
-    super.onError(err, handler); // Forwarding the error
+    super.onError(err, handler); // We are forwarding the error further
   }
 }

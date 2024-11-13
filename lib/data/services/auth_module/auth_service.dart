@@ -1,16 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:qms_mobile/data/services/api_service.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
 import 'package:qms_mobile/utils/helpers/auth_storage.dart';
+import 'package:qms_mobile/utils/helpers/token_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AuthService {
   final ApiService _apiService;
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  final TokenManager _tokenManager;
 
-  AuthService(this._apiService);
+  AuthService(this._apiService, this._tokenManager);
 
   Future<bool> login(String username, String password) async {
     try {
@@ -21,7 +21,7 @@ class AuthService {
 
       if (response.statusCode == 201 && response.data['access_token'] != null) {
         final accessToken = response.data['access_token'];
-        await _secureStorage.write(key: 'access_token', value: accessToken);
+        await _tokenManager.setAccessToken(accessToken);
         return true;
       }
       return false;
@@ -66,7 +66,7 @@ class AuthService {
         options: Options(extra: {'withCredentials': true}),
       );
       if (response.statusCode == 200) {
-        await _secureStorage.delete(key: 'access_token');
+        await _tokenManager.deleteAccessToken();
         await AuthStorage.deleteLoginData();
         return true;
       }
@@ -78,6 +78,6 @@ class AuthService {
   }
 
   Future<String?> getAccessToken() async {
-    return await _secureStorage.read(key: 'access_token');
+    return await _tokenManager.getAccessToken();
   }
 }

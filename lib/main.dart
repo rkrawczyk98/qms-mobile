@@ -10,6 +10,7 @@ import 'package:qms_mobile/data/services/auth_module/auth_service.dart';
 import 'package:qms_mobile/routes/app_routes.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
 import 'package:qms_mobile/utils/helpers/error_loger.dart';
+import 'package:qms_mobile/utils/helpers/token_manager.dart';
 import 'package:qms_mobile/views/screens/login_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -39,6 +40,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(languageProvider);
+    final tokenManager = TokenManager();
 
     return MaterialApp(
       navigatorKey: navigationService.navigatorKey,
@@ -48,8 +50,8 @@ class MyApp extends ConsumerWidget {
       themeMode: themeMode, // Theme mode from provider
       home: ProviderScope(
         overrides: [
-          authServiceProvider
-              .overrideWithValue(AuthService(ref.read(apiServiceProvider))),
+          authServiceProvider.overrideWithValue(
+              AuthService(ref.read(apiServiceProvider), tokenManager)),
         ],
         child: const LoginScreen(),
       ),
