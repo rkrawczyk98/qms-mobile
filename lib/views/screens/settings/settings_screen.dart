@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qms_mobile/data/providers/notification_provider.dart';
 import 'package:qms_mobile/routes/app_routes.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
+import 'package:qms_mobile/views/widgets/custom_switch_list_tile.dart';
 import 'package:qms_mobile/views/widgets/language_switcher.dart';
 import 'package:qms_mobile/views/widgets/theme_toggle_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -45,10 +46,10 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 child: const LanguageSwitcher()),
           ),
-          SwitchListTile(
+          CustomSwitchListTile(
             contentPadding: const EdgeInsets.all(0),
-            title: Text(localizations.notifications),
-            subtitle: Text(localizations.manageNotifications),
+            title: localizations.notifications,
+            subtitle: localizations.manageNotifications,
             value: notificationsEnabled,
             onChanged: (bool value) {
               ref

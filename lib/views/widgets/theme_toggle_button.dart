@@ -17,6 +17,7 @@ class ThemeToggleButton extends ConsumerWidget {
     return ToggleButtons(
       borderColor: Theme.of(context).colorScheme.secondary,
       selectedBorderColor: Theme.of(context).colorScheme.secondary,
+      selectedColor: Theme.of(context).colorScheme.onSecondary,
       borderWidth: 2.0,
       isSelected: [
         themeMode == ThemeMode.light,

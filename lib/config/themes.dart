@@ -6,8 +6,9 @@ final ThemeData lightTheme = ThemeData(
   scaffoldBackgroundColor: Colors.white,
   colorScheme: ColorScheme.light(
     primary: Colors.white,
-    secondary: Colors.lightBlue[50]!,
     onPrimary: Colors.blue, // For icons or text on primary color
+    secondary: Colors.lightBlue[50]!,
+    onSecondary: Colors.blue,
   ),
   appBarTheme: const AppBarTheme(
     color: Colors.blue,
@@ -34,8 +35,9 @@ final ThemeData darkTheme = ThemeData(
   scaffoldBackgroundColor: Colors.black,
   colorScheme: ColorScheme.dark(
     primary: Colors.grey[900]!,
-    secondary: Colors.grey[600]!,
     onPrimary: Colors.white, // For icons or text on primary color
+    secondary: Colors.grey[600]!,
+    onSecondary: Colors.grey[600]!,
   ),
   appBarTheme: const AppBarTheme(
     color: Colors.grey,
