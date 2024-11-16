@@ -14,7 +14,7 @@ class ApiService {
       : _dio = Dio(),
         _cookieJar = CookieJar() {
     _dio.options = BaseOptions(
-      baseUrl: 'http://192.168.56.1:8080',
+      baseUrl: 'http://10.0.1.31:8080',
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
       },

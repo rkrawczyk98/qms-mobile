@@ -27,8 +27,8 @@ class AdminPanelScreen extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.business),
-            title: Text(localizations.clientManagement),
-            onTap: () => navigationService.navigateTo(AppRoutes.clientManagement),
+            title: Text(localizations.customerManagement),
+            onTap: () => navigationService.navigateTo(AppRoutes.customerManagement),
           ),
           ListTile(
             leading: const Icon(Icons.build),
@@ -37,8 +37,8 @@ class AdminPanelScreen extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.warehouse),
-            title: Text(localizations.inventoryManagement),
-            onTap: () => navigationService.navigateTo(AppRoutes.inventoryManagement),
+            title: Text(localizations.warehouseManagement),
+            onTap: () => navigationService.navigateTo(AppRoutes.warehouseManagement),
           ),
         ],
       ),

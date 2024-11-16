@@ -62,9 +62,9 @@ class HomeScreen extends ConsumerWidget {
                     _buildNavigationCard(
                       context,
                       icon: Icons.business,
-                      title: localizations.clientManagement,
+                      title: localizations.customerManagement,
                       onTap: () => navigationService
-                          .navigateTo(AppRoutes.clientManagement),
+                          .navigateTo(AppRoutes.customerManagement),
                     ),
                   if (user?.permissions.contains('MASTER_PERMISSION') ??
                       false) // Check for permission
@@ -80,9 +80,9 @@ class HomeScreen extends ConsumerWidget {
                     _buildNavigationCard(
                       context,
                       icon: Icons.warehouse,
-                      title: localizations.inventoryManagement,
+                      title: localizations.warehouseManagement,
                       onTap: () => navigationService
-                          .navigateTo(AppRoutes.inventoryManagement),
+                          .navigateTo(AppRoutes.warehouseManagement),
                     ),
                   _buildNavigationCard(
                     context,

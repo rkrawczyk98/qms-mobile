@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:qms_mobile/views/screens/admin_panel/managment/create_user_screen.dart';
-import 'package:qms_mobile/views/screens/admin_panel/managment/role_permission_managment_screen.dart';
-import 'package:qms_mobile/views/screens/admin_panel/managment/user_managment_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/customer_managment/create_customer_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/customer_managment/manage_customer_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/navigation/customer_management_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/user_managment/create_user_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/user_managment/role_permission_managment_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/user_managment/user_managment_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/navigation/admin_panel.dart';
-import 'package:qms_mobile/views/screens/admin_panel/navigation/client_management_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/navigation/component_management_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/navigation/delivery_management_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/navigation/inventory_management_screen.dart';
@@ -27,12 +29,15 @@ class AppRoutes {
   static const String adminPanel = '/admin-panel';
   static const String userManagement = '/admin-panel/user-management';
   static const String deliveryManagement = '/admin-panel/delivery-management';
-  static const String clientManagement = '/admin-panel/client-management';
+  static const String customerManagement = '/admin-panel/customer-management';
   static const String componentManagement = '/admin-panel/component-management';
-  static const String inventoryManagement = '/admin-panel/inventory-management';
+  static const String warehouseManagement = '/admin-panel/warehouse-management';
   static const String createUser = '/admin-panel/create-user';
   static const String manageUser = '/admin-panel/manage-user';
   static const String rolePermissionManagment = '/admin-panel/role-permission-managment';
+  static const String deleteCustomer = '/admin-panel/delete-customer';
+  static const String createCustomer = '/admin-panel/create-customer';
+  static const String manageCustomer = '/admin-panel/manage-customer';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -46,12 +51,14 @@ class AppRoutes {
       adminPanel: (context) => const AdminPanelScreen(),
       userManagement: (context) => const UserManagementScreen(),
       deliveryManagement: (context) => const DeliveryManagementScreen(),
-      clientManagement: (context) => const ClientManagementScreen(),
+      customerManagement: (context) => const CustomerManagementScreen(),
       componentManagement: (context) => const ComponentManagementScreen(),
-      inventoryManagement: (context) => const InventoryManagementScreen(),
+      warehouseManagement: (context) => const WarehouseManagementScreen(),
       createUser: (context) => const CreateUserScreen(),
       manageUser: (context) => const ManageUserScreen(),
       rolePermissionManagment: (context) => const RolePermissionManagementScreen(),
+      createCustomer: (context) => const CreateCustomerScreen(),
+      manageCustomer: (context) => const ManageCustomersScreen(),
     };
   }
 }
