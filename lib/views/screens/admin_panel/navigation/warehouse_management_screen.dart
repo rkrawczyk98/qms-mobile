@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:qms_mobile/routes/app_routes.dart';
+import 'package:qms_mobile/routes/navigation_service.dart';
 
 class WarehouseManagementScreen extends StatelessWidget {
   const WarehouseManagementScreen({super.key});
@@ -19,21 +21,28 @@ class WarehouseManagementScreen extends StatelessWidget {
             leading: const Icon(Icons.add),
             title: Text(localizations.addWarehouse),
             onTap: () {
-              // TODO: Add functionality to add warehouse
+              navigationService.navigateTo(AppRoutes.createWarehouse);
             },
           ),
           ListTile(
-            leading: const Icon(Icons.edit),
-            title: Text(localizations.editWarehouse),
+            leading: const Icon(Icons.warehouse),
+            title: Text(localizations.manageWarehouses),
             onTap: () {
-              // TODO: Add functionality to edit warehouse
+              navigationService.navigateTo(AppRoutes.manageWarehouse);
             },
           ),
           ListTile(
-            leading: const Icon(Icons.delete),
-            title: Text(localizations.deleteWarehouse),
+            leading: const Icon(Icons.add_location_alt),
+            title: Text(localizations.addWarehousePosition),
             onTap: () {
-              // TODO: Add functionality to delete warehouse
+              navigationService.navigateTo(AppRoutes.createWarehousePosition);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.location_on),
+            title: Text(localizations.manageWarehousePositions),
+            onTap: () {
+              navigationService.navigateTo(AppRoutes.manageWarehousePosition);
             },
           ),
         ],

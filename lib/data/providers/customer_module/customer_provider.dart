@@ -6,7 +6,9 @@ import 'package:qms_mobile/data/models/DTOs/customer_module/customer_response_dt
 class CustomerNotifier extends StateNotifier<List<CustomerResponseDto>> {
   final CustomerService _customerService;
 
-  CustomerNotifier(this._customerService) : super([]);
+  CustomerNotifier(this._customerService) : super([]) {
+    fetchCustomers();
+  }
 
   Future<void> fetchCustomers() async {
     try {

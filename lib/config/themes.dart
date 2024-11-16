@@ -26,7 +26,7 @@ final ThemeData lightTheme = ThemeData(
   ),
   iconTheme: const IconThemeData(color: Colors.blue),
   hintColor: Colors.grey[600], // Tooltip color
-  dividerColor: Colors.grey[400], // Frame color
+  dividerColor: Colors.grey[900], // Frame color
 );
 
 final ThemeData darkTheme = ThemeData(

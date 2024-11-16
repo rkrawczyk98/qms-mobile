@@ -8,8 +8,12 @@ import 'package:qms_mobile/views/screens/admin_panel/user_managment/user_managme
 import 'package:qms_mobile/views/screens/admin_panel/navigation/admin_panel.dart';
 import 'package:qms_mobile/views/screens/admin_panel/navigation/component_management_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/navigation/delivery_management_screen.dart';
-import 'package:qms_mobile/views/screens/admin_panel/navigation/inventory_management_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/navigation/warehouse_management_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/navigation/user_management_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/warehouse_managment/create_warehouse_position_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/warehouse_managment/create_warehouse_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/warehouse_managment/manage_warehouse_positions_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/warehouse_managment/manage_warehouses_screen.dart';
 import 'package:qms_mobile/views/screens/home_screen.dart';
 import 'package:qms_mobile/views/screens/settings/about_app_screen.dart';
 import 'package:qms_mobile/views/screens/settings/change_password_screen.dart';
@@ -38,6 +42,10 @@ class AppRoutes {
   static const String deleteCustomer = '/admin-panel/delete-customer';
   static const String createCustomer = '/admin-panel/create-customer';
   static const String manageCustomer = '/admin-panel/manage-customer';
+  static const String createWarehouse = '/admin-panel/create-warehouse';
+  static const String manageWarehouse = '/admin-panel/manage-warehouse';
+  static const String createWarehousePosition = '/admin-panel/create-warehouse-position';
+  static const String manageWarehousePosition = '/admin-panel/manage-warehouse-position';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -59,6 +67,10 @@ class AppRoutes {
       rolePermissionManagment: (context) => const RolePermissionManagementScreen(),
       createCustomer: (context) => const CreateCustomerScreen(),
       manageCustomer: (context) => const ManageCustomersScreen(),
+      createWarehouse: (context) => const CreateWarehouseScreen(),
+      manageWarehouse: (context) => const ManageWarehousesScreen(),
+      createWarehousePosition: (context) => const CreateWarehousePositionScreen(),
+      manageWarehousePosition: (context) => const ManageWarehousePositionsScreen(),
     };
   }
 }
