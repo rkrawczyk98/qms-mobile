@@ -1,5 +1,6 @@
 import 'package:qms_mobile/data/models/DTOs/component_module/component_type/component_type_response_dto.dart';
 import 'package:qms_mobile/data/models/DTOs/component_module/component_type/create_component_type_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/component_module/component_type/create_with_details_dto.dart';
 import 'package:qms_mobile/data/models/DTOs/component_module/component_type/update_component_type_dto.dart';
 import 'package:qms_mobile/data/services/api_service.dart';
 
@@ -49,6 +50,48 @@ class ComponentTypeService {
       return ComponentTypeResponseDto.fromJson(response.data);
     } catch (e) {
       throw Exception('Failed to update component type: $e');
+    }
+  }
+
+    Future<void> createWithDetails(CreateWithDetailsDto dto) async {
+    try {
+      await apiService.dio.post(
+        '/component-types/with-details',
+        data: dto.toJson(),
+      );
+    } catch (e) {
+      throw Exception('Failed to create component type with details: $e');
+    }
+  }
+
+    Future<List<CreateWithDetailsDto>> getAllWithDetails() async {
+    try {
+      final response =
+          await apiService.dio.get('/component-types/all-with-details');
+      return (response.data as List)
+          .map((e) => CreateWithDetailsDto.fromJson(e))
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to fetch all component types with details: $e');
+    }
+  }
+
+  Future<int> getLastSortOrderNumber() async {
+    final response = await apiService.dio.get('/component-types/last-sort-order-number');
+    if (response.statusCode == 200) {
+      return response.data as int;
+    } else {
+      throw Exception('Failed to fetch last sort order number');
+    }
+  }
+
+  Future<CreateWithDetailsDto> getOneWithDetails(int id) async {
+    try {
+      final response =
+          await apiService.dio.get('/component-types/with-details/$id');
+      return CreateWithDetailsDto.fromJson(response.data);
+    } catch (e) {
+      throw Exception('Failed to fetch component type with details: $e');
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qms_mobile/views/screens/admin_panel/component_managment/component_type/create_component_type_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/customer_managment/create_customer_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/customer_managment/manage_customer_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/navigation/customer_management_screen.dart';
@@ -46,6 +47,8 @@ class AppRoutes {
   static const String manageWarehouse = '/admin-panel/manage-warehouse';
   static const String createWarehousePosition = '/admin-panel/create-warehouse-position';
   static const String manageWarehousePosition = '/admin-panel/manage-warehouse-position';
+  static const String createComponentType = '/admin-panel/create-component-type';
+  
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -71,6 +74,7 @@ class AppRoutes {
       manageWarehouse: (context) => const ManageWarehousesScreen(),
       createWarehousePosition: (context) => const CreateWarehousePositionScreen(),
       manageWarehousePosition: (context) => const ManageWarehousePositionsScreen(),
+      createComponentType: (context) => const CreateComponentTypeScreen(),
     };
   }
 }

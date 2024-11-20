@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:qms_mobile/routes/app_routes.dart';
+import 'package:qms_mobile/routes/navigation_service.dart';
 
 class ComponentManagementScreen extends StatelessWidget {
   const ComponentManagementScreen({super.key});
@@ -19,7 +21,7 @@ class ComponentManagementScreen extends StatelessWidget {
             leading: const Icon(Icons.add),
             title: Text(localizations.addComponentType),
             onTap: () {
-              // TODO: Add functionality to add component type
+              navigationService.navigateTo(AppRoutes.createComponentType);
             },
           ),
           ListTile(
