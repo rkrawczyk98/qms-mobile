@@ -34,69 +34,75 @@ class HomeScreen extends ConsumerWidget {
               const SizedBox(height: 10),
             ],
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
+              child: ListView(
                 children: [
-                  if (user?.permissions.contains('MASTER_PERMISSION') ??
-                      false) // Check for permission
-                    _buildNavigationCard(
-                      context,
-                      icon: Icons.people,
-                      title: localizations.userManagement,
-                      onTap: () => navigationService
-                          .navigateTo(AppRoutes.userManagement),
-                    ),
-                  if (user?.permissions.contains('MASTER_PERMISSION') ??
-                      false) // Check for permission
+                  _buildSectionTitle(context, localizations.lists),
+                  _buildGridSection(context, [
                     _buildNavigationCard(
                       context,
                       icon: Icons.local_shipping,
-                      title: localizations.deliveryManagement,
-                      onTap: () => navigationService
-                          .navigateTo(AppRoutes.deliveryManagement),
+                      title: localizations.deliveryList,
+                      onTap: () => navigationService.navigateTo(AppRoutes.deliveryList),
                     ),
-                  if (user?.permissions.contains('MASTER_PERMISSION') ??
-                      false) // Check for permission
                     _buildNavigationCard(
                       context,
-                      icon: Icons.business,
-                      title: localizations.customerManagement,
-                      onTap: () => navigationService
-                          .navigateTo(AppRoutes.customerManagement),
+                      icon: Icons.list_alt,
+                      title: localizations.componentList,
+                      onTap: () => {}//navigationService.navigateTo(AppRoutes.componentList),
                     ),
-                  if (user?.permissions.contains('MASTER_PERMISSION') ??
-                      false) // Check for permission
+                  ]),
+                  const SizedBox(height: 20),
+                  if (user?.permissions.contains('MASTER_PERMISSION') ?? false)
+                    _buildSectionTitle(context, localizations.administration),
+                  if (user?.permissions.contains('MASTER_PERMISSION') ?? false)
+                    _buildGridSection(context, [
+                      _buildNavigationCard(
+                        context,
+                        icon: Icons.people,
+                        title: localizations.userManagement,
+                        onTap: () => navigationService.navigateTo(AppRoutes.userManagement),
+                      ),
+                      _buildNavigationCard(
+                        context,
+                        icon: Icons.local_shipping,
+                        title: localizations.deliveryManagement,
+                        onTap: () => navigationService.navigateTo(AppRoutes.deliveryManagement),
+                      ),
+                      _buildNavigationCard(
+                        context,
+                        icon: Icons.business,
+                        title: localizations.customerManagement,
+                        onTap: () => navigationService.navigateTo(AppRoutes.customerManagement),
+                      ),
+                      _buildNavigationCard(
+                        context,
+                        icon: Icons.build,
+                        title: localizations.componentManagement,
+                        onTap: () => navigationService.navigateTo(AppRoutes.componentManagement),
+                      ),
+                      _buildNavigationCard(
+                        context,
+                        icon: Icons.warehouse,
+                        title: localizations.warehouseManagement,
+                        onTap: () => navigationService.navigateTo(AppRoutes.warehouseManagement),
+                      ),
+                    ]),
+                  const SizedBox(height: 20),
+                  _buildSectionTitle(context, localizations.other),
+                  _buildGridSection(context, [
                     _buildNavigationCard(
                       context,
-                      icon: Icons.build,
-                      title: localizations.componentManagement,
-                      onTap: () => navigationService
-                          .navigateTo(AppRoutes.componentManagement),
+                      icon: Icons.settings,
+                      title: localizations.settings,
+                      onTap: () => navigationService.navigateTo(AppRoutes.settings),
                     ),
-                  if (user?.permissions.contains('MASTER_PERMISSION') ??
-                      false) // Check for permission
                     _buildNavigationCard(
                       context,
-                      icon: Icons.warehouse,
-                      title: localizations.warehouseManagement,
-                      onTap: () => navigationService
-                          .navigateTo(AppRoutes.warehouseManagement),
+                      icon: Icons.info_outline,
+                      title: localizations.aboutApp,
+                      onTap: () => navigationService.navigateTo(AppRoutes.about),
                     ),
-                  _buildNavigationCard(
-                    context,
-                    icon: Icons.settings,
-                    title: localizations.settings,
-                    onTap: () =>
-                        navigationService.navigateTo(AppRoutes.settings),
-                  ),
-                  _buildNavigationCard(
-                    context,
-                    icon: Icons.info_outline,
-                    title: localizations.aboutApp,
-                    onTap: () => navigationService.navigateTo(AppRoutes.about),
-                  ),
+                  ]),
                 ],
               ),
             ),
@@ -122,10 +128,7 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon,
-                  size: 40,
-                  color:
-                      Theme.of(context).iconTheme.color), // Use iconTheme color
+              Icon(icon, size: 40, color: Theme.of(context).iconTheme.color),
               const SizedBox(height: 10),
               Text(
                 title,
@@ -136,6 +139,27 @@ class HomeScreen extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.headlineSmall,
+      ),
+    );
+  }
+
+  Widget _buildGridSection(BuildContext context, List<Widget> cards) {
+    return GridView.count(
+      crossAxisCount: 2,
+      crossAxisSpacing: 16,
+      mainAxisSpacing: 16,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: cards,
     );
   }
 }

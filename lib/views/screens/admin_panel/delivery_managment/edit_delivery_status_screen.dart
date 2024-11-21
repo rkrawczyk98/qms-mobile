@@ -1,28 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qms_mobile/data/models/DTOs/customer_module/create_customer_dto.dart';
-import 'package:qms_mobile/data/providers/customer_module/customer_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qms_mobile/data/models/DTOs/delivery_module/delivery_status/update_delivery_status_dto.dart';
+import 'package:qms_mobile/data/providers/delivery_module/delivery_status_provider.dart';
 import 'package:qms_mobile/views/dialogs/custom_snackbar.dart';
 import 'package:qms_mobile/views/widgets/centered_container.dart';
 import 'package:qms_mobile/views/widgets/custom_button.dart';
 import 'package:qms_mobile/views/widgets/custom_text_field.dart';
 
-class CreateCustomerScreen extends ConsumerStatefulWidget {
-  const CreateCustomerScreen({super.key});
+class EditDeliveryStatusScreen extends ConsumerStatefulWidget {
+  final int statusId;
+  final String initialName;
+
+  const EditDeliveryStatusScreen({
+    super.key,
+    required this.statusId,
+    required this.initialName,
+  });
 
   @override
-  ConsumerState<CreateCustomerScreen> createState() =>
-      _CreateCustomerScreenState();
+  ConsumerState<EditDeliveryStatusScreen> createState() =>
+      _EditDeliveryStatusScreenState();
 }
 
-class _CreateCustomerScreenState extends ConsumerState<CreateCustomerScreen> {
+class _EditDeliveryStatusScreenState
+    extends ConsumerState<EditDeliveryStatusScreen> {
   late final TextEditingController _nameController;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController();
+    _nameController = TextEditingController(text: widget.initialName);
   }
 
   @override
@@ -31,32 +39,35 @@ class _CreateCustomerScreenState extends ConsumerState<CreateCustomerScreen> {
     super.dispose();
   }
 
-  Future<void> _saveCustomer(BuildContext context) async {
+  Future<void> _updateDeliveryStatus(BuildContext context) async {
     final localizations = AppLocalizations.of(context)!;
     final name = _nameController.text.trim();
 
     if (name.isEmpty) {
       CustomSnackbar.showErrorSnackbar(
-          context, localizations.enterCustomerNameError);
+          context, localizations.enterDeliveryStatusNameError);
       return;
     }
 
-    final dto = CreateCustomerDto(name: name);
+    final dto = UpdateDeliveryStatusDto(name: name);
 
     try {
-      await ref.read(customerProvider.notifier).addCustomer(dto);
+      await ref
+          .read(deliveryStatusProvider.notifier)
+          .updateDeliveryStatus(widget.statusId, dto);
+
       if (mounted) {
         CustomSnackbar.showSuccessSnackbar(
           context,
-          localizations.customerCreatedSuccess,
+          localizations.deliveryStatusUpdatedSuccess,
         );
-        Navigator.pop(context); // Navigate back after successful creation
+        Navigator.pop(context); // Go back after a successful update
       }
     } catch (e) {
       if (mounted) {
         CustomSnackbar.showErrorSnackbar(
           context,
-          localizations.customerCreationError,
+          localizations.deliveryStatusUpdateError,
         );
       }
     }
@@ -69,7 +80,7 @@ class _CreateCustomerScreenState extends ConsumerState<CreateCustomerScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(localizations.createCustomer),
+        title: Text(localizations.editDeliveryStatus),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -87,12 +98,12 @@ class _CreateCustomerScreenState extends ConsumerState<CreateCustomerScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        Icons.person_add_alt_1,
+                        Icons.edit,
                         color: Theme.of(context).colorScheme.onPrimary,
                         size: 150,
                       ),
                       Text(
-                        localizations.addCustomer,
+                        localizations.editDeliveryStatusDetails,
                         style: TextStyle(
                           fontSize: isMobile ? 28 : 38,
                           fontWeight: FontWeight.bold,
@@ -101,13 +112,13 @@ class _CreateCustomerScreenState extends ConsumerState<CreateCustomerScreen> {
                       const SizedBox(height: 50),
                       CustomTextField(
                         label: localizations.name,
-                        hint: localizations.enterCustomerName,
+                        hint: localizations.enterDeliveryStatusName,
                         controller: _nameController,
                       ),
                       const SizedBox(height: 25),
                       CustomButton(
                         text: localizations.save,
-                        onPressed: () => _saveCustomer(context),
+                        onPressed: () => _updateDeliveryStatus(context),
                       ),
                     ],
                   ),

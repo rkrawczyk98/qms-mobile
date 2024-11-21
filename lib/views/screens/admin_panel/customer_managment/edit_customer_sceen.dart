@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qms_mobile/data/models/DTOs/customer_module/customer_response_dto.dart';
 import 'package:qms_mobile/data/models/DTOs/customer_module/update_customer_dto.dart';
 import 'package:qms_mobile/data/providers/customer_module/customer_provider.dart';
 import 'package:qms_mobile/views/dialogs/custom_snackbar.dart';
@@ -36,6 +35,40 @@ class _EditCustomerScreenState extends ConsumerState<EditCustomerScreen> {
   void dispose() {
     _nameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _updateCustomer(BuildContext context) async {
+    final localizations = AppLocalizations.of(context)!;
+    final name = _nameController.text.trim();
+
+    if (name.isEmpty) {
+      CustomSnackbar.showErrorSnackbar(
+          context, localizations.enterCustomerNameError);
+      return;
+    }
+
+    final dto = UpdateCustomerDto(name: name);
+
+    try {
+      await ref
+          .read(customerProvider.notifier)
+          .updateCustomer(widget.customerId, dto);
+
+      if (mounted) {
+        CustomSnackbar.showSuccessSnackbar(
+          context,
+          localizations.customerUpdatedSuccess,
+        );
+        Navigator.pop(context); // Go back after a successful update
+      }
+    } catch (e) {
+      if (mounted) {
+        CustomSnackbar.showErrorSnackbar(
+          context,
+          localizations.customerUpdateError,
+        );
+      }
+    }
   }
 
   @override
@@ -83,36 +116,7 @@ class _EditCustomerScreenState extends ConsumerState<EditCustomerScreen> {
                       const SizedBox(height: 25),
                       CustomButton(
                         text: localizations.save,
-                        onPressed: () async {
-                          final name = _nameController.text.trim();
-                          if (name.isNotEmpty) {
-                            final dto = UpdateCustomerDto(name: name);
-
-                            await ref
-                                .read(customerServiceProvider)
-                                .updateCustomer(widget.customerId, dto);
-
-                            if (mounted) {
-                              final updatedCustomer = CustomerResponseDto(
-                                id: widget.customerId,
-                                name: name,
-                                creationDate:
-                                    DateTime.now(), // Adjust as needed
-                                lastModified: DateTime.now(),
-                              );
-                              ref
-                                  .read(customerProvider.notifier)
-                                  .updateCustomer(
-                                      widget.customerId, updatedCustomer);
-
-                              CustomSnackbar.showSuccessSnackbar(
-                                context,
-                                localizations.customerUpdatedSuccess,
-                              );
-                              Navigator.pop(context);
-                            }
-                          }
-                        },
+                        onPressed: () => _updateCustomer(context),
                       ),
                     ],
                   ),

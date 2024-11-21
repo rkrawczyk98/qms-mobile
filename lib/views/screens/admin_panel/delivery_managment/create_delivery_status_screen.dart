@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qms_mobile/data/models/DTOs/customer_module/create_customer_dto.dart';
-import 'package:qms_mobile/data/providers/customer_module/customer_provider.dart';
+import 'package:qms_mobile/data/models/DTOs/delivery_module/delivery_status/create_delivery_status_dto.dart';
+import 'package:qms_mobile/data/providers/delivery_module/delivery_status_provider.dart';
 import 'package:qms_mobile/views/dialogs/custom_snackbar.dart';
 import 'package:qms_mobile/views/widgets/centered_container.dart';
 import 'package:qms_mobile/views/widgets/custom_button.dart';
 import 'package:qms_mobile/views/widgets/custom_text_field.dart';
 
-class CreateCustomerScreen extends ConsumerStatefulWidget {
-  const CreateCustomerScreen({super.key});
+class CreateDeliveryStatusScreen extends ConsumerStatefulWidget {
+  const CreateDeliveryStatusScreen({super.key});
 
   @override
-  ConsumerState<CreateCustomerScreen> createState() =>
-      _CreateCustomerScreenState();
+  ConsumerState<CreateDeliveryStatusScreen> createState() =>
+      _CreateDeliveryStatusScreenState();
 }
 
-class _CreateCustomerScreenState extends ConsumerState<CreateCustomerScreen> {
+class _CreateDeliveryStatusScreenState
+    extends ConsumerState<CreateDeliveryStatusScreen> {
   late final TextEditingController _nameController;
 
   @override
@@ -31,24 +32,24 @@ class _CreateCustomerScreenState extends ConsumerState<CreateCustomerScreen> {
     super.dispose();
   }
 
-  Future<void> _saveCustomer(BuildContext context) async {
+  Future<void> _saveDeliveryStatus(BuildContext context) async {
     final localizations = AppLocalizations.of(context)!;
     final name = _nameController.text.trim();
 
     if (name.isEmpty) {
       CustomSnackbar.showErrorSnackbar(
-          context, localizations.enterCustomerNameError);
+          context, localizations.enterDeliveryStatusNameError);
       return;
     }
 
-    final dto = CreateCustomerDto(name: name);
+    final dto = CreateDeliveryStatusDto(name: name);
 
     try {
-      await ref.read(customerProvider.notifier).addCustomer(dto);
+      await ref.read(deliveryStatusProvider.notifier).addDeliveryStatus(dto);
       if (mounted) {
         CustomSnackbar.showSuccessSnackbar(
           context,
-          localizations.customerCreatedSuccess,
+          localizations.deliveryStatusCreatedSuccess,
         );
         Navigator.pop(context); // Navigate back after successful creation
       }
@@ -56,7 +57,7 @@ class _CreateCustomerScreenState extends ConsumerState<CreateCustomerScreen> {
       if (mounted) {
         CustomSnackbar.showErrorSnackbar(
           context,
-          localizations.customerCreationError,
+          localizations.deliveryStatusCreationError,
         );
       }
     }
@@ -69,7 +70,7 @@ class _CreateCustomerScreenState extends ConsumerState<CreateCustomerScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(localizations.createCustomer),
+        title: Text(localizations.createDeliveryStatus),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -87,12 +88,12 @@ class _CreateCustomerScreenState extends ConsumerState<CreateCustomerScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        Icons.person_add_alt_1,
+                        Icons.check_circle_outline,
                         color: Theme.of(context).colorScheme.onPrimary,
                         size: 150,
                       ),
                       Text(
-                        localizations.addCustomer,
+                        localizations.addDeliveryStatus,
                         style: TextStyle(
                           fontSize: isMobile ? 28 : 38,
                           fontWeight: FontWeight.bold,
@@ -100,14 +101,14 @@ class _CreateCustomerScreenState extends ConsumerState<CreateCustomerScreen> {
                       ),
                       const SizedBox(height: 50),
                       CustomTextField(
-                        label: localizations.name,
-                        hint: localizations.enterCustomerName,
+                        label: localizations.deliveryStatusName,
+                        hint: localizations.enterDeliveryStatusName,
                         controller: _nameController,
                       ),
                       const SizedBox(height: 25),
                       CustomButton(
                         text: localizations.save,
-                        onPressed: () => _saveCustomer(context),
+                        onPressed: () => _saveDeliveryStatus(context),
                       ),
                     ],
                   ),

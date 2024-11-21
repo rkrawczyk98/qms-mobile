@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qms_mobile/data/providers/customer_module/customer_provider.dart';
+import 'package:qms_mobile/data/providers/delivery_module/delivery_status_provider.dart';
 import 'package:qms_mobile/views/dialogs/custom_snackbar.dart';
-import 'package:qms_mobile/views/screens/admin_panel/customer_managment/edit_customer_sceen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/delivery_managment/edit_delivery_status_screen.dart';
 
-class ManageCustomersScreen extends ConsumerWidget {
-  const ManageCustomersScreen({super.key});
+class ManageDeliveryStatusesScreen extends ConsumerWidget {
+  const ManageDeliveryStatusesScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final customersAsync = ref.watch(customerProvider);
+    final deliveryStatusesAsync = ref.watch(deliveryStatusProvider);
     final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(localizations.manageCustomers),
+        title: Text(localizations.manageDeliveryStatuses),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () async {
               try {
-                await ref.read(customerProvider.notifier).fetchCustomers();
+                await ref.read(deliveryStatusProvider.notifier).fetchDeliveryStatuses();
                 CustomSnackbar.showSuccessSnackbar(
                   context,
                   localizations.refreshSuccess,
@@ -36,21 +36,21 @@ class ManageCustomersScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: customersAsync.when(
+      body: deliveryStatusesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
-          child: Text(localizations.fetchErrorCustomers),
+          child: Text(localizations.fetchErrorDeliveryStatuses),
         ),
-        data: (customers) {
-          if (customers.isEmpty) {
-            return Center(child: Text(localizations.noCustomersAvailable));
+        data: (statuses) {
+          if (statuses.isEmpty) {
+            return Center(child: Text(localizations.noDeliveryStatusesAvailable));
           }
           return ListView.builder(
-            itemCount: customers.length,
+            itemCount: statuses.length,
             itemBuilder: (context, index) {
-              final customer = customers[index];
+              final status = statuses[index];
               return ListTile(
-                title: Text(customer.name),
+                title: Text(status.name),
                 trailing: Wrap(
                   spacing: 8,
                   children: [
@@ -60,9 +60,9 @@ class ManageCustomersScreen extends ConsumerWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => EditCustomerScreen(
-                              customerId: customer.id,
-                              initialName: customer.name,
+                            builder: (_) => EditDeliveryStatusScreen(
+                              statusId: status.id,
+                              initialName: status.name,
                             ),
                           ),
                         );
@@ -71,11 +71,11 @@ class ManageCustomersScreen extends ConsumerWidget {
                     IconButton(
                       icon: const Icon(Icons.delete, color: Colors.red),
                       onPressed: () {
-                        _confirmDeleteCustomer(
+                        _confirmDeleteDeliveryStatus(
                           context,
                           ref,
-                          customer.id,
-                          customer.name,
+                          status.id,
+                          status.name,
                         );
                       },
                     ),
@@ -89,8 +89,8 @@ class ManageCustomersScreen extends ConsumerWidget {
     );
   }
 
-  void _confirmDeleteCustomer(BuildContext context, WidgetRef ref,
-      int customerId, String customerName) {
+  void _confirmDeleteDeliveryStatus(BuildContext context, WidgetRef ref,
+      int statusId, String statusName) {
     final localizations = AppLocalizations.of(context)!;
 
     showDialog(
@@ -98,8 +98,7 @@ class ManageCustomersScreen extends ConsumerWidget {
       builder: (context) {
         return AlertDialog(
           title: Text(localizations.confirmDelete),
-          content:
-              Text('${localizations.confirmDeleteCustomer} "$customerName"?'),
+          content: Text('${localizations.confirmDeleteDeliveryStatus} "$statusName"?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -112,16 +111,16 @@ class ManageCustomersScreen extends ConsumerWidget {
               onPressed: () async {
                 try {
                   await ref
-                      .read(customerProvider.notifier)
-                      .deleteCustomer(customerId);
+                      .read(deliveryStatusProvider.notifier)
+                      .deleteDeliveryStatus(statusId);
                   CustomSnackbar.showSuccessSnackbar(
                     context,
-                    localizations.customerDeletedSuccess,
+                    localizations.deliveryStatusDeletedSuccess,
                   );
                 } catch (e) {
                   CustomSnackbar.showErrorSnackbar(
                     context,
-                    localizations.customerDeleteError,
+                    localizations.deliveryStatusDeleteError,
                   );
                 }
                 Navigator.pop(context); // Close the dialog

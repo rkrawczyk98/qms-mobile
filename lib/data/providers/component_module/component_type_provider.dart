@@ -9,7 +9,9 @@ class ComponentTypeNotifier
   final ComponentTypeService componentTypeService;
 
   ComponentTypeNotifier(this.componentTypeService)
-      : super(const AsyncValue.loading());
+      : super(const AsyncValue.loading()) {
+    fetchComponentTypes();
+  }
 
   // ownloading simple component types
   Future<void> fetchComponentTypes() async {
