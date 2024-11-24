@@ -76,15 +76,6 @@ class ComponentTypeService {
     }
   }
 
-  Future<int> getLastSortOrderNumber() async {
-    final response = await apiService.dio.get('/component-types/last-sort-order-number');
-    if (response.statusCode == 200) {
-      return response.data as int;
-    } else {
-      throw Exception('Failed to fetch last sort order number');
-    }
-  }
-
   Future<CreateWithDetailsDto> getOneWithDetails(int id) async {
     try {
       final response =

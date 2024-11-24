@@ -34,15 +34,11 @@ class CustomSwitchListTile extends StatelessWidget {
           : null,
       value: value,
       onChanged: onChanged,
+      inactiveThumbColor: theme.colorScheme.onSurface.withOpacity(0.60),
       trackOutlineColor: WidgetStateProperty.resolveWith((states) {
         return theme.brightness == Brightness.light
-            ? theme.colorScheme.secondary
-            : theme.colorScheme.onSecondary;
-      }),
-      thumbColor: WidgetStateProperty.resolveWith((states) {
-        return theme.brightness == Brightness.light
             ? theme.colorScheme.onPrimary
-            : theme.colorScheme.onPrimary;
+            : theme.colorScheme.onSecondary;
       }),
     );
   }

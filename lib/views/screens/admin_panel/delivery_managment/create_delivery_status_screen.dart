@@ -87,9 +87,8 @@ class _CreateDeliveryStatusScreenState
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.check_circle_outline,
-                        color: Theme.of(context).colorScheme.onPrimary,
                         size: 150,
                       ),
                       Text(

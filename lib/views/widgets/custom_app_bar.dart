@@ -16,12 +16,8 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
-    // final localizations = AppLocalizations.of(context)!;
 
     return AppBar(
-      // automaticallyImplyLeading: false, // Disable the back arrow
-      backgroundColor:
-          Theme.of(context).appBarTheme.backgroundColor ?? Colors.black,
       leading: user != null
           ? Builder(
               builder: (BuildContext context) {

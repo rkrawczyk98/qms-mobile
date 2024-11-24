@@ -279,5 +279,6 @@
   "browse": "Przeglądaj",
   "create": "Utwórz",
   "noDeliveriesFound": "Nie znaleziono żadnej dostawy.",
-  "lastModified": "Ostatnia zmiana"
+  "lastModified": "Ostatnia zmiana",
+  "none": "Brak"
 }

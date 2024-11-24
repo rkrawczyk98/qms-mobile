@@ -113,22 +113,18 @@ class _ManageUserScreenState extends ConsumerState<ManageUserScreen> {
                     TextField(
                       controller: searchController,
                       decoration: InputDecoration(
-                        labelText: 'Search roles',
-                        labelStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary),
+                        labelText: AppLocalizations.of(context)!.searchRoles,
                         prefixIcon: Icon(Icons.search,
                             color: Theme.of(context).hintColor),
                         border: const OutlineInputBorder(),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).dividerColor,
+                          borderSide: const BorderSide(
                             width: 1.5,
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.onPrimary,
+                          borderSide: const BorderSide(
                             width: 2.0,
                           ),
                           borderRadius: BorderRadius.circular(8),
@@ -143,7 +139,6 @@ class _ManageUserScreenState extends ConsumerState<ManageUserScreen> {
                           filterRoles(query);
                         });
                       },
-                      cursorColor: Theme.of(context).colorScheme.onPrimary,
                     ),
                     const SizedBox(height: 10),
                     Expanded(
@@ -233,24 +228,20 @@ class _ManageUserScreenState extends ConsumerState<ManageUserScreen> {
                     TextField(
                       controller: searchController,
                       decoration: InputDecoration(
-                        labelText: 'Search permissions',
-                        labelStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary),
+                        labelText: AppLocalizations.of(context)!.searchPermissions,
                         prefixIcon: Icon(
                           Icons.search,
                           color: Theme.of(context).hintColor,
                         ),
                         border: const OutlineInputBorder(),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).dividerColor,
+                          borderSide: const BorderSide(
                             width: 1.5,
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
+                          borderSide: const BorderSide(
                             width: 2.0,
                           ),
                           borderRadius: BorderRadius.circular(8),
@@ -265,7 +256,6 @@ class _ManageUserScreenState extends ConsumerState<ManageUserScreen> {
                           filterPermissions(query);
                         });
                       },
-                      cursorColor: Theme.of(context).colorScheme.primary,
                     ),
                     const SizedBox(height: 10),
                     Expanded(

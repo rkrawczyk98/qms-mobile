@@ -23,7 +23,6 @@ class _CreateComponentTypeScreenState
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _prefixController = TextEditingController();
-  final TextEditingController _sortOrderController = TextEditingController();
 
   final List<SubcomponentDetailsDto> _subcomponents = [];
   final Map<int, bool> _expandedState = {};
@@ -32,16 +31,6 @@ class _CreateComponentTypeScreenState
   void initState() {
     super.initState();
     ref.read(subcomponentStatusProvider.notifier).fetchAllStatuses();
-    _initializeSortOrder();
-  }
-
-  Future<void> _initializeSortOrder() async {
-    final lastSortOrder = await ref
-        .read(componentTypeWithDetailsProvider.notifier)
-        .getLastSortOrder();
-    setState(() {
-      _sortOrderController.text = (lastSortOrder + 1).toString();
-    });
   }
 
   void _addSubcomponent() {
@@ -82,7 +71,6 @@ class _CreateComponentTypeScreenState
       appBar: AppBar(
         title: Text(
           localization.createComponentTypeTitle,
-          style: theme.appBarTheme.titleTextStyle,
         ),
         centerTitle: true,
       ),
@@ -112,18 +100,6 @@ class _CreateComponentTypeScreenState
                   ? localization.validationRequired
                   : null,
             ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _sortOrderController,
-              decoration: InputDecoration(
-                labelText: localization.sortOrder,
-                hintText: localization.sortOrder,
-              ),
-              keyboardType: TextInputType.number,
-              validator: (value) => value == null || int.tryParse(value) == null
-                  ? localization.validationNumber
-                  : null,
-            ),
             const SizedBox(height: 24),
             Text(
               localization.subcomponents,
@@ -135,7 +111,7 @@ class _CreateComponentTypeScreenState
                   expanded), //Allows quick moving of items only when all are collapsed
               children: List.generate(_subcomponents.length, (index) {
                 return ReorderableDragStartListener(
-                  key: ValueKey(index), 
+                  key: ValueKey(index),
                   index: index,
                   child: SubcomponentCard(
                     index: index,
@@ -153,8 +129,7 @@ class _CreateComponentTypeScreenState
                         _subcomponents[index] = updated;
                       });
                     },
-                    dragHandle: const Icon(
-                        Icons.drag_handle),
+                    dragHandle: const Icon(Icons.drag_handle),
                   ),
                 );
               }),
@@ -167,9 +142,13 @@ class _CreateComponentTypeScreenState
               },
             ),
             ElevatedButton.icon(
+              style: const ButtonStyle(),
               onPressed: _addSubcomponent,
-              icon: const Icon(Icons.add),
-              label: Text(localization.addSubcomponent),
+              icon: const Icon(
+                Icons.add,
+              ),
+              label: Text(localization.addSubcomponent,
+                  style: Theme.of(context).textTheme.bodyLarge),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -177,7 +156,6 @@ class _CreateComponentTypeScreenState
                 if (_formKey.currentState!.validate()) {
                   final dto = CreateWithDetailsDto(
                     name: _nameController.text,
-                    sortOrder: int.parse(_sortOrderController.text),
                     prefix: _prefixController.text,
                     subcomponents: _subcomponents,
                   );
@@ -194,7 +172,8 @@ class _CreateComponentTypeScreenState
                   }
                 }
               },
-              child: Text(localization.createComponentType),
+              child: Text(localization.createComponentType,
+                  style: Theme.of(context).textTheme.bodyLarge),
             ),
           ],
         ),
@@ -226,10 +205,10 @@ class SubcomponentCard extends StatefulWidget {
   });
 
   @override
-  _SubcomponentCardState createState() => _SubcomponentCardState();
+  SubcomponentCardState createState() => SubcomponentCardState();
 }
 
-class _SubcomponentCardState extends State<SubcomponentCard> {
+class SubcomponentCardState extends State<SubcomponentCard> {
   late TextEditingController _nameController;
 
   @override

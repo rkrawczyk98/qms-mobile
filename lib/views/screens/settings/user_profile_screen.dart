@@ -17,59 +17,61 @@ class UserProfileScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(localizations.userProfile),
       ),
-      body: user == null
-          ? Center(child: Text(localizations.noUserLoggedIn))
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    localizations.userProfileTitle,
-                    style: Theme.of(context).textTheme.headlineMedium,
+      body: SafeArea(
+        child: user == null
+            ? Center(child: Text(localizations.noUserLoggedIn))
+            : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        localizations.userProfileTitle,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildProfileInfoTile(
+                        context,
+                        icon: Icons.person,
+                        title: localizations.username,
+                        value: user.username,
+                      ),
+                      _buildProfileInfoTile(
+                        context,
+                        icon: Icons.account_circle,
+                        title: localizations.roles,
+                        value: user.roles.isEmpty
+                            ? localizations.noRoles
+                            : user.roles.join(', '),
+                      ),
+                      _buildProfileInfoTile(
+                        context,
+                        icon: Icons.security,
+                        title: localizations.permissions,
+                        value: user.permissions.isEmpty
+                            ? localizations.noPermissions
+                            : user.permissions.join(', '),
+                      ),
+                      const SizedBox(height: 16),
+                      Center(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            navigationService
+                                .navigateTo(AppRoutes.changePassword);
+                          },
+                          icon: const Icon(Icons.edit),
+                          label: Text(
+                            localizations.changePassword,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  _buildProfileInfoTile(
-                    context,
-                    icon: Icons.person,
-                    title: localizations.username,
-                    value: user.username,
-                  ),
-                  // _buildProfileInfoTile(
-                  //   context,
-                  //   icon: Icons.email,
-                  //   title: localizations.email,
-                  //   value: user.email ?? localizations.noEmail,
-                  // ),
-                  _buildProfileInfoTile(
-                    context,
-                    icon: Icons.account_circle,
-                    title: localizations.roles,
-                    value: user.roles.isEmpty
-                        ? localizations.noRoles
-                        : user.roles.join(', '),
-                  ),
-                  _buildProfileInfoTile( //Not sure about that
-                    context,
-                    icon: Icons.security,
-                    title: localizations.permissions,
-                    value: user.permissions.isEmpty
-                        ? localizations.noPermissions
-                        : user.permissions.join(', '),
-                  ),
-                  const Spacer(),
-                  Center(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        navigationService.navigateTo(AppRoutes.changePassword);
-                      },
-                      icon: const Icon(Icons.edit),
-                      label: Text(localizations.changePassword),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+      ),
     );
   }
 

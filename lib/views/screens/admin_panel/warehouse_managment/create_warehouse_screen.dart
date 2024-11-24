@@ -55,9 +55,8 @@ class _CreateWarehouseScreenState extends ConsumerState<CreateWarehouseScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.warehouse,
-                        color: Theme.of(context).colorScheme.onPrimary,
                         size: 150,
                       ),
                       Text(

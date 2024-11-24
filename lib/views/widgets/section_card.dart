@@ -29,7 +29,7 @@ class SectionCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, color: Theme.of(context).colorScheme.onPrimary),
+                Icon(icon),
                 const SizedBox(width: 10),
                 Text(
                   title,
@@ -66,12 +66,6 @@ class SectionCard extends StatelessWidget {
                 onPressed: onManagePressed,
                 icon: const Icon(Icons.settings),
                 label: Text(manageLabel),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  side:
-                      BorderSide(color: Theme.of(context).colorScheme.primary),
-                ),
               ),
             ),
           ],

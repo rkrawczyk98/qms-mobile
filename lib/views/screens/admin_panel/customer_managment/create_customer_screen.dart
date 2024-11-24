@@ -86,9 +86,8 @@ class _CreateCustomerScreenState extends ConsumerState<CreateCustomerScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.person_add_alt_1,
-                        color: Theme.of(context).colorScheme.onPrimary,
                         size: 150,
                       ),
                       Text(

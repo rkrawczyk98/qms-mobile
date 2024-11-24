@@ -97,9 +97,8 @@ class _EditDeliveryStatusScreenState
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.edit,
-                        color: Theme.of(context).colorScheme.onPrimary,
                         size: 150,
                       ),
                       Text(

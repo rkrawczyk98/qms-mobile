@@ -31,17 +31,9 @@ class CustomDropdownButton<T> extends StatelessWidget {
           ),
         ),
         filled: true,
-        // fillColor:
-        //     theme.colorScheme.primary, // Use secondary color for background
-        hintStyle: theme.textTheme.bodyLarge?.copyWith(
-          color: theme.hintColor, // Use hint color from theme
-        ),
       ),
       hint: Text(
         text,
-        style: theme.textTheme.bodyLarge?.copyWith(
-          color: theme.hintColor, // Hint text color from theme
-        ),
       ),
       items: items ?? [],
       onChanged: onChanged,
@@ -51,9 +43,7 @@ class CustomDropdownButton<T> extends StatelessWidget {
     if (tooltipMessage != null) {
       return Tooltip(
         message: tooltipMessage!,
-        textStyle: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSecondary, // Tooltip text color
-        ),
+        textStyle: theme.textTheme.bodySmall?.copyWith(),
         child: dropdown,
       );
     }

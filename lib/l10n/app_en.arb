@@ -279,5 +279,6 @@
   "browse": "Browse",
   "create": "Create",
   "noDeliveriesFound": "No deliveries found.",
-  "lastModified": "Last Modified"
+  "lastModified": "Last Modified",
+  "none": "None"
 }

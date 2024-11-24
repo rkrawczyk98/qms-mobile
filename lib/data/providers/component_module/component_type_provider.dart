@@ -13,7 +13,7 @@ class ComponentTypeNotifier
     fetchComponentTypes();
   }
 
-  // ownloading simple component types
+  // Downloading simple component types
   Future<void> fetchComponentTypes() async {
     try {
       final data = await componentTypeService.getAllComponentTypes();
@@ -63,7 +63,7 @@ class ComponentTypeWithDetailsNotifier
     }
   }
 
-  // Pobranie pojedynczego komponentu z szczegółami
+  // Downloading a single component with details
   Future<CreateWithDetailsDto> fetchOneWithDetails(int id) async {
     try {
       return await componentTypeService.getOneWithDetails(id);
@@ -81,15 +81,6 @@ class ComponentTypeWithDetailsNotifier
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
       return false;
-    }
-  }
-
-  Future<int> getLastSortOrder() async {
-    try {
-      return await componentTypeService.getLastSortOrderNumber();
-    } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
-      return 0;
     }
   }
 }

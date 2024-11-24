@@ -28,30 +28,24 @@ class SidePanelWidget extends ConsumerWidget {
         padding: EdgeInsets.zero,
         children: [
           if (user != null) ...[
-            DrawerHeader(
-              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+            const DrawerHeader(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Flexible(
+                  Flexible(
                     child: CustomLogoWidget(
                       logoPath: 'images/logo.svg',
                       width: 80,
                       height: 100,
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    localizations!.menu,
-                    style: const TextStyle(color: Colors.white, fontSize: 20),
-                  ),
+                  )
                 ],
               ),
             ),
             ListTile(
               leading: const Icon(Icons.home),
-              title: Text(localizations.home),
+              title: Text(localizations!.home),
               onTap: () {
                 navigationService.navigateTo('/home');
               },

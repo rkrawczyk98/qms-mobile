@@ -31,10 +31,19 @@ class RolePermissionManagementScreenState
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
+    _tabController.addListener(() {
+      if (_tabController.index == 0) {
+        ref.read(roleNotifierProvider.notifier).loadRoles();
+      } else if (_tabController.index == 1) {
+        ref.read(permissionNotifierProvider.notifier).loadPermissions();
+      }
+    });
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(() {});
     _tabController.dispose();
     super.dispose();
   }
@@ -135,21 +144,15 @@ class RolePermissionManagementScreenState
                       decoration: InputDecoration(
                         labelText:
                             AppLocalizations.of(context)!.searchPermissions,
-                        labelStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary),
-                        prefixIcon: Icon(Icons.search,
-                            color: Theme.of(context).hintColor),
                         border: const OutlineInputBorder(),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).dividerColor,
+                          borderSide: const BorderSide(
                             width: 1.5,
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
+                          borderSide: const BorderSide(
                             width: 2.0,
                           ),
                           borderRadius: BorderRadius.circular(8),
@@ -164,7 +167,6 @@ class RolePermissionManagementScreenState
                           filterPermissions(query);
                         });
                       },
-                      cursorColor: Theme.of(context).colorScheme.primary,
                     ),
                     const SizedBox(height: 10),
                     Expanded(
@@ -352,14 +354,11 @@ class RolePermissionManagementScreenState
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.rolePermissionManagement),
         bottom: TabBar(
           controller: _tabController,
-          labelStyle: TextStyle(color: theme.appBarTheme.titleTextStyle!.color),
           tabs: [
             Tab(text: AppLocalizations.of(context)!.roles),
             Tab(text: AppLocalizations.of(context)!.permissions),

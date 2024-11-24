@@ -9,13 +9,43 @@ import 'package:qms_mobile/views/dialogs/custom_snackbar.dart';
 import 'package:qms_mobile/views/screens/delivery/add_delivery_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class DeliveryScreen extends ConsumerWidget {
+class DeliveryScreen extends ConsumerStatefulWidget {
   const DeliveryScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final deliveriesAsync = ref.watch(deliveryProvider);
+  ConsumerState<DeliveryScreen> createState() => _DeliveryScreenState();
+}
+
+class _DeliveryScreenState extends ConsumerState<DeliveryScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(length: 2, vsync: this);
+
+    // Taking deliveries during initialization
     final deliveryNotifier = ref.read(deliveryProvider.notifier);
+    deliveryNotifier.fetchDeliveries();
+
+    // Tab change support
+    tabController.addListener(() {
+      if (tabController.index == 0) {
+        deliveryNotifier.fetchDeliveries();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final deliveriesAsync = ref.watch(deliveryProvider);
     final localizations = AppLocalizations.of(context)!;
 
     return DefaultTabController(
@@ -24,6 +54,7 @@ class DeliveryScreen extends ConsumerWidget {
         appBar: AppBar(
           title: Text(localizations.manageDeliveries),
           bottom: TabBar(
+            controller: tabController,
             tabs: [
               Tab(text: localizations.browse),
               Tab(text: localizations.create),
@@ -34,7 +65,13 @@ class DeliveryScreen extends ConsumerWidget {
               icon: const Icon(Icons.refresh),
               onPressed: () async {
                 try {
-                  await deliveryNotifier.fetchDeliveries();
+                  await ref.read(deliveryProvider.notifier).fetchDeliveries();
+                  if (!mounted)
+                    return;
+                  CustomSnackbar.showSuccessSnackbar(
+                    context,
+                    localizations.refreshSuccess,
+                  );
                 } catch (e) {
                   CustomSnackbar.showErrorSnackbar(
                     context,
@@ -46,6 +83,7 @@ class DeliveryScreen extends ConsumerWidget {
           ],
         ),
         body: TabBarView(
+          controller: tabController,
           children: [
             deliveriesAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
@@ -68,39 +106,40 @@ class DeliveryScreen extends ConsumerWidget {
     );
   }
 }
+
 class DeliveryList extends StatelessWidget {
-  final List<DeliveryResponseDto> deliveries;
+  final List<dynamic> deliveries;
 
   const DeliveryList({super.key, required this.deliveries});
 
   @override
   Widget build(BuildContext context) {
-      return ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: deliveries.length,
-        itemBuilder: (context, index) {
-          final delivery = deliveries[index];
-          return PackageItem(
-            delivery: delivery,
-            onDetailsTap: () {
-              navigationService.navigateTo(
-                AppRoutes.deliveryDetails,
-                arguments: delivery.id,
-              );
-            },
-            onContentTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => DeliveryContentsScreen(
-              //       deliveryId: delivery.id,
-              //     ),
-              //   ),
-              // );
-            },
-          );
-        },
-      );
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: deliveries.length,
+      itemBuilder: (context, index) {
+        final delivery = deliveries[index];
+        return PackageItem(
+          delivery: delivery,
+          onDetailsTap: () {
+            navigationService.navigateTo(
+              AppRoutes.deliveryDetails,
+              arguments: delivery.id,
+            );
+          },
+          onContentTap: () {
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => DeliveryContentsScreen(
+            //       deliveryId: delivery.id,
+            //     ),
+            //   ),
+            // );
+          },
+        );
+      },
+    );
   }
 }
 
@@ -121,7 +160,6 @@ class PackageItem extends StatelessWidget {
     final localizations = AppLocalizations.of(context)!;
 
     return Card(
-      color: Colors.grey[850],
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -135,13 +173,11 @@ class PackageItem extends StatelessWidget {
                   children: [
                     Text(
                       localizations.deliveryNumber,
-                      style: const TextStyle(color: Colors.grey),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       delivery.number,
                       style: const TextStyle(
-                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -150,7 +186,7 @@ class PackageItem extends StatelessWidget {
               ),
               const Icon(
                 Icons.local_shipping_outlined,
-                color: Colors.green,
+                // color: Colors.green,
                 size: 30,
               ),
             ]),
@@ -164,12 +200,10 @@ class PackageItem extends StatelessWidget {
                     children: [
                       Text(
                         localizations.componentType,
-                        style: const TextStyle(color: Colors.grey),
                       ),
                       Text(
-                        delivery.componentType?.name ?? 'Brak',
+                        delivery.componentType?.name ?? localizations.none,
                         style: const TextStyle(
-                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -185,9 +219,8 @@ class PackageItem extends StatelessWidget {
                         style: const TextStyle(color: Colors.grey),
                       ),
                       Text(
-                        delivery.status?.name ?? 'Brak',
+                        delivery.status?.name ?? localizations.none,
                         style: const TextStyle(
-                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -206,13 +239,11 @@ class PackageItem extends StatelessWidget {
                     children: [
                       Text(
                         localizations.customer,
-                        style: const TextStyle(color: Colors.grey),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        delivery.customer?.name ?? 'Brak',
+                        delivery.customer?.name ?? localizations.none,
                         style: const TextStyle(
-                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -225,13 +256,11 @@ class PackageItem extends StatelessWidget {
                     children: [
                       Text(
                         localizations.lastModified,
-                        style: const TextStyle(color: Colors.grey),
                         textAlign: TextAlign.right,
                       ),
                       AutoSizeText(
                         delivery.lastModified.toString(),
                         style: const TextStyle(
-                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.right,

@@ -24,14 +24,14 @@ class HomeScreen extends ConsumerWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             if (user != null) ...[
               Text(
                 '${localizations.welcome}, ${user.username}!',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
-              const SizedBox(height: 10),
+              const Divider()
             ],
             Expanded(
               child: ListView(
@@ -42,14 +42,15 @@ class HomeScreen extends ConsumerWidget {
                       context,
                       icon: Icons.local_shipping,
                       title: localizations.deliveryList,
-                      onTap: () => navigationService.navigateTo(AppRoutes.deliveryList),
+                      onTap: () =>
+                          navigationService.navigateTo(AppRoutes.deliveryList),
                     ),
-                    _buildNavigationCard(
-                      context,
-                      icon: Icons.list_alt,
-                      title: localizations.componentList,
-                      onTap: () => {}//navigationService.navigateTo(AppRoutes.componentList),
-                    ),
+                    _buildNavigationCard(context,
+                        icon: Icons.list_alt,
+                        title: localizations.componentList,
+                        onTap: () =>
+                            {} //navigationService.navigateTo(AppRoutes.componentList),
+                        ),
                   ]),
                   const SizedBox(height: 20),
                   if (user?.permissions.contains('MASTER_PERMISSION') ?? false)
@@ -60,31 +61,36 @@ class HomeScreen extends ConsumerWidget {
                         context,
                         icon: Icons.people,
                         title: localizations.userManagement,
-                        onTap: () => navigationService.navigateTo(AppRoutes.userManagement),
+                        onTap: () => navigationService
+                            .navigateTo(AppRoutes.userManagement),
                       ),
                       _buildNavigationCard(
                         context,
                         icon: Icons.local_shipping,
                         title: localizations.deliveryManagement,
-                        onTap: () => navigationService.navigateTo(AppRoutes.deliveryManagement),
+                        onTap: () => navigationService
+                            .navigateTo(AppRoutes.deliveryManagement),
                       ),
                       _buildNavigationCard(
                         context,
                         icon: Icons.business,
                         title: localizations.customerManagement,
-                        onTap: () => navigationService.navigateTo(AppRoutes.customerManagement),
+                        onTap: () => navigationService
+                            .navigateTo(AppRoutes.customerManagement),
                       ),
                       _buildNavigationCard(
                         context,
                         icon: Icons.build,
                         title: localizations.componentManagement,
-                        onTap: () => navigationService.navigateTo(AppRoutes.componentManagement),
+                        onTap: () => navigationService
+                            .navigateTo(AppRoutes.componentManagement),
                       ),
                       _buildNavigationCard(
                         context,
                         icon: Icons.warehouse,
                         title: localizations.warehouseManagement,
-                        onTap: () => navigationService.navigateTo(AppRoutes.warehouseManagement),
+                        onTap: () => navigationService
+                            .navigateTo(AppRoutes.warehouseManagement),
                       ),
                     ]),
                   const SizedBox(height: 20),
@@ -94,13 +100,15 @@ class HomeScreen extends ConsumerWidget {
                       context,
                       icon: Icons.settings,
                       title: localizations.settings,
-                      onTap: () => navigationService.navigateTo(AppRoutes.settings),
+                      onTap: () =>
+                          navigationService.navigateTo(AppRoutes.settings),
                     ),
                     _buildNavigationCard(
                       context,
                       icon: Icons.info_outline,
                       title: localizations.aboutApp,
-                      onTap: () => navigationService.navigateTo(AppRoutes.about),
+                      onTap: () =>
+                          navigationService.navigateTo(AppRoutes.about),
                     ),
                   ]),
                 ],
@@ -128,7 +136,10 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 40, color: Theme.of(context).iconTheme.color),
+              Icon(
+                icon,
+                size: 40,
+              ),
               const SizedBox(height: 10),
               Text(
                 title,

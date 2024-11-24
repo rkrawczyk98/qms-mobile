@@ -74,16 +74,6 @@ class CustomTextField extends StatelessWidget {
         // The style of the label text.
         labelStyle: GoogleFonts.inter(
             fontSize: fontSize ?? 14, color: theme.textTheme.bodySmall?.color),
-
-        // The border of the text field when it is enabled but not focused.
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: theme.dividerColor, width: 1),
-        ),
-
-        // The border of the text field when it is focused.
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: theme.primaryColor, width: 1),
-        ),
       ),
     );
   }
