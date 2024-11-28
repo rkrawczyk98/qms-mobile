@@ -8,6 +8,7 @@ import 'package:qms_mobile/data/models/DTOs/component_module/component_type/subc
 import 'package:qms_mobile/data/providers/component_module/component_type_provider.dart';
 import 'package:qms_mobile/data/providers/component_module/subcomponent_status_provider.dart';
 import 'package:qms_mobile/views/dialogs/custom_snackbar.dart';
+import 'package:qms_mobile/views/widgets/custom_switch_list_tile.dart';
 import 'package:reorderables/reorderables.dart';
 
 class CreateComponentTypeScreen extends ConsumerStatefulWidget {
@@ -21,6 +22,7 @@ class CreateComponentTypeScreen extends ConsumerStatefulWidget {
 class _CreateComponentTypeScreenState
     extends ConsumerState<CreateComponentTypeScreen> {
   final _formKey = GlobalKey<FormState>();
+  final FocusScopeNode _focusScopeNode = FocusScopeNode();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _prefixController = TextEditingController();
 
@@ -31,6 +33,14 @@ class _CreateComponentTypeScreenState
   void initState() {
     super.initState();
     ref.read(subcomponentStatusProvider.notifier).fetchAllStatuses();
+  }
+
+  @override
+  void dispose() {
+    _focusScopeNode.dispose();
+    _nameController.dispose();
+    _prefixController.dispose();
+    super.dispose();
   }
 
   void _addSubcomponent() {
@@ -61,126 +71,202 @@ class _CreateComponentTypeScreenState
     }
   }
 
+  void _validateSubcomponentNames() {
+    // Making sure all names are correct
+    setState(() {
+      for (var i = 0; i < _subcomponents.length; i++) {
+        if (_subcomponents[i].name.trim().isEmpty) {
+          _subcomponents[i] =
+              _subcomponents[i].copyWith(name: 'Unnamed Subcomponent $i');
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final statuses = ref.watch(subcomponentStatusProvider);
     final theme = Theme.of(context);
     final localization = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          localization.createComponentTypeTitle,
+    return FocusScope(
+      node: _focusScopeNode,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            localization.createComponentTypeTitle,
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: localization.componentTypeName,
-                hintText: localization.componentTypeName,
-              ),
-              validator: (value) => value == null || value.isEmpty
-                  ? localization.validationRequired
-                  : null,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _prefixController,
-              decoration: InputDecoration(
-                labelText: localization.prefix,
-                hintText: localization.prefix,
-              ),
-              validator: (value) => value == null || value.isEmpty
-                  ? localization.validationRequired
-                  : null,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              localization.subcomponents,
-              style: theme.textTheme.titleMedium,
-            ),
-            const SizedBox(height: 16),
-            ReorderableColumn(
-              needsLongPressDraggable: _expandedState.values.any((expanded) =>
-                  expanded), //Allows quick moving of items only when all are collapsed
-              children: List.generate(_subcomponents.length, (index) {
-                return ReorderableDragStartListener(
-                  key: ValueKey(index),
-                  index: index,
-                  child: SubcomponentCard(
-                    index: index,
-                    subcomponent: _subcomponents[index],
-                    statuses: statuses,
-                    expanded: _expandedState[index] ?? false,
-                    onToggleExpanded: () {
-                      setState(() {
-                        _expandedState[index] = !_expandedState[index]!;
-                      });
-                    },
-                    onRemove: () => _removeSubcomponent(index),
-                    onUpdate: (updated) {
-                      setState(() {
-                        _subcomponents[index] = updated;
-                      });
-                    },
-                    dragHandle: const Icon(Icons.drag_handle),
+        body: GestureDetector(
+          onTap: () {
+            // Close all open text fields
+            FocusScope.of(context).unfocus();
+            _validateSubcomponentNames();
+          },
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: localization.componentTypeName,
+                    hintText: localization.componentTypeName,
                   ),
-                );
-              }),
-              onReorder: (oldIndex, newIndex) {
-                setState(() {
-                  final item = _subcomponents.removeAt(oldIndex);
-                  _subcomponents.insert(newIndex, item);
-                  _updateSortOrder();
-                });
-              },
-            ),
-            ElevatedButton.icon(
-              style: const ButtonStyle(),
-              onPressed: _addSubcomponent,
-              icon: const Icon(
-                Icons.add,
-              ),
-              label: Text(localization.addSubcomponent,
-                  style: Theme.of(context).textTheme.bodyLarge),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  final dto = CreateWithDetailsDto(
-                    name: _nameController.text,
-                    prefix: _prefixController.text,
-                    subcomponents: _subcomponents,
-                  );
-                  final success = await ref
-                      .read(componentTypeWithDetailsProvider.notifier)
-                      .createWithDetails(dto);
-
-                  if (mounted && success) {
-                    CustomSnackbar.showSuccessSnackbar(
-                      context,
-                      localization.successfullyCreatedComponentType,
+                  validator: (value) => value == null || value.isEmpty
+                      ? localization.validationRequired
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _prefixController,
+                  decoration: InputDecoration(
+                    labelText: localization.prefix,
+                    hintText: localization.prefix,
+                  ),
+                  validator: (value) => value == null || value.isEmpty
+                      ? localization.validationRequired
+                      : null,
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  localization.subcomponents,
+                  style: theme.textTheme.titleMedium,
+                ),
+                const SizedBox(height: 16),
+                ReorderableColumn(
+                  needsLongPressDraggable: _expandedState.values.any((expanded) =>
+                  expanded), // Allows quick moving of items only when all are collapsed
+                  children: List.generate(_subcomponents.length, (index) {
+                    return ReorderableDragStartListener(
+                      key: ValueKey(index),
+                      index: index,
+                      child: SubcomponentCard(
+                        index: index,
+                        subcomponent: _subcomponents[index],
+                        statuses: statuses,
+                        expanded: _expandedState[index] ?? false,
+                        onToggleExpanded: () async {
+                          // Check for unsaved changes
+                          final result = await _handleUnsavedChanges(
+                              context, index);
+                          if (result) {
+                            setState(() {
+                              _expandedState[index] =
+                                  !_expandedState[index]!;
+                            });
+                          }
+                        },
+                        onRemove: () async {
+                          // Check for unsaved changes
+                          final result = await _handleUnsavedChanges(
+                              context, index);
+                          if (result) {
+                            _removeSubcomponent(index);
+                          }
+                        },
+                        onUpdate: (updated) {
+                          setState(() {
+                            _subcomponents[index] = updated;
+                          });
+                        },
+                        onNameChanged: (newName) {
+                          setState(() {
+                            _subcomponents[index] =
+                                _subcomponents[index].copyWith(name: newName);
+                          });
+                        },
+                        dragHandle: const Icon(Icons.drag_handle),
+                      ),
                     );
-                    Navigator.pop(context);
-                  }
-                }
-              },
-              child: Text(localization.createComponentType,
-                  style: Theme.of(context).textTheme.bodyLarge),
+                  }),
+                  onReorder: (oldIndex, newIndex) {
+                    setState(() {
+                      final item = _subcomponents.removeAt(oldIndex);
+                      _subcomponents.insert(newIndex, item);
+                      _updateSortOrder();
+                    });
+                  },
+                ),
+                ElevatedButton.icon(
+                  onPressed: _addSubcomponent,
+                  icon: const Icon(
+                    Icons.add,
+                  ),
+                  label: Text(localization.addSubcomponent,
+                      style: Theme.of(context).textTheme.bodyLarge),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                  ),
+                  onPressed: () async {
+                    FocusScope.of(context).unfocus();
+                    _validateSubcomponentNames();
+                    if (_formKey.currentState!.validate()) {
+                      final dto = CreateWithDetailsDto(
+                        name: _nameController.text,
+                        prefix: _prefixController.text,
+                        subcomponents: _subcomponents,
+                      );
+                      final success = await ref
+                          .read(componentTypeWithDetailsProvider.notifier)
+                          .createWithDetails(dto);
+
+                      if (mounted && success) {
+                        CustomSnackbar.showSuccessSnackbar(
+                          context,
+                          localization.successfullyCreatedComponentType,
+                        );
+                        Navigator.pop(context);
+                      }
+                    }
+                  },
+                  child: Text(localization.createComponentType,
+                      style: Theme.of(context).textTheme.bodyLarge),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
+
+  Future<bool> _handleUnsavedChanges(BuildContext context, int index) async {
+    final subcomponentCardKey = GlobalKey<_SubcomponentCardState>();
+
+    if (subcomponentCardKey.currentState != null &&
+        subcomponentCardKey.currentState!.hasUnsavedChanges) {
+      final localization = AppLocalizations.of(context)!;
+      final result = await showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(localization.unsavedChangesTitle),
+            content: Text(localization.unsavedChangesContent),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(localization.cancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(localization.discardChanges),
+              ),
+            ],
+          );
+        },
+      );
+      return result ?? false;
+    }
+    return true;
+  }
 }
+
 
 class SubcomponentCard extends StatefulWidget {
   final int index;
@@ -190,6 +276,7 @@ class SubcomponentCard extends StatefulWidget {
   final VoidCallback onToggleExpanded;
   final VoidCallback onRemove;
   final Function(SubcomponentDetailsDto) onUpdate;
+  final Function(String) onNameChanged;
   final Widget? dragHandle;
 
   const SubcomponentCard({
@@ -201,20 +288,39 @@ class SubcomponentCard extends StatefulWidget {
     required this.onToggleExpanded,
     required this.onRemove,
     required this.onUpdate,
+    required this.onNameChanged,
     this.dragHandle,
   });
 
   @override
-  SubcomponentCardState createState() => SubcomponentCardState();
+  _SubcomponentCardState createState() => _SubcomponentCardState();
 }
 
-class SubcomponentCardState extends State<SubcomponentCard> {
+class _SubcomponentCardState extends State<SubcomponentCard> {
   late TextEditingController _nameController;
+  bool _isModified = false;
+
+  bool get hasUnsavedChanges => _isModified;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.subcomponent.name);
+    _nameController.addListener(() {
+      setState(() {
+        _isModified = _nameController.text != widget.subcomponent.name;
+      });
+    });
+  }
+
+  @override
+  void didUpdateWidget(SubcomponentCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.subcomponent.name != widget.subcomponent.name &&
+        _nameController.text != widget.subcomponent.name) {
+      _nameController.text = widget.subcomponent.name;
+      _isModified = false;
+    }
   }
 
   @override
@@ -223,12 +329,38 @@ class SubcomponentCardState extends State<SubcomponentCard> {
     super.dispose();
   }
 
+  Future<bool> _confirmDiscardChanges() async {
+    if (!_isModified) return true;
+    final localization = AppLocalizations.of(context)!;
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(localization.unsavedChangesTitle),
+          content: Text(localization.unsavedChangesContent),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(localization.cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(localization.discardChanges),
+            ),
+          ],
+        );
+      },
+    );
+    return result ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context)!;
 
     return Card(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ListTile(
             leading: widget.dragHandle,
@@ -238,139 +370,101 @@ class SubcomponentCardState extends State<SubcomponentCard> {
             subtitle: Text(
                 '${localization.sortOrder}: ${widget.subcomponent.sortOrder}'),
             trailing: IconButton(
-              icon:
-                  Icon(widget.expanded ? Icons.expand_less : Icons.expand_more),
-              onPressed: widget.onToggleExpanded,
+              icon: Icon(widget.expanded ? Icons.expand_less : Icons.expand_more),
+              onPressed: () async {
+                final shouldToggle = await _confirmDiscardChanges();
+                if (shouldToggle) {
+                  _isModified = false;
+                  _nameController.text = widget.subcomponent.name;
+                  widget.onToggleExpanded();
+                }
+              },
             ),
           ),
           if (widget.expanded)
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: localization.subcomponentName,
-                      hintText: localization.subcomponentName,
-                    ),
-                    onFieldSubmitted: (value) {
-                      if (value.isNotEmpty &&
-                          value != widget.subcomponent.name) {
-                        widget.onUpdate(
-                            widget.subcomponent.copyWith(name: value));
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  Text(localization.primaryStatuses),
-                  Wrap(
-                    spacing: 8.0,
-                    runSpacing: 4.0,
-                    children: widget.subcomponent.primaryStatuses.map((status) {
-                      final statusName = widget.statuses
-                          .firstWhere((s) => s.id == status.statusId)
-                          .name;
-                      return Chip(
-                        label: Text(statusName),
-                        onDeleted: () {
-                          final updatedStatuses =
-                              List.of(widget.subcomponent.primaryStatuses)
-                                ..remove(status);
-                          widget.onUpdate(widget.subcomponent
-                              .copyWith(primaryStatuses: updatedStatuses));
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _nameController,
+                          decoration: InputDecoration(
+                            labelText: localization.subcomponentName,
+                            hintText: localization.subcomponentName,
+                            suffixIcon: IconButton(
+                              icon:
+                                  const Icon(Icons.info_outline, color: Colors.blue),
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(localization.nameSubmitInfo),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.save, color: Colors.green),
+                        onPressed: () {
+                          widget.onNameChanged(_nameController.text);
+                          setState(() {
+                            _isModified = false;
+                          });
                         },
-                      );
-                    }).toList(),
-                  ),
-                  DropdownButtonFormField<int>(
-                    items: widget.statuses
-                        .where((status) => !widget.subcomponent.primaryStatuses
-                            .any((existing) =>
-                                existing.statusId ==
-                                status.id)) // Duplicate Avoidance Filter
-                        .map<DropdownMenuItem<int>>((status) {
-                      return DropdownMenuItem<int>(
-                        value: status.id,
-                        child: Text(status.name),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      if (value != null) {
-                        final updatedStatuses = [
-                          ...widget.subcomponent.primaryStatuses,
-                          PrimaryStatusDto(statusId: value, sortOrder: 0),
-                        ];
-                        widget.onUpdate(widget.subcomponent
-                            .copyWith(primaryStatuses: updatedStatuses));
-                      }
-                    },
-                    decoration: InputDecoration(
-                      labelText: localization.addPrimaryStatus,
-                    ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
-                  Text(localization.secondaryStatuses),
-                  Wrap(
-                    spacing: 8.0,
-                    runSpacing: 4.0,
-                    children:
-                        widget.subcomponent.secondaryStatuses.map((status) {
-                      final statusName = widget.statuses
-                          .firstWhere((s) => s.id == status.statusId)
-                          .name;
-                      return Chip(
-                        label: Text(statusName),
-                        onDeleted: () {
-                          final updatedStatuses =
-                              List.of(widget.subcomponent.secondaryStatuses)
-                                ..remove(status);
-                          widget.onUpdate(widget.subcomponent
-                              .copyWith(secondaryStatuses: updatedStatuses));
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  DropdownButtonFormField<int>(
-                    items: widget.statuses
-                        .where((status) => !widget
-                            .subcomponent.secondaryStatuses
-                            .any((existing) =>
-                                existing.statusId ==
-                                status.id)) // Duplicate Avoidance Filter
-                        .map<DropdownMenuItem<int>>((status) {
-                      return DropdownMenuItem<int>(
-                        value: status.id,
-                        child: Text(status.name),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      if (value != null) {
-                        final updatedStatuses = [
-                          ...widget.subcomponent.secondaryStatuses,
-                          SecondaryStatusDto(statusId: value, sortOrder: 0),
-                        ];
-                        widget.onUpdate(widget.subcomponent
-                            .copyWith(secondaryStatuses: updatedStatuses));
-                      }
-                    },
-                    decoration: InputDecoration(
-                      labelText: localization.addSecondaryStatus,
+                  _buildStatusChips<PrimaryStatusDto>(
+                    title: localization.primaryStatuses,
+                    statuses: widget.subcomponent.primaryStatuses,
+                    allStatuses: widget.statuses,
+                    createStatus: (id) =>
+                        PrimaryStatusDto(statusId: id, sortOrder: 0),
+                    copyWith: (updatedStatuses) => widget.subcomponent.copyWith(
+                      primaryStatuses: updatedStatuses,
                     ),
+                    onUpdate: widget.onUpdate,
                   ),
                   const SizedBox(height: 16),
-                  SwitchListTile(
-                    title: Text(localization.isActivity),
+                  _buildStatusChips<SecondaryStatusDto>(
+                    title: localization.secondaryStatuses,
+                    statuses: widget.subcomponent.secondaryStatuses,
+                    allStatuses: widget.statuses,
+                    createStatus: (id) =>
+                        SecondaryStatusDto(statusId: id, sortOrder: 0),
+                    copyWith: (updatedStatuses) => widget.subcomponent.copyWith(
+                      secondaryStatuses: updatedStatuses,
+                    ),
+                    onUpdate: widget.onUpdate,
+                  ),
+                  const SizedBox(height: 16),
+                  CustomSwitchListTile(
+                    title: localization.isActivity,
                     value: widget.subcomponent.isActivity,
                     onChanged: (value) {
                       widget.onUpdate(
                           widget.subcomponent.copyWith(isActivity: value));
                     },
                   ),
-                  ElevatedButton.icon(
-                    onPressed: widget.onRemove,
-                    icon: const Icon(Icons.delete),
-                    label: Text(localization.removeSubcomponent),
+                  Align(
+                    alignment: Alignment.center,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
+                      onPressed: () async {
+                          widget.onRemove();
+                      },
+                      icon: const Icon(Icons.delete),
+                      label: Text(localization.removeSubcomponent),
+                    ),
                   ),
                 ],
               ),
@@ -378,5 +472,60 @@ class SubcomponentCardState extends State<SubcomponentCard> {
         ],
       ),
     );
+  }
+
+  Widget _buildStatusChips<T>({
+    required String title,
+    required List<T> statuses,
+    required List<dynamic> allStatuses,
+    required T Function(int id) createStatus,
+    required SubcomponentDetailsDto Function(List<T>) copyWith,
+    required Function(SubcomponentDetailsDto) onUpdate,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title),
+        Wrap(
+          alignment: WrapAlignment.start,
+          spacing: 8.0,
+          runSpacing: 4.0,
+          children: allStatuses.map((status) {
+            final isSelected =
+                statuses.any((s) => (s as dynamic).statusId == status.id);
+            return ChoiceChip(
+              showCheckmark: false,
+              label: Text(status.name),
+              selected: isSelected,
+              onSelected: (selected) {
+                onUpdate(copyWith(
+                  _updateStatuses<T>(
+                    statuses,
+                    createStatus,
+                    status.id,
+                    selected,
+                  ),
+                ));
+              },
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  List<T> _updateStatuses<T>(
+    List<T> statuses,
+    T Function(int id) createStatus,
+    int statusId,
+    bool selected,
+  ) {
+    final updatedStatuses = List<T>.from(statuses);
+    if (selected) {
+      updatedStatuses.add(createStatus(statusId));
+    } else {
+      updatedStatuses.removeWhere((s) => (s as dynamic).statusId == statusId);
+    }
+    return updatedStatuses;
   }
 }

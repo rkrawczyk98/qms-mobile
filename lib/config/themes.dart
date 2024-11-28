@@ -31,7 +31,7 @@ final ThemeData lightTheme = ThemeData(
         fontWeight: FontWeight.w500,
       ),
       iconTheme: IconThemeData(color: Colors.white)),
-  tabBarTheme: TabBarTheme(
+  tabBarTheme: TabBarTheme( //This also for containers
     labelStyle: const TextStyle(
         fontSize: 16, fontWeight: FontWeight.bold), // Active Tab Style
     unselectedLabelStyle:

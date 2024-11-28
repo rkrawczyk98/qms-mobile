@@ -280,5 +280,9 @@
   "create": "Utwórz",
   "noDeliveriesFound": "Nie znaleziono żadnej dostawy.",
   "lastModified": "Ostatnia zmiana",
-  "none": "Brak"
+  "none": "Brak",
+  "nameSubmitInfo": "Aby zaakceptować nazwę, wpisz ją w pole tekstowe, a następnie kliknij przycisk zatwierdzenia.",
+  "unsavedChangesTitle": "Niezapisane zmiany",
+  "unsavedChangesContent": "Masz niezapisane zmiany. Czy na pewno chcesz je odrzucić?",
+  "discardChanges": "Odrzuć zmiany"
 }
