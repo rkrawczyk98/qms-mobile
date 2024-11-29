@@ -22,7 +22,6 @@ class CreateComponentTypeScreen extends ConsumerStatefulWidget {
 class _CreateComponentTypeScreenState
     extends ConsumerState<CreateComponentTypeScreen> {
   final _formKey = GlobalKey<FormState>();
-  final FocusScopeNode _focusScopeNode = FocusScopeNode();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _prefixController = TextEditingController();
 
@@ -37,7 +36,6 @@ class _CreateComponentTypeScreenState
 
   @override
   void dispose() {
-    _focusScopeNode.dispose();
     _nameController.dispose();
     _prefixController.dispose();
     super.dispose();
@@ -71,202 +69,137 @@ class _CreateComponentTypeScreenState
     }
   }
 
-  void _validateSubcomponentNames() {
-    // Making sure all names are correct
-    setState(() {
-      for (var i = 0; i < _subcomponents.length; i++) {
-        if (_subcomponents[i].name.trim().isEmpty) {
-          _subcomponents[i] =
-              _subcomponents[i].copyWith(name: 'Unnamed Subcomponent $i');
-        }
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final statuses = ref.watch(subcomponentStatusProvider);
     final theme = Theme.of(context);
     final localization = AppLocalizations.of(context)!;
 
-    return FocusScope(
-      node: _focusScopeNode,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            localization.createComponentTypeTitle,
-          ),
-          centerTitle: true,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          localization.createComponentTypeTitle,
         ),
-        body: GestureDetector(
-          onTap: () {
-            // Close all open text fields
-            FocusScope.of(context).unfocus();
-            _validateSubcomponentNames();
-          },
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: localization.componentTypeName,
-                    hintText: localization.componentTypeName,
-                  ),
-                  validator: (value) => value == null || value.isEmpty
-                      ? localization.validationRequired
-                      : null,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _prefixController,
-                  decoration: InputDecoration(
-                    labelText: localization.prefix,
-                    hintText: localization.prefix,
-                  ),
-                  validator: (value) => value == null || value.isEmpty
-                      ? localization.validationRequired
-                      : null,
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  localization.subcomponents,
-                  style: theme.textTheme.titleMedium,
-                ),
-                const SizedBox(height: 16),
-                ReorderableColumn(
-                  needsLongPressDraggable: _expandedState.values.any((expanded) =>
-                  expanded), // Allows quick moving of items only when all are collapsed
-                  children: List.generate(_subcomponents.length, (index) {
-                    return ReorderableDragStartListener(
-                      key: ValueKey(index),
-                      index: index,
-                      child: SubcomponentCard(
-                        index: index,
-                        subcomponent: _subcomponents[index],
-                        statuses: statuses,
-                        expanded: _expandedState[index] ?? false,
-                        onToggleExpanded: () async {
-                          // Check for unsaved changes
-                          final result = await _handleUnsavedChanges(
-                              context, index);
-                          if (result) {
-                            setState(() {
-                              _expandedState[index] =
-                                  !_expandedState[index]!;
-                            });
-                          }
-                        },
-                        onRemove: () async {
-                          // Check for unsaved changes
-                          final result = await _handleUnsavedChanges(
-                              context, index);
-                          if (result) {
-                            _removeSubcomponent(index);
-                          }
-                        },
-                        onUpdate: (updated) {
-                          setState(() {
-                            _subcomponents[index] = updated;
-                          });
-                        },
-                        onNameChanged: (newName) {
-                          setState(() {
-                            _subcomponents[index] =
-                                _subcomponents[index].copyWith(name: newName);
-                          });
-                        },
-                        dragHandle: const Icon(Icons.drag_handle),
-                      ),
-                    );
-                  }),
-                  onReorder: (oldIndex, newIndex) {
-                    setState(() {
-                      final item = _subcomponents.removeAt(oldIndex);
-                      _subcomponents.insert(newIndex, item);
-                      _updateSortOrder();
-                    });
-                  },
-                ),
-                ElevatedButton.icon(
-                  onPressed: _addSubcomponent,
-                  icon: const Icon(
-                    Icons.add,
-                  ),
-                  label: Text(localization.addSubcomponent,
-                      style: Theme.of(context).textTheme.bodyLarge),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                  ),
-                  onPressed: () async {
-                    FocusScope.of(context).unfocus();
-                    _validateSubcomponentNames();
-                    if (_formKey.currentState!.validate()) {
-                      final dto = CreateWithDetailsDto(
-                        name: _nameController.text,
-                        prefix: _prefixController.text,
-                        subcomponents: _subcomponents,
-                      );
-                      final success = await ref
-                          .read(componentTypeWithDetailsProvider.notifier)
-                          .createWithDetails(dto);
-
-                      if (mounted && success) {
-                        CustomSnackbar.showSuccessSnackbar(
-                          context,
-                          localization.successfullyCreatedComponentType,
-                        );
-                        Navigator.pop(context);
-                      }
-                    }
-                  },
-                  child: Text(localization.createComponentType,
-                      style: Theme.of(context).textTheme.bodyLarge),
-                ),
-              ],
+        centerTitle: true,
+      ),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            TextFormField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: localization.componentTypeName,
+                hintText: localization.componentTypeName,
+              ),
+              validator: (value) => value == null || value.isEmpty
+                  ? localization.validationRequired
+                  : null,
             ),
-          ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _prefixController,
+              decoration: InputDecoration(
+                labelText: localization.prefix,
+                hintText: localization.prefix,
+              ),
+              validator: (value) => value == null || value.isEmpty
+                  ? localization.validationRequired
+                  : null,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              localization.subcomponents,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 16),
+            ReorderableColumn(
+              needsLongPressDraggable: _expandedState.values.any((expanded) =>
+                  expanded), // Allows quick moving of items only when all are collapsed
+              children: List.generate(_subcomponents.length, (index) {
+                return ReorderableDragStartListener(
+                  key: ValueKey(index),
+                  index: index,
+                  child: SubcomponentCard(
+                    index: index,
+                    subcomponent: _subcomponents[index],
+                    statuses: statuses,
+                    expanded: _expandedState[index] ?? false,
+                    onToggleExpanded: () async {
+                      setState(() {
+                        _expandedState[index] = !_expandedState[index]!;
+                      });
+                    },
+                    onRemove: () async {
+                      _removeSubcomponent(index);
+                    },
+                    onUpdate: (updated) {
+                      setState(() {
+                        _subcomponents[index] = updated;
+                      });
+                    },
+                    onNameChanged: (newName) {
+                      setState(() {
+                        _subcomponents[index] =
+                            _subcomponents[index].copyWith(name: newName);
+                      });
+                    },
+                    dragHandle: const Icon(Icons.drag_handle),
+                  ),
+                );
+              }),
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  final item = _subcomponents.removeAt(oldIndex);
+                  _subcomponents.insert(newIndex, item);
+                  _updateSortOrder();
+                });
+              },
+            ),
+            ElevatedButton.icon(
+              onPressed: _addSubcomponent,
+              icon: const Icon(
+                Icons.add,
+              ),
+              label: Text(localization.addSubcomponent,
+                  style: Theme.of(context).textTheme.bodyLarge),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              onPressed: () async {
+                FocusScope.of(context).unfocus();
+                if (_formKey.currentState!.validate()) {
+                  final dto = CreateWithDetailsDto(
+                    name: _nameController.text,
+                    prefix: _prefixController.text,
+                    subcomponents: _subcomponents,
+                  );
+                  final success = await ref
+                      .read(componentTypeWithDetailsProvider.notifier)
+                      .createWithDetails(dto);
+
+                  if (mounted && success) {
+                    CustomSnackbar.showSuccessSnackbar(
+                      context,
+                      localization.successfullyCreatedComponentType,
+                    );
+                    Navigator.pop(context);
+                  }
+                }
+              },
+              child: Text(localization.createComponentType,
+                  style: Theme.of(context).textTheme.bodyLarge),
+            ),
+          ],
         ),
       ),
     );
   }
-
-  Future<bool> _handleUnsavedChanges(BuildContext context, int index) async {
-    final subcomponentCardKey = GlobalKey<_SubcomponentCardState>();
-
-    if (subcomponentCardKey.currentState != null &&
-        subcomponentCardKey.currentState!.hasUnsavedChanges) {
-      final localization = AppLocalizations.of(context)!;
-      final result = await showDialog<bool>(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(localization.unsavedChangesTitle),
-            content: Text(localization.unsavedChangesContent),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text(localization.cancel),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text(localization.discardChanges),
-              ),
-            ],
-          );
-        },
-      );
-      return result ?? false;
-    }
-    return true;
-  }
 }
-
 
 class SubcomponentCard extends StatefulWidget {
   final int index;
@@ -298,60 +231,17 @@ class SubcomponentCard extends StatefulWidget {
 
 class _SubcomponentCardState extends State<SubcomponentCard> {
   late TextEditingController _nameController;
-  bool _isModified = false;
-
-  bool get hasUnsavedChanges => _isModified;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.subcomponent.name);
-    _nameController.addListener(() {
-      setState(() {
-        _isModified = _nameController.text != widget.subcomponent.name;
-      });
-    });
-  }
-
-  @override
-  void didUpdateWidget(SubcomponentCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.subcomponent.name != widget.subcomponent.name &&
-        _nameController.text != widget.subcomponent.name) {
-      _nameController.text = widget.subcomponent.name;
-      _isModified = false;
-    }
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     super.dispose();
-  }
-
-  Future<bool> _confirmDiscardChanges() async {
-    if (!_isModified) return true;
-    final localization = AppLocalizations.of(context)!;
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(localization.unsavedChangesTitle),
-          content: Text(localization.unsavedChangesContent),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(localization.cancel),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(localization.discardChanges),
-            ),
-          ],
-        );
-      },
-    );
-    return result ?? false;
   }
 
   @override
@@ -370,14 +260,12 @@ class _SubcomponentCardState extends State<SubcomponentCard> {
             subtitle: Text(
                 '${localization.sortOrder}: ${widget.subcomponent.sortOrder}'),
             trailing: IconButton(
-              icon: Icon(widget.expanded ? Icons.expand_less : Icons.expand_more),
+              icon:
+                  Icon(widget.expanded ? Icons.expand_less : Icons.expand_more),
               onPressed: () async {
-                final shouldToggle = await _confirmDiscardChanges();
-                if (shouldToggle) {
-                  _isModified = false;
-                  _nameController.text = widget.subcomponent.name;
-                  widget.onToggleExpanded();
-                }
+                // _isModified = false;
+                _nameController.text = widget.subcomponent.name;
+                widget.onToggleExpanded();
               },
             ),
           ),
@@ -393,30 +281,35 @@ class _SubcomponentCardState extends State<SubcomponentCard> {
                         child: TextFormField(
                           controller: _nameController,
                           decoration: InputDecoration(
+                            fillColor: Theme.of(context).colorScheme.surface,
                             labelText: localization.subcomponentName,
                             hintText: localization.subcomponentName,
-                            suffixIcon: IconButton(
-                              icon:
-                                  const Icon(Icons.info_outline, color: Colors.blue),
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(localization.nameSubmitInfo),
-                                  ),
-                                );
-                              },
+                            suffixIcon: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.info_outline,
+                                      color: Colors.blue),
+                                  onPressed: () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content:
+                                            Text(localization.nameSubmitInfo),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.save,
+                                      color: Colors.green),
+                                  onPressed: () {
+                                    widget.onNameChanged(_nameController.text);
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.save, color: Colors.green),
-                        onPressed: () {
-                          widget.onNameChanged(_nameController.text);
-                          setState(() {
-                            _isModified = false;
-                          });
-                        },
                       ),
                     ],
                   ),
@@ -460,7 +353,7 @@ class _SubcomponentCardState extends State<SubcomponentCard> {
                         backgroundColor: Colors.red,
                       ),
                       onPressed: () async {
-                          widget.onRemove();
+                        widget.onRemove();
                       },
                       icon: const Icon(Icons.delete),
                       label: Text(localization.removeSubcomponent),

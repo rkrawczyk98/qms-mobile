@@ -21,10 +21,9 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   final TextEditingController _newPasswordController = TextEditingController();
   bool _isLoading = false;
   String? _errorMessage;
-  
 
   Future<void> _changePassword() async {
-  if (!mounted) return;
+    if (!mounted) return;
 
     setState(() {
       _isLoading = true;
@@ -41,7 +40,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
 
     setState(() => _isLoading = false);
 
-    if (message == AppLocalizations.of(context)!.passwordChangedSuccessfully ) {
+    if (message == AppLocalizations.of(context)!.passwordChangedSuccessfully) {
       CustomSnackbar.showSuccessSnackbar(
         context,
         message ?? '',
@@ -73,6 +72,11 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
           screenWidth: MediaQuery.of(context).size.width,
           child: Column(
             children: [
+              const Icon(
+                Icons.edit,
+                size: 150,
+              ),
+              const SizedBox(height: 16),
               CustomTextField(
                 label: localizations.currentPassword,
                 hint: localizations.enterCurrentPassword,

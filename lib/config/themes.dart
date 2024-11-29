@@ -31,15 +31,31 @@ final ThemeData lightTheme = ThemeData(
         fontWeight: FontWeight.w500,
       ),
       iconTheme: IconThemeData(color: Colors.white)),
-  tabBarTheme: TabBarTheme( //This also for containers
+  tabBarTheme: TabBarTheme(
+    //This also for containers
     labelStyle: const TextStyle(
         fontSize: 16, fontWeight: FontWeight.bold), // Active Tab Style
-    unselectedLabelStyle:
-        const TextStyle(fontSize: 14), // Inactive Tab Style
+    unselectedLabelStyle: const TextStyle(fontSize: 14), // Inactive Tab Style
     labelColor: Colors.white, // Active Tab Color
     unselectedLabelColor: Colors.grey[700], // Inactive Tab Color
     indicator: const UnderlineTabIndicator(
       borderSide: BorderSide(width: 4.0, color: Colors.white), // Pointer style
+    ),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: Colors.blue.shade50, // Text box background
+    labelStyle: const TextStyle(color: Colors.black), // Label color
+    hintStyle: TextStyle(color: Colors.grey.shade600), //Tooltip color
+    enabledBorder: OutlineInputBorder(
+      borderSide:
+          BorderSide(color: Colors.blue.shade300), //Active border
+    ),
+    focusedBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.blue), // Border in focus
+    ),
+    errorBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red), // Error border
     ),
   ),
 );
@@ -82,6 +98,23 @@ final ThemeData darkTheme = ThemeData(
     unselectedLabelColor: Colors.grey[700],
     indicator: const UnderlineTabIndicator(
       borderSide: BorderSide(width: 4.0, color: Colors.white),
+    ),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: Colors.black,
+    labelStyle: const TextStyle(color: Colors.white),
+    hintStyle: TextStyle(color: Colors.grey.shade500),
+    enabledBorder: OutlineInputBorder(
+      borderSide:
+          BorderSide(color: Colors.grey.shade600),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide:
+          BorderSide(color: Colors.grey.shade300),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red.shade300),
     ),
   ),
 );

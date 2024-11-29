@@ -283,6 +283,9 @@
   "none": "Brak",
   "nameSubmitInfo": "Aby zaakceptować nazwę, wpisz ją w pole tekstowe, a następnie kliknij przycisk zatwierdzenia.",
   "unsavedChangesTitle": "Niezapisane zmiany",
-  "unsavedChangesContent": "Masz niezapisane zmiany. Czy na pewno chcesz je odrzucić?",
-  "discardChanges": "Odrzuć zmiany"
+  "lossOfUnsavedData": "Niezapisane zmiany zostały utracone.",
+  "discardChanges": "Odrzuć zmiany",
+  "warning": "Ostrzeżenie",
+  "info": "Informacja",
+  "unnamedSubcomponent": "Nienazwany podkomponent"
 }

@@ -283,6 +283,9 @@
   "none": "None",
   "nameSubmitInfo": "To confirm the name, type it into the text field and click the confirmation button.",
   "unsavedChangesTitle": "Unsaved Changes",
-  "unsavedChangesContent": "You have unsaved changes. Are you sure you want to discard them?",
-  "discardChanges": "Discard Changes"
+  "lossOfUnsavedData": "Your unsaved changes have been lost.",
+  "discardChanges": "Discard Changes",
+  "warning": "Warning",
+  "info": "Information",
+  "unnamedSubcomponent": "Unnamed Subcomponent"
 }
