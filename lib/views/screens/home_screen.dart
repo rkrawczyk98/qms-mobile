@@ -49,7 +49,7 @@ class HomeScreen extends ConsumerWidget {
                         icon: Icons.list_alt,
                         title: localizations.componentList,
                         onTap: () =>
-                            {} //navigationService.navigateTo(AppRoutes.componentList),
+                            navigationService.navigateTo(AppRoutes.componentScreen),
                         ),
                   ]),
                   const SizedBox(height: 20),

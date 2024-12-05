@@ -4,9 +4,7 @@ class CreateComponentDto {
   final DateTime? controlDate;
   final DateTime? productionDate;
   final int? deliveryId;
-  final String newMonNumber;
-  final String? oldMonNumber;
-  final int size;
+  final double size;
 
   CreateComponentDto({
     required this.nameOne,
@@ -14,8 +12,6 @@ class CreateComponentDto {
     this.controlDate,
     this.productionDate,
     this.deliveryId,
-    required this.newMonNumber,
-    this.oldMonNumber,
     required this.size,
   });
 
@@ -26,8 +22,6 @@ class CreateComponentDto {
       'controlDate': controlDate?.toIso8601String(),
       'productionDate': productionDate?.toIso8601String(),
       'deliveryId': deliveryId,
-      'newMonNumber': newMonNumber,
-      'oldMonNumber': oldMonNumber,
       'size': size,
     };
   }

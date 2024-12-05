@@ -19,7 +19,6 @@ class SubcomponentConfigResponseDto {
   final String subcomponentName;
   final List<StatusDto> primaryStatuses;
   final StatusDto secondaryStatus;
-  final bool isIss;
   final bool isActivity;
 
   SubcomponentConfigResponseDto({
@@ -27,7 +26,6 @@ class SubcomponentConfigResponseDto {
     required this.subcomponentName,
     required this.primaryStatuses,
     required this.secondaryStatus,
-    required this.isIss,
     required this.isActivity,
   });
 
@@ -39,7 +37,6 @@ class SubcomponentConfigResponseDto {
           .map((e) => StatusDto.fromJson(e))
           .toList(),
       secondaryStatus: StatusDto.fromJson(json['secondaryStatus']),
-      isIss: json['isIss'],
       isActivity: json['isActivity'],
     );
   }

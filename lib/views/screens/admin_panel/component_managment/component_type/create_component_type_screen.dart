@@ -75,129 +75,136 @@ class _CreateComponentTypeScreenState
     final theme = Theme.of(context);
     final localization = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          localization.createComponentTypeTitle,
-        ),
-        centerTitle: true,
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: localization.componentTypeName,
-                hintText: localization.componentTypeName,
+    return statuses.when(
+        data: (statusList) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                localization.createComponentTypeTitle,
               ),
-              validator: (value) => value == null || value.isEmpty
-                  ? localization.validationRequired
-                  : null,
+              centerTitle: true,
             ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _prefixController,
-              decoration: InputDecoration(
-                labelText: localization.prefix,
-                hintText: localization.prefix,
-              ),
-              validator: (value) => value == null || value.isEmpty
-                  ? localization.validationRequired
-                  : null,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              localization.subcomponents,
-              style: theme.textTheme.titleMedium,
-            ),
-            const SizedBox(height: 16),
-            ReorderableColumn(
-              needsLongPressDraggable: _expandedState.values.any((expanded) =>
-                  expanded), // Allows quick moving of items only when all are collapsed
-              children: List.generate(_subcomponents.length, (index) {
-                return ReorderableDragStartListener(
-                  key: ValueKey(index),
-                  index: index,
-                  child: SubcomponentCard(
-                    index: index,
-                    subcomponent: _subcomponents[index],
-                    statuses: statuses,
-                    expanded: _expandedState[index] ?? false,
-                    onToggleExpanded: () async {
-                      setState(() {
-                        _expandedState[index] = !_expandedState[index]!;
-                      });
-                    },
-                    onRemove: () async {
-                      _removeSubcomponent(index);
-                    },
-                    onUpdate: (updated) {
-                      setState(() {
-                        _subcomponents[index] = updated;
-                      });
-                    },
-                    onNameChanged: (newName) {
-                      setState(() {
-                        _subcomponents[index] =
-                            _subcomponents[index].copyWith(name: newName);
-                      });
-                    },
-                    dragHandle: const Icon(Icons.drag_handle),
+            body: Form(
+              key: _formKey,
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: localization.componentTypeName,
+                      hintText: localization.componentTypeName,
+                    ),
+                    validator: (value) => value == null || value.isEmpty
+                        ? localization.validationRequired
+                        : null,
                   ),
-                );
-              }),
-              onReorder: (oldIndex, newIndex) {
-                setState(() {
-                  final item = _subcomponents.removeAt(oldIndex);
-                  _subcomponents.insert(newIndex, item);
-                  _updateSortOrder();
-                });
-              },
-            ),
-            ElevatedButton.icon(
-              onPressed: _addSubcomponent,
-              icon: const Icon(
-                Icons.add,
-              ),
-              label: Text(localization.addSubcomponent,
-                  style: Theme.of(context).textTheme.bodyLarge),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
-              onPressed: () async {
-                FocusScope.of(context).unfocus();
-                if (_formKey.currentState!.validate()) {
-                  final dto = CreateWithDetailsDto(
-                    name: _nameController.text,
-                    prefix: _prefixController.text,
-                    subcomponents: _subcomponents,
-                  );
-                  final success = await ref
-                      .read(componentTypeWithDetailsProvider.notifier)
-                      .createWithDetails(dto);
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _prefixController,
+                    decoration: InputDecoration(
+                      labelText: localization.prefix,
+                      hintText: localization.prefix,
+                    ),
+                    validator: (value) => value == null || value.isEmpty
+                        ? localization.validationRequired
+                        : null,
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    localization.subcomponents,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  ReorderableColumn(
+                    needsLongPressDraggable: _expandedState.values.any((expanded) =>
+                        expanded), // Allows quick moving of items only when all are collapsed
+                    children: List.generate(_subcomponents.length, (index) {
+                      return ReorderableDragStartListener(
+                        key: ValueKey(index),
+                        index: index,
+                        child: SubcomponentCard(
+                          index: index,
+                          subcomponent: _subcomponents[index],
+                          statuses: statusList,
+                          expanded: _expandedState[index] ?? false,
+                          onToggleExpanded: () async {
+                            setState(() {
+                              _expandedState[index] = !_expandedState[index]!;
+                            });
+                          },
+                          onRemove: () async {
+                            _removeSubcomponent(index);
+                          },
+                          onUpdate: (updated) {
+                            setState(() {
+                              _subcomponents[index] = updated;
+                            });
+                          },
+                          onNameChanged: (newName) {
+                            setState(() {
+                              _subcomponents[index] =
+                                  _subcomponents[index].copyWith(name: newName);
+                            });
+                          },
+                          dragHandle: const Icon(Icons.drag_handle),
+                        ),
+                      );
+                    }),
+                    onReorder: (oldIndex, newIndex) {
+                      setState(() {
+                        final item = _subcomponents.removeAt(oldIndex);
+                        _subcomponents.insert(newIndex, item);
+                        _updateSortOrder();
+                      });
+                    },
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: _addSubcomponent,
+                    icon: const Icon(
+                      Icons.add,
+                    ),
+                    label: Text(localization.addSubcomponent,
+                        style: Theme.of(context).textTheme.bodyLarge),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    onPressed: () async {
+                      FocusScope.of(context).unfocus();
+                      if (_formKey.currentState!.validate()) {
+                        final dto = CreateWithDetailsDto(
+                          name: _nameController.text,
+                          prefix: _prefixController.text,
+                          subcomponents: _subcomponents,
+                        );
+                        final success = await ref
+                            .read(componentTypeWithDetailsProvider.notifier)
+                            .createWithDetails(dto);
 
-                  if (mounted && success) {
-                    CustomSnackbar.showSuccessSnackbar(
-                      context,
-                      localization.successfullyCreatedComponentType,
-                    );
-                    Navigator.pop(context);
-                  }
-                }
-              },
-              child: Text(localization.createComponentType,
-                  style: Theme.of(context).textTheme.bodyLarge),
+                        if (mounted && success) {
+                          CustomSnackbar.showSuccessSnackbar(
+                            context,
+                            localization.successfullyCreatedComponentType,
+                          );
+                          Navigator.pop(context);
+                        }
+                      }
+                    },
+                    child: Text(localization.createComponentType,
+                        style: Theme.of(context).textTheme.bodyLarge),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stackTrace) => Center(
+              child: Text(AppLocalizations.of(context)!.errorLoadingStatuses),
+            ));
   }
 }
 

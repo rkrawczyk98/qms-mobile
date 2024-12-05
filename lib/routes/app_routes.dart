@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:qms_mobile/views/screens/component/component_details_screen.dart';
+import 'package:qms_mobile/views/screens/component/component_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/component_managment/component_type/create_component_type_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/customer_managment/create_customer_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/customer_managment/manage_customer_screen.dart';
@@ -60,6 +62,8 @@ class AppRoutes {
   static const String deliveryDetails = '/delivery-details';
   static const String createDeliveryStatus = '/admin-panel/create-delivery-status';
   static const String manageDeliveryStatuses = '/admin-panel/manage-delivery-statuses';
+  static const String componentScreen = '/component-list';
+  static const String componentDetails = '/component-details';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -96,6 +100,11 @@ class AppRoutes {
       },
       createDeliveryStatus: (context) => const CreateDeliveryStatusScreen(),
       manageDeliveryStatuses: (context) => const ManageDeliveryStatusesScreen(),
+      componentScreen: (context) => const ComponentScreen(),
+      componentDetails: (context) {
+        final componentId = ModalRoute.of(context)!.settings.arguments as int;
+        return ComponentDetailsScreen(componentId: componentId);
+      },
     };
   }
 }

@@ -39,3 +39,6 @@ class LanguageNotifier extends StateNotifier<Locale> {
 final languageProvider = StateNotifierProvider<LanguageNotifier, Locale>((ref) {
   return LanguageNotifier();
 });
+
+
+//flutter gen-l10n <--- komenda do generowania tłumaczeń z łapy

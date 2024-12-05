@@ -3,7 +3,6 @@ class SubcomponentResponseDto {
   final String name;
   final int componentTypeId;
   final int sortOrder;
-  final bool isISS;
   final DateTime creationDate;
   final DateTime lastModified;
   final DateTime? deletedAt;
@@ -14,7 +13,6 @@ class SubcomponentResponseDto {
     required this.name,
     required this.componentTypeId,
     required this.sortOrder,
-    required this.isISS,
     required this.creationDate,
     required this.lastModified,
     this.deletedAt,
@@ -27,7 +25,6 @@ class SubcomponentResponseDto {
       name: json['name'],
       componentTypeId: json['componentTypeId'],
       sortOrder: json['sortOrder'],
-      isISS: json['isISS'],
       creationDate: DateTime.parse(json['creationDate']),
       lastModified: DateTime.parse(json['lastModified']),
       deletedAt: json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
@@ -41,7 +38,6 @@ class SubcomponentResponseDto {
       'name': name,
       'componentTypeId': componentTypeId,
       'sortOrder': sortOrder,
-      'isISS': isISS,
       'creationDate': creationDate.toIso8601String(),
       'lastModified': lastModified.toIso8601String(),
       'deletedAt': deletedAt?.toIso8601String(),

@@ -1,41 +1,74 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qms_mobile/data/models/DTOs/component_module/subcomponent/subcomponent_response_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/component_module/subcomponent/update_subcomponent_dto.dart';
 import 'package:qms_mobile/data/services/component_module/subcomponent_service.dart';
 import 'package:qms_mobile/data/providers/api_service_provider.dart';
 
-class SubcomponentNotifier extends StateNotifier<List<SubcomponentResponseDto>> {
-  final SubcomponentService service;
+class SubcomponentNotifier extends AsyncNotifier<List<SubcomponentResponseDto>> {
+  late final SubcomponentService _service;
 
-  SubcomponentNotifier(this.service) : super([]);
+  @override
+  Future<List<SubcomponentResponseDto>> build() async {
+    _service = ref.read(subcomponentServiceProvider);
+    return await fetchAllSubcomponents();
+  }
 
-  Future<void> fetchAllSubcomponents() async {
+  /// Fetch all subcomponents
+  Future<List<SubcomponentResponseDto>> fetchAllSubcomponents() async {
     try {
-      state = await service.getAllSubcomponents();
+      final data = await _service.getAllSubcomponents();
+      state = AsyncValue.data(data);
+      return data;
     } catch (e) {
-      throw Exception('Failed to fetch subcomponents: $e');
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
     }
   }
 
-  void addSubcomponent(SubcomponentResponseDto subcomponent) {
-    state = [...state, subcomponent];
+  /// Add a new subcomponent
+  Future<void> addSubcomponent(SubcomponentResponseDto subcomponent) async {
+    state = AsyncValue.data([
+      ...state.value ?? [],
+      subcomponent,
+    ]);
   }
 
-  void updateSubcomponent(SubcomponentResponseDto updatedSubcomponent) {
-    state = [
-      for (final subcomponent in state)
-        if (subcomponent.id == updatedSubcomponent.id) updatedSubcomponent else subcomponent,
-    ];
+  /// Update an existing subcomponent
+  Future<void> updateSubcomponent(int id, UpdateSubcomponentDto dto) async {
+    try {
+      // Update in backend
+      final updatedSubcomponent = await _service.updateSubcomponent(id, dto);
+
+      // Update local state
+      state = AsyncValue.data([
+        for (final subcomponent in state.value ?? [])
+          if (subcomponent.id == id) updatedSubcomponent else subcomponent,
+      ]);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
+    }
   }
 
-  void removeSubcomponent(int id) {
-    state = state.where((subcomponent) => subcomponent.id != id).toList();
+  /// Delete a subcomponent
+  Future<void> removeSubcomponent(int id) async {
+    try {
+      await _service.deleteSubcomponent(id);
+
+      // Update local state
+      state = AsyncValue.data(
+        (state.value ?? []).where((subcomponent) => subcomponent.id != id).toList(),
+      );
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
+    }
   }
 }
 
 final subcomponentProvider =
-    StateNotifierProvider<SubcomponentNotifier, List<SubcomponentResponseDto>>((ref) {
-  final service = ref.read(subcomponentServiceProvider);
-  return SubcomponentNotifier(service);
+    AsyncNotifierProvider<SubcomponentNotifier, List<SubcomponentResponseDto>>(() {
+  return SubcomponentNotifier();
 });
 
 final subcomponentServiceProvider = Provider<SubcomponentService>((ref) {

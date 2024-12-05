@@ -1,41 +1,80 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qms_mobile/data/models/DTOs/component_module/component/component_response_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/component_module/component/create_component_dto.dart';
 import 'package:qms_mobile/data/services/component_module/component_service.dart';
 import 'package:qms_mobile/data/providers/api_service_provider.dart';
 
-class ComponentNotifier extends StateNotifier<List<ComponentResponseDto>> {
-  final ComponentService componentService;
+class ComponentNotifier extends AsyncNotifier<List<ComponentResponseDto>> {
+  late final ComponentService _componentService;
 
-  ComponentNotifier(this.componentService) : super([]);
+  @override
+  Future<List<ComponentResponseDto>> build() async {
+    _componentService = ref.read(componentServiceProvider);
+    return await fetchComponents();
+  }
 
-  Future<void> fetchComponents() async {
+  /// Fetch all components
+  Future<List<ComponentResponseDto>> fetchComponents() async {
     try {
-      state = await componentService.getAllComponents();
+      final data = await _componentService.getAllComponents();
+      state = AsyncValue.data(data);
+      return data;
     } catch (e) {
-      throw Exception('Failed to fetch components: $e');
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
     }
   }
 
-  void addComponent(ComponentResponseDto component) {
-    state = [...state, component];
+  /// Add a new component
+  Future<ComponentResponseDto> addComponent(CreateComponentDto component) async {
+    try {
+      final response = await _componentService.createComponent(component);
+      // Update the UI state
+      state = AsyncValue.data([...state.value ?? [], response]);
+      return response;
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
+    }
   }
 
-  void updateComponent(int id, ComponentResponseDto updatedComponent) {
-    state = [
-      for (final component in state)
-        if (component.id == id) updatedComponent else component,
-    ];
+  /// Update an existing component
+  Future<void> updateComponent(int id, ComponentResponseDto updatedComponent) async {
+    try {
+      // Update the UI state
+      state = AsyncValue.data([
+        for (final component in state.value ?? [])
+          if (component.id == id) updatedComponent else component,
+      ]);
+
+      // Optionally, you could update the component in the backend here.
+      // await _componentService.updateComponent(id, updatedComponent);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
+    }
   }
 
+  /// Delete a component
   Future<void> deleteComponent(int id) async {
-    await componentService.deleteComponent(id);
-    state = state.where((component) => component.id != id).toList();
+    try {
+      // Remove from backend
+      await _componentService.deleteComponent(id);
+
+      // Update the UI state
+      state = AsyncValue.data(
+        (state.value ?? []).where((component) => component.id != id).toList(),
+      );
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
+    }
   }
 }
 
-final componentProvider = StateNotifierProvider<ComponentNotifier, List<ComponentResponseDto>>((ref) {
-  final componentService = ref.read(componentServiceProvider);
-  return ComponentNotifier(componentService);
+final componentProvider =
+    AsyncNotifierProvider<ComponentNotifier, List<ComponentResponseDto>>(() {
+  return ComponentNotifier();
 });
 
 final componentServiceProvider = Provider<ComponentService>((ref) {

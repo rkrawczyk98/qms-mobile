@@ -1,45 +1,77 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qms_mobile/data/models/DTOs/component_module/component_subcomponent/component_subcomponent_response_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/component_module/component_subcomponent/update_component_subcomponent_dto.dart';
 import 'package:qms_mobile/data/services/component_module/component_subcomponent_service.dart';
 import 'package:qms_mobile/data/providers/api_service_provider.dart';
 
 class ComponentSubcomponentNotifier
-    extends StateNotifier<List<ComponentSubcomponentResponseDto>> {
-  final ComponentSubcomponentService componentSubcomponentService;
+    extends AsyncNotifier<List<ComponentSubcomponentResponseDto>> {
+  late final ComponentSubcomponentService _componentSubcomponentService;
 
-  ComponentSubcomponentNotifier(this.componentSubcomponentService) : super([]);
+  @override
+  Future<List<ComponentSubcomponentResponseDto>> build() async {
+    _componentSubcomponentService = ref.read(componentSubcomponentServiceProvider);
+    return await fetchComponentSubcomponents();
+  }
 
-  Future<void> fetchComponentSubcomponents() async {
+  /// Fetch all component-subcomponent relationships
+  Future<List<ComponentSubcomponentResponseDto>> fetchComponentSubcomponents() async {
     try {
-      state = await componentSubcomponentService.getAllComponentSubcomponents();
+      final data = await _componentSubcomponentService.getAllComponentSubcomponents();
+      state = AsyncValue.data(data);
+      return data;
     } catch (e) {
-      throw Exception('Failed to fetch component-subcomponent relationships: $e');
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
     }
   }
 
-  void addComponentSubcomponent(ComponentSubcomponentResponseDto subcomponent) {
-    state = [...state, subcomponent];
+  /// Add a new component-subcomponent relationship
+  Future<void> addComponentSubcomponent(ComponentSubcomponentResponseDto subcomponent) async {
+    state = AsyncValue.data([
+      ...state.value ?? [],
+      subcomponent,
+    ]);
   }
 
-  void updateComponentSubcomponent(
-      int id, ComponentSubcomponentResponseDto updatedSubcomponent) {
-    state = [
-      for (final subcomponent in state)
-        if (subcomponent.id == id) updatedSubcomponent else subcomponent,
-    ];
+  /// Update a component-subcomponent relationship
+  Future<void> updateComponentSubcomponent(
+      int id, UpdateComponentSubcomponentDto dto) async {
+    try {
+      // Update in the backend
+      final updatedSubcomponent =
+          await _componentSubcomponentService.updateComponentSubcomponent(id, dto);
+
+      // Update local state
+      state = AsyncValue.data([
+        for (final subcomponent in state.value ?? [])
+          if (subcomponent.id == id) updatedSubcomponent else subcomponent,
+      ]);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
+    }
   }
 
+  /// Delete a component-subcomponent relationship
   Future<void> deleteComponentSubcomponent(int id) async {
-    await componentSubcomponentService.deleteComponentSubcomponent(id);
-    state = state.where((subcomponent) => subcomponent.id != id).toList();
+    try {
+      await _componentSubcomponentService.deleteComponentSubcomponent(id);
+
+      // Remove from local state
+      state = AsyncValue.data(
+        (state.value ?? []).where((subcomponent) => subcomponent.id != id).toList(),
+      );
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
+    }
   }
 }
 
-final componentSubcomponentProvider = StateNotifierProvider<
-    ComponentSubcomponentNotifier, List<ComponentSubcomponentResponseDto>>((ref) {
-  final componentSubcomponentService =
-      ref.read(componentSubcomponentServiceProvider);
-  return ComponentSubcomponentNotifier(componentSubcomponentService);
+final componentSubcomponentProvider = AsyncNotifierProvider<ComponentSubcomponentNotifier,
+    List<ComponentSubcomponentResponseDto>>(() {
+  return ComponentSubcomponentNotifier();
 });
 
 final componentSubcomponentServiceProvider =
