@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qms_mobile/data/models/DTOs/component_module/component/component_response_dto.dart';
 import 'package:qms_mobile/data/models/DTOs/component_module/component/create_component_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/component_module/component/update_component_dto.dart';
 import 'package:qms_mobile/data/services/component_module/component_service.dart';
 import 'package:qms_mobile/data/providers/api_service_provider.dart';
 
@@ -39,16 +40,14 @@ class ComponentNotifier extends AsyncNotifier<List<ComponentResponseDto>> {
   }
 
   /// Update an existing component
-  Future<void> updateComponent(int id, ComponentResponseDto updatedComponent) async {
+  Future<void> updateComponent(int id, UpdateComponentDto updatedComponent) async {
     try {
+      final response = await _componentService.updateComponent(id, updatedComponent);
       // Update the UI state
       state = AsyncValue.data([
         for (final component in state.value ?? [])
-          if (component.id == id) updatedComponent else component,
+          if (component.id == id) response,
       ]);
-
-      // Optionally, you could update the component in the backend here.
-      // await _componentService.updateComponent(id, updatedComponent);
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
       rethrow;

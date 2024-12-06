@@ -10,18 +10,18 @@ import 'package:qms_mobile/data/providers/component_module/subcomponent_status_p
 import 'package:qms_mobile/views/dialogs/custom_snackbar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class ComponentDetailsScreen extends ConsumerStatefulWidget {
+class ComponentManageScreen extends ConsumerStatefulWidget {
   final int componentId;
 
-  const ComponentDetailsScreen({super.key, required this.componentId});
+  const ComponentManageScreen({super.key, required this.componentId});
 
   @override
-  ConsumerState<ComponentDetailsScreen> createState() =>
+  ConsumerState<ComponentManageScreen> createState() =>
       _ComponentDetailsScreenState();
 }
 
 class _ComponentDetailsScreenState
-    extends ConsumerState<ComponentDetailsScreen> {
+    extends ConsumerState<ComponentManageScreen> {
   late AsyncValue<ComponentResponseDto?> component;
 
   @override
@@ -168,7 +168,6 @@ class _ComponentDetailsScreenState
             child: ListTile(
               leading: const Icon(Icons.extension),
               title: Text(subcomponent.name),
-              subtitle: Text('${localization.status}: ${status.name}'),
               trailing: DropdownButton<int>(
                 value: componentSubcomponent.statusId,
                 onChanged: (newValue) {

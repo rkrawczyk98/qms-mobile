@@ -6,9 +6,7 @@ class UpdateComponentDto {
   final DateTime? productionDate;
   final String? nameOne;
   final String? nameTwo;
-  final String? newMonNumber;
-  final String? oldMonNumber;
-  final int? size;
+  final double? size;
   final String? wzNumber;
 
   UpdateComponentDto({
@@ -19,8 +17,6 @@ class UpdateComponentDto {
     this.productionDate,
     this.nameOne,
     this.nameTwo,
-    this.newMonNumber,
-    this.oldMonNumber,
     this.size,
     this.wzNumber,
   });
@@ -34,8 +30,6 @@ class UpdateComponentDto {
       'productionDate': productionDate?.toIso8601String(),
       'nameOne': nameOne,
       'nameTwo': nameTwo,
-      'newMonNumber': newMonNumber,
-      'oldMonNumber': oldMonNumber,
       'size': size,
       'wzNumber': wzNumber,
     };

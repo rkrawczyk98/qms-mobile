@@ -8,7 +8,10 @@ import 'package:qms_mobile/views/dialogs/custom_snackbar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddComponentScreen extends ConsumerStatefulWidget {
-  const AddComponentScreen({super.key});
+  final bool showAppBar;
+  final int? deliveryId;
+  const AddComponentScreen(
+      {super.key, this.showAppBar = false, this.deliveryId});
 
   @override
   ConsumerState<AddComponentScreen> createState() => _AddComponentScreenState();
@@ -22,6 +25,26 @@ class _AddComponentScreenState extends ConsumerState<AddComponentScreen> {
   DateTime? _productionDate;
   double? _componentSize;
   DeliveryResponseDto? _selectedDelivery;
+  bool _isDeliveryLocked = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.deliveryId != null) {
+      _fetchAndSetDelivery(widget.deliveryId);
+    }
+  }
+
+  Future<void> _fetchAndSetDelivery(int? deliveryId) async {
+    if (deliveryId == null) return;
+    final delivery =
+        await ref.read(deliveryProvider.notifier).getDeliveryById(deliveryId);
+    setState(() {
+      _selectedDelivery = delivery;
+      _isDeliveryLocked = true;
+    });
+  }
 
   Future<void> _selectDate(BuildContext context, bool isControlDate) async {
     final picked = await showDatePicker(
@@ -42,6 +65,7 @@ class _AddComponentScreenState extends ConsumerState<AddComponentScreen> {
   }
 
   Future<void> _selectDelivery(BuildContext context) async {
+    if (_isDeliveryLocked) return;
     final selectedDelivery = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -67,7 +91,8 @@ class _AddComponentScreenState extends ConsumerState<AddComponentScreen> {
 
       try {
         final createdComponent = await ref
-            .read(componentProvider.notifier).addComponent(newComponent);
+            .read(componentProvider.notifier)
+            .addComponent(newComponent);
 
         if (!mounted) return;
         CustomSnackbar.showSuccessSnackbar(
@@ -107,6 +132,11 @@ class _AddComponentScreenState extends ConsumerState<AddComponentScreen> {
     final localization = AppLocalizations.of(context)!;
 
     return Scaffold(
+      appBar: widget.showAppBar
+          ? AppBar(
+              title: Text(localization.addComponent),
+            )
+          : null,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -131,12 +161,18 @@ class _AddComponentScreenState extends ConsumerState<AddComponentScreen> {
                       GestureDetector(
                         onTap: () => _selectDelivery(context),
                         child: AbsorbPointer(
+                          absorbing: !_isDeliveryLocked,
                           child: TextFormField(
+                            readOnly: true,
                             decoration: InputDecoration(
-                                labelText: localization.deliveryNumber,
-                                hintText: _selectedDelivery?.number ?? '',
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always),
+                              labelText: localization.deliveryNumber,
+                              hintText: _selectedDelivery?.number ?? '',
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.always,
+                              suffixIcon: _isDeliveryLocked
+                                  ? const Icon(Icons.lock)
+                                  : null,
+                            ),
                             validator: (_) => _selectedDelivery == null
                                 ? localization.validationRequired
                                 : null,
@@ -201,6 +237,7 @@ class _AddComponentScreenState extends ConsumerState<AddComponentScreen> {
     required VoidCallback onTap,
   }) {
     return TextFormField(
+      readOnly: true,
       controller: TextEditingController(
         text: selectedDate != null
             ? selectedDate.toLocal().toString().split(' ')[0]

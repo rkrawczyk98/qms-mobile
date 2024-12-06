@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:qms_mobile/views/screens/component/component_details_screen.dart';
+import 'package:qms_mobile/views/screens/component/add_component_screen.dart';
+import 'package:qms_mobile/views/screens/component/component_manage_screen.dart';
+import 'package:qms_mobile/views/screens/component/component_edit_screen.dart';
 import 'package:qms_mobile/views/screens/component/component_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/component_managment/component_type/create_component_type_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/customer_managment/create_customer_screen.dart';
@@ -19,6 +21,7 @@ import 'package:qms_mobile/views/screens/admin_panel/warehouse_managment/create_
 import 'package:qms_mobile/views/screens/admin_panel/warehouse_managment/create_warehouse_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/warehouse_managment/manage_warehouse_positions_screen.dart';
 import 'package:qms_mobile/views/screens/admin_panel/warehouse_managment/manage_warehouses_screen.dart';
+import 'package:qms_mobile/views/screens/delivery/delivery_contents_screen.dart';
 import 'package:qms_mobile/views/screens/delivery/delivery_details_screen.dart';
 import 'package:qms_mobile/views/screens/delivery/delivery_screen.dart';
 import 'package:qms_mobile/views/screens/home_screen.dart';
@@ -60,10 +63,15 @@ class AppRoutes {
       '/admin-panel/create-component-type';
   static const String deliveryList = '/delivery-list';
   static const String deliveryDetails = '/delivery-details';
-  static const String createDeliveryStatus = '/admin-panel/create-delivery-status';
-  static const String manageDeliveryStatuses = '/admin-panel/manage-delivery-statuses';
-  static const String componentScreen = '/component-list';
-  static const String componentDetails = '/component-details';
+  static const String createDeliveryStatus =
+      '/admin-panel/create-delivery-status';
+  static const String manageDeliveryStatuses =
+      '/admin-panel/manage-delivery-statuses';
+  static const String componentList = '/component-list';
+  static const String componentManage = '/component-manage';
+  static const String componentEdit = '/component-edit';
+  static const String addComponent = '/add-component';
+  static const String deliveryContents = '/delivery-contents';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -100,10 +108,28 @@ class AppRoutes {
       },
       createDeliveryStatus: (context) => const CreateDeliveryStatusScreen(),
       manageDeliveryStatuses: (context) => const ManageDeliveryStatusesScreen(),
-      componentScreen: (context) => const ComponentScreen(),
-      componentDetails: (context) {
+      componentList: (context) => const ComponentScreen(),
+      componentManage: (context) {
         final componentId = ModalRoute.of(context)!.settings.arguments as int;
-        return ComponentDetailsScreen(componentId: componentId);
+        return ComponentManageScreen(componentId: componentId);
+      },
+      componentEdit: (context) {
+        final componentId = ModalRoute.of(context)!.settings.arguments as int;
+        return ComponentEditScreen(componentId: componentId);
+      },
+      deliveryContents: (context) {
+        final deliveryId = ModalRoute.of(context)!.settings.arguments as int;
+        return DeliveryContentsScreen(deliveryId: deliveryId);
+      },
+      addComponent: (context) {
+        final args =
+            ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+        final showAppBar = args?['showAppBar'] ?? false;
+        final deliveryId = args?['deliveryId'];
+        return AddComponentScreen(
+          showAppBar: showAppBar,
+          deliveryId: deliveryId,
+        );
       },
     };
   }

@@ -1,14 +1,14 @@
-class _UserDto {
+class UserDto {
   final int id;
   final String username;
 
-  _UserDto({
+  UserDto({
     required this.id,
     required this.username,
   });
 
-  factory _UserDto.fromJson(Map<String, dynamic> json) {
-    return _UserDto(
+  factory UserDto.fromJson(Map<String, dynamic> json) {
+    return UserDto(
       id: json['id'],
       username: json['username'],
     );
@@ -23,7 +23,7 @@ class _UserDto {
 }
 class _ComponentSubcomponentResponseDto {
   final int id;
-  final _UserDto modifiedByUser;
+  final UserDto modifiedByUser;
   final DateTime creationDate;
   final DateTime lastModified;
   final DateTime? deletedAt;
@@ -39,7 +39,7 @@ class _ComponentSubcomponentResponseDto {
   factory _ComponentSubcomponentResponseDto.fromJson(Map<String, dynamic> json) {
     return _ComponentSubcomponentResponseDto(
       id: json['id'],
-      modifiedByUser: _UserDto.fromJson(json['modifiedByUser']),
+      modifiedByUser: UserDto.fromJson(json['modifiedByUser']),
       creationDate: DateTime.parse(json['creationDate']),
       lastModified: DateTime.parse(json['lastModified']),
       deletedAt:
@@ -58,43 +58,43 @@ class _ComponentSubcomponentResponseDto {
   }
 }
 
-class _Warehouse {
+class Warehouse {
   final int id;
   final String name;
 
-  _Warehouse({required this.id, required this.name});
+  Warehouse({required this.id, required this.name});
 
-  factory _Warehouse.fromJson(Map<String, dynamic> json) {
-    return _Warehouse(
+  factory Warehouse.fromJson(Map<String, dynamic> json) {
+    return Warehouse(
       id: json['id'],
       name: json['name'],
     );
   }
 }
 
-class _WarehousePosition {
+class WarehousePosition {
   final int id;
   final String name;
 
-  _WarehousePosition({required this.id, required this.name});
+  WarehousePosition({required this.id, required this.name});
 
-  factory _WarehousePosition.fromJson(Map<String, dynamic> json) {
-    return _WarehousePosition(
+  factory WarehousePosition.fromJson(Map<String, dynamic> json) {
+    return WarehousePosition(
       id: json['id'],
       name: json['name'],
     );
   }
 }
 
-class _Delivery {
+class Delivery {
   final int id;
   final String number;
   final DateTime? deliveryDate;
 
-  _Delivery({required this.id, required this.number, required this.deliveryDate});
+  Delivery({required this.id, required this.number, required this.deliveryDate});
 
-  factory _Delivery.fromJson(Map<String, dynamic> json) {
-    return _Delivery(
+  factory Delivery.fromJson(Map<String, dynamic> json) {
+    return Delivery(
       id: json['id'],
       number: json['number'],
       deliveryDate: DateTime.parse(json['deliveryDate'])
@@ -102,21 +102,21 @@ class _Delivery {
   }
 }
 
-class _ComponentStatus {
+class ComponentStatus {
   final int id;
   final String name;
 
-  _ComponentStatus({required this.id, required this.name});
+  ComponentStatus({required this.id, required this.name});
 
-  factory _ComponentStatus.fromJson(Map<String, dynamic> json) {
-    return _ComponentStatus(
+  factory ComponentStatus.fromJson(Map<String, dynamic> json) {
+    return ComponentStatus(
       id: json['id'],
       name: json['name'],
     );
   }
 }
 
-class _ComponentType {
+class ComponentType {
   final int id;
   final String name;
   final DateTime creationDate;
@@ -124,10 +124,10 @@ class _ComponentType {
   final DateTime? deletedAt;
   final int? sortOrder;
 
-  _ComponentType({required this.id, required this.name, required this.creationDate, required this.lastModified, required this.deletedAt, required this.sortOrder});
+  ComponentType({required this.id, required this.name, required this.creationDate, required this.lastModified, required this.deletedAt, required this.sortOrder});
 
-  factory _ComponentType.fromJson(Map<String, dynamic> json) {
-    return _ComponentType(
+  factory ComponentType.fromJson(Map<String, dynamic> json) {
+    return ComponentType(
       id: json['id'],
       name: json['name'],
       creationDate: DateTime.parse(json['creationDate']),
@@ -144,13 +144,13 @@ class ComponentResponseDto {
   final String? nameTwo;
   final String insideNumber;
   final String? outsideNumber;
-  final _UserDto createdByUser;
-  final _UserDto modifiedByUser;
-  final _ComponentType componentType;
-  final _ComponentStatus status;
-  final _Delivery delivery;
-  final _Warehouse? warehouse;
-  final _WarehousePosition? warehousePosition;
+  final UserDto createdByUser;
+  final UserDto modifiedByUser;
+  final ComponentType componentType;
+  final ComponentStatus status;
+  final Delivery delivery;
+  final Warehouse? warehouse;
+  final WarehousePosition? warehousePosition;
   final DateTime? scrappedAt;
   final DateTime? shippingDate;
   final DateTime creationDate;
@@ -194,13 +194,13 @@ class ComponentResponseDto {
       nameTwo: json['nameTwo'],
       insideNumber: json['insideNumber'],
       outsideNumber: json['outsideNumber'],
-      createdByUser: _UserDto.fromJson(json['createdByUser']),
-      modifiedByUser: _UserDto.fromJson(json['modifiedByUser']),
-      componentType: _ComponentType.fromJson(json['componentType']),
-      status: _ComponentStatus.fromJson(json['status']),
-      delivery: _Delivery.fromJson(json['delivery']),
-      warehouse: _Warehouse.fromJson(json['warehouse']),
-      warehousePosition: _WarehousePosition.fromJson(json['warehousePosition']),
+      createdByUser: UserDto.fromJson(json['createdByUser']),
+      modifiedByUser: UserDto.fromJson(json['modifiedByUser']),
+      componentType: ComponentType.fromJson(json['componentType']),
+      status: ComponentStatus.fromJson(json['status']),
+      delivery: Delivery.fromJson(json['delivery']),
+      warehouse: Warehouse.fromJson(json['warehouse']),
+      warehousePosition: WarehousePosition.fromJson(json['warehousePosition']),
       scrappedAt: json['scrappedAt'] != null
           ? DateTime.parse(json['scrappedAt'])
           : null,
