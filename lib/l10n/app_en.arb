@@ -345,5 +345,7 @@
   "warehousePosition": "Warehouse Position",
   "errorLoadingComponents": "Error loading components",
   "edit": "Edit",
-  "deliveryStatus": "Delivery status"
+  "deliveryStatus": "Delivery status",
+  "filter": "Filter",
+  "sort": "Sort"
 }

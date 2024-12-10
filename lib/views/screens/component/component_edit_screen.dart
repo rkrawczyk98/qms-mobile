@@ -19,11 +19,7 @@ class ComponentEditScreen extends ConsumerStatefulWidget {
 class _ComponentManageScreenState extends ConsumerState<ComponentEditScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameOneController = TextEditingController();
-  final TextEditingController _nameTwoController = TextEditingController();
-  final TextEditingController _outsideNumberController =
-      TextEditingController();
   final TextEditingController _sizeController = TextEditingController();
-  final TextEditingController _wzNumberController = TextEditingController();
 
   DateTime? _controlDate;
   DateTime? _productionDate;
@@ -41,10 +37,7 @@ class _ComponentManageScreenState extends ConsumerState<ComponentEditScreen> {
 
     if (component != null) {
       _nameOneController.text = component.nameOne;
-      _nameTwoController.text = component.nameTwo ?? '';
-      _outsideNumberController.text = component.outsideNumber ?? '';
       _sizeController.text = component.size?.toString() ?? '';
-      _wzNumberController.text = component.wzNumber ?? '';
       _controlDate = component.controlDate;
       _productionDate = component.productionDate;
       _shippingDate = component.shippingDate;
@@ -75,10 +68,7 @@ class _ComponentManageScreenState extends ConsumerState<ComponentEditScreen> {
     if (_formKey.currentState!.validate()) {
       final updatedDto = UpdateComponentDto(
         nameOne: _nameOneController.text,
-        nameTwo: _nameTwoController.text,
-        outsideNumber: _outsideNumberController.text,
         size: double.tryParse(_sizeController.text),
-        wzNumber: _wzNumberController.text,
         controlDate: _controlDate,
         productionDate: _productionDate,
         shippingDate: _shippingDate,
@@ -117,7 +107,7 @@ class _ComponentManageScreenState extends ConsumerState<ComponentEditScreen> {
                 TextFormField(
                   controller: _nameOneController,
                   decoration:
-                      InputDecoration(labelText: localization.componentNameOne),
+                      InputDecoration(labelText: localization.componentNumber),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return localization.requiredField;
@@ -127,28 +117,10 @@ class _ComponentManageScreenState extends ConsumerState<ComponentEditScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: _nameTwoController,
-                  decoration:
-                      InputDecoration(labelText: localization.componentNameTwo),
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _outsideNumberController,
-                  decoration:
-                      InputDecoration(labelText: localization.outsideNumber),
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
                   controller: _sizeController,
                   decoration: InputDecoration(labelText: localization.size),
                   keyboardType: TextInputType.number,
                 ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _wzNumberController,
-                  decoration: InputDecoration(labelText: localization.wzNumber),
-                ),
-                const SizedBox(height: 20),
                 const SizedBox(height: 10),
                 _buildDateField(
                   label: localization.controlDate,

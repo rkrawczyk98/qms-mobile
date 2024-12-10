@@ -69,7 +69,7 @@ class _AddComponentScreenState extends ConsumerState<AddComponentScreen> {
     final selectedDelivery = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DeliverySelectionScreen(),
+        builder: (context) => const DeliverySelectionScreen(),
       ),
     ) as DeliveryResponseDto?;
     if (selectedDelivery != null) {

@@ -345,5 +345,7 @@
   "warehousePosition": "Pozycja Magazynowa",
   "errorLoadingComponents": "Błąd podczas ładowania komponentów",
   "edit": "Edytuj",
-  "deliveryStatus": "Data dostawy"
+  "deliveryStatus": "Data dostawy",
+  "filter": "Filtruj",
+  "sort": "Sortuj"
 }
