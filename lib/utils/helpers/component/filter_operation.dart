@@ -1,6 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:qms_mobile/utils/externsions/date_formater_extensions.dart';
 
 enum FilterOperation { eq, lt, gt, between, like }
+
+extension AppLocalizationsExtension on AppLocalizations {
+  String translateOperationName(FilterOperation operation) {
+    switch (operation) {
+      case FilterOperation.eq:
+        return operationName_eq;
+      case FilterOperation.lt:
+        return operationName_lt;
+      case FilterOperation.gt:
+        return operationName_gt;
+      case FilterOperation.between:
+        return operationName_between;
+      case FilterOperation.like:
+        return operationName_like;
+    }
+  }
+}
 
 abstract class FilterWidgetBuilder {
   Widget build(
@@ -14,6 +33,14 @@ class FilterOption {
   final List<FilterOperation> allowedFilteringOperations;
   final FilterWidgetBuilder widgetBuilder;
 
+  Map<FilterOperation, String> operationMap(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    return {
+      for (var operation in allowedFilteringOperations)
+        operation: localizations.translateOperationName(operation)
+    };
+  }
+
   FilterOption({
     required this.displayName,
     required this.objectName,
@@ -24,42 +51,56 @@ class FilterOption {
 }
 
 class IntNumberFilterWidgetBuilder extends FilterWidgetBuilder {
+  final BuildContext context;
+
+  IntNumberFilterWidgetBuilder({required this.context});
+
   @override
   Widget build(
       FilterOperation operation, void Function(dynamic value) onValueChanged) {
-    switch (operation) {
-      case FilterOperation.eq:
-      case FilterOperation.lt:
-      case FilterOperation.gt:
-        return TextField(
-          decoration:
-              InputDecoration(labelText: 'Enter value (${operation.name})'),
+    final localization = AppLocalizations.of(context)!;
+    return switch (operation) {
+      FilterOperation.eq ||
+      FilterOperation.lt ||
+      FilterOperation.gt =>
+        TextField(
+          decoration: InputDecoration(
+            labelText:
+                '${localization.enterValue} (${localization.translateOperationName(operation)})',
+          ),
           keyboardType: TextInputType.number,
           onChanged: (value) => onValueChanged(int.tryParse(value)),
-        );
-      case FilterOperation.between:
-        return _BetweenFilterWidget<int>(
+        ),
+      FilterOperation.between => _BetweenFilterWidget<int>(
           onValueChanged: (values) => onValueChanged(values),
           parseValue: (value) => int.tryParse(value),
           inputType: TextInputType.number,
-        );
-      default:
-        throw UnsupportedError('Unsupported operation for numbers');
-    }
+          startLabel: localization.startValue,
+          endLabel: localization.endValue,
+        ),
+      _ => throw UnsupportedError('Unsupported operation for numbers'),
+    };
   }
 }
 
 class DoubleNumberFilterWidgetBuilder extends FilterWidgetBuilder {
+  final BuildContext context;
+
+  DoubleNumberFilterWidgetBuilder({required this.context});
+
   @override
   Widget build(
       FilterOperation operation, void Function(dynamic value) onValueChanged) {
+    final localization = AppLocalizations.of(context)!;
     switch (operation) {
       case FilterOperation.eq:
       case FilterOperation.lt:
       case FilterOperation.gt:
         return TextField(
-          decoration:
-              InputDecoration(labelText: 'Enter value (${operation.name})'),
+          decoration: InputDecoration(
+            labelText:
+                '${localization.enterValue} (${localization.translateOperationName(operation)})',
+          ),
           keyboardType: TextInputType.number,
           onChanged: (value) => onValueChanged(double.tryParse(value)),
         );
@@ -68,6 +109,8 @@ class DoubleNumberFilterWidgetBuilder extends FilterWidgetBuilder {
           onValueChanged: (values) => onValueChanged(values),
           parseValue: (value) => double.tryParse(value),
           inputType: TextInputType.number,
+          startLabel: localization.startValue,
+          endLabel: localization.endValue,
         );
       default:
         throw UnsupportedError('Unsupported operation for numbers');
@@ -76,15 +119,21 @@ class DoubleNumberFilterWidgetBuilder extends FilterWidgetBuilder {
 }
 
 class StringFilterWidgetBuilder extends FilterWidgetBuilder {
+  final BuildContext context;
+
+  StringFilterWidgetBuilder({required this.context});
+
   @override
   Widget build(
       FilterOperation operation, void Function(dynamic value) onValueChanged) {
+    final localization = AppLocalizations.of(context)!;
     switch (operation) {
       case FilterOperation.eq:
       case FilterOperation.like:
         return TextField(
-          decoration:
-              InputDecoration(labelText: 'Enter value (${operation.name})'),
+          decoration: InputDecoration(
+              labelText:
+                  '${localization.enterValue} (${localization.translateOperationName(operation)})'),
           onChanged: onValueChanged,
         );
       default:
@@ -94,36 +143,56 @@ class StringFilterWidgetBuilder extends FilterWidgetBuilder {
 }
 
 class DateFilterWidgetBuilder extends FilterWidgetBuilder {
+  final BuildContext context;
+  final TextEditingController dateController = TextEditingController();
+
+  DateFilterWidgetBuilder({required this.context});
+
   @override
   Widget build(
       FilterOperation operation, void Function(dynamic value) onValueChanged) {
-    switch (operation) {
-      case FilterOperation.eq:
-      case FilterOperation.lt:
-      case FilterOperation.gt:
-        return TextButton(
-          onPressed: () async {
+    final localization = AppLocalizations.of(context)!;
+
+    return switch (operation) {
+      FilterOperation.eq ||
+      FilterOperation.lt ||
+      FilterOperation.gt =>
+        TextField(
+          controller: dateController,
+          readOnly: true,
+          decoration: InputDecoration(
+            labelText:
+                '${localization.selectDate} (${localization.translateOperationName(operation)})',
+            hintText: localization.selectDate,
+            suffixIcon: const Icon(Icons.calendar_today),
+          ),
+          onTap: () async {
+            // Open the date picker
             final pickedDate = await showDatePicker(
-              context: onValueChanged as BuildContext,
+              context: context,
               initialDate: DateTime.now(),
               firstDate: DateTime(2000),
               lastDate: DateTime(2100),
             );
             if (pickedDate != null) {
+              // Format and display the selected date
+              final formattedDate = pickedDate.forceFormatToDate();
+              dateController.text = formattedDate;
+
+              // Pass ISO string to the callback
               onValueChanged(pickedDate.toIso8601String());
             }
           },
-          child: Text('Select Date (${operation.name})'),
-        );
-      case FilterOperation.between:
-        return _BetweenFilterWidget<DateTime>(
+        ),
+      FilterOperation.between => _BetweenFilterWidget<DateTime>(
           onValueChanged: (values) => onValueChanged(values),
           parseValue: (value) => DateTime.tryParse(value),
           isDate: true,
-        );
-      default:
-        throw UnsupportedError('Unsupported operation for dates');
-    }
+          startLabel: localization.startDate,
+          endLabel: localization.endDate,
+        ),
+      _ => throw UnsupportedError('Unsupported operation for dates'),
+    };
   }
 }
 
@@ -133,17 +202,17 @@ class _BetweenFilterWidget<T> extends StatefulWidget {
   final String startLabel;
   final String endLabel;
   final TextInputType? inputType;
-  final bool isDate; // Flaga do obsługi wyboru daty
+  final bool isDate;
 
   const _BetweenFilterWidget({
     required this.onValueChanged,
     required this.parseValue,
-    this.startLabel = 'Start value',
-    this.endLabel = 'End value',
+    required this.startLabel,
+    required this.endLabel,
     this.inputType,
     this.isDate = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<_BetweenFilterWidget<T>> createState() =>
@@ -154,8 +223,24 @@ class _BetweenFilterWidgetState<T> extends State<_BetweenFilterWidget<T>> {
   T? startValue;
   T? endValue;
 
-  void _updateValues() {
-    widget.onValueChanged([startValue, endValue]);
+  late final TextEditingController startController;
+  late final TextEditingController endController;
+
+  String? startErrorText;
+  String? endErrorText;
+
+  @override
+  void initState() {
+    super.initState();
+    startController = TextEditingController();
+    endController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    startController.dispose();
+    endController.dispose();
+    super.dispose();
   }
 
   Future<void> _pickDate(bool isStart) async {
@@ -165,15 +250,33 @@ class _BetweenFilterWidgetState<T> extends State<_BetweenFilterWidget<T>> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
+
     if (pickedDate != null) {
+      final formattedDate = pickedDate.forceFormatToDate();
       setState(() {
         if (isStart) {
           startValue = pickedDate as T?;
+          startController.text = formattedDate;
+          startErrorText = null; // Clear error
         } else {
           endValue = pickedDate as T?;
+          endController.text = formattedDate;
+          endErrorText = null; // Clear error
         }
       });
-      _updateValues();
+      _validateAndUpdateValues();
+    }
+  }
+
+  void _validateAndUpdateValues() {
+    setState(() {
+      startErrorText =
+          startValue == null ? 'Please select a start date.' : null;
+      endErrorText = endValue == null ? 'Please select an end date.' : null;
+    });
+
+    if (startValue != null && endValue != null) {
+      widget.onValueChanged([startValue, endValue]);
     }
   }
 
@@ -181,172 +284,61 @@ class _BetweenFilterWidgetState<T> extends State<_BetweenFilterWidget<T>> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // Start field
         widget.isDate
-            ? TextButton(
-                onPressed: () => _pickDate(true),
-                child: Text(startValue == null
-                    ? widget.startLabel
-                    : startValue.toString()),
+            ? TextField(
+                controller: startController,
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: widget.startLabel,
+                  hintText: widget.startLabel,
+                  suffixIcon: const Icon(Icons.calendar_today),
+                  errorText: startErrorText, // Display error if needed
+                ),
+                onTap: () => _pickDate(true),
               )
             : TextField(
-                decoration: InputDecoration(labelText: widget.startLabel),
+                decoration: InputDecoration(
+                  labelText: widget.startLabel,
+                  errorText: startErrorText, // Display error if needed
+                ),
                 keyboardType: widget.inputType,
                 onChanged: (value) {
                   setState(() {
                     startValue = widget.parseValue(value);
+                    startErrorText = null; // Clear error
                   });
-                  _updateValues();
+                  _validateAndUpdateValues();
                 },
               ),
+        // End field
         widget.isDate
-            ? TextButton(
-                onPressed: () => _pickDate(false),
-                child: Text(
-                    endValue == null ? widget.endLabel : endValue.toString()),
+            ? TextField(
+                controller: endController,
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: widget.endLabel,
+                  hintText: widget.endLabel,
+                  suffixIcon: const Icon(Icons.calendar_today),
+                  errorText: endErrorText, // Display error if needed
+                ),
+                onTap: () => _pickDate(false),
               )
             : TextField(
-                decoration: InputDecoration(labelText: widget.endLabel),
+                decoration: InputDecoration(
+                  labelText: widget.endLabel,
+                  errorText: endErrorText, // Display error if needed
+                ),
                 keyboardType: widget.inputType,
                 onChanged: (value) {
                   setState(() {
                     endValue = widget.parseValue(value);
+                    endErrorText = null; // Clear error
                   });
-                  _updateValues();
+                  _validateAndUpdateValues();
                 },
               ),
       ],
     );
   }
 }
-
-// Example configurations
-final List<FilterOption> exampleFilterOptions = [
-  FilterOption(
-    displayName: 'ID',
-    objectName: 'id',
-    databaseName: 'component.id',
-    allowedFilteringOperations: [
-      FilterOperation.eq,
-      FilterOperation.lt,
-      FilterOperation.gt,
-      FilterOperation.between
-    ],
-    widgetBuilder: IntNumberFilterWidgetBuilder(),
-  ),
-  FilterOption(
-    displayName: 'Inside Number',
-    objectName: 'insideNumber',
-    databaseName: 'insideNumber',
-    allowedFilteringOperations: [FilterOperation.like, FilterOperation.eq],
-    widgetBuilder: StringFilterWidgetBuilder(),
-  ),
-  FilterOption(
-    displayName: 'Outside Number',
-    objectName: 'outsideNumber',
-    databaseName: 'outsideNumber',
-    allowedFilteringOperations: [FilterOperation.like, FilterOperation.eq],
-    widgetBuilder: StringFilterWidgetBuilder(),
-  ),
-  FilterOption(
-    displayName: 'Name',
-    objectName: 'nameOne',
-    databaseName: 'nameOne',
-    allowedFilteringOperations: [FilterOperation.like, FilterOperation.eq],
-    widgetBuilder: StringFilterWidgetBuilder(),
-  ),
-  FilterOption(
-    displayName: 'Size',
-    objectName: 'size',
-    databaseName: 'size',
-    allowedFilteringOperations: [
-      FilterOperation.eq,
-      FilterOperation.lt,
-      FilterOperation.gt,
-      FilterOperation.between
-    ],
-    widgetBuilder: DoubleNumberFilterWidgetBuilder(),
-  ),
-  FilterOption(
-    displayName: 'Production Date',
-    objectName: 'productionDate',
-    databaseName: 'productionDate',
-    allowedFilteringOperations: [
-      FilterOperation.lt,
-      FilterOperation.gt,
-      FilterOperation.between
-    ],
-    widgetBuilder: DateFilterWidgetBuilder(),
-  ),
-  FilterOption(
-    displayName: 'Control Date',
-    objectName: 'controlDate',
-    databaseName: 'controlDate',
-    allowedFilteringOperations: [
-      FilterOperation.lt,
-      FilterOperation.gt,
-      FilterOperation.between
-    ],
-    widgetBuilder: DateFilterWidgetBuilder(),
-  ),
-  FilterOption(
-    displayName: 'Shipping Date',
-    objectName: 'shippingDate',
-    databaseName: 'shippingDate',
-    allowedFilteringOperations: [
-      FilterOperation.lt,
-      FilterOperation.gt,
-      FilterOperation.between
-    ],
-    widgetBuilder: DateFilterWidgetBuilder(),
-  ),
-  FilterOption(
-    displayName: 'Creation Date',
-    objectName: 'creationDate',
-    databaseName: 'creationDate',
-    allowedFilteringOperations: [
-      FilterOperation.lt,
-      FilterOperation.gt,
-      FilterOperation.between
-    ],
-    widgetBuilder: DateFilterWidgetBuilder(),
-  ),
-  FilterOption(
-    displayName: 'Last Modified',
-    objectName: 'lastModified',
-    databaseName: 'lastModified',
-    allowedFilteringOperations: [
-      FilterOperation.lt,
-      FilterOperation.gt,
-      FilterOperation.between
-    ],
-    widgetBuilder: DateFilterWidgetBuilder(),
-  ),
-  FilterOption(
-    displayName: 'Created By Username',
-    objectName: 'createdByUsername',
-    databaseName: 'createdByUsername',
-    allowedFilteringOperations: [FilterOperation.like, FilterOperation.eq],
-    widgetBuilder: StringFilterWidgetBuilder(),
-  ),
-  // FilterOption(
-  //   displayName: 'Modified By User ID',
-  //   objectName: 'modifiedByUserId',
-  //   databaseName: 'modifiedByUserId',
-  //   allowedFilteringOperations: [FilterOperation.eq, FilterOperation.lt, FilterOperation.gt, FilterOperation.between],
-  //   widgetBuilder: NumberFilterWidgetBuilder(),
-  // ),
-  FilterOption(
-    displayName: 'Modified By Username',
-    objectName: 'modifiedByUsername',
-    databaseName: 'modifiedByUsername',
-    allowedFilteringOperations: [FilterOperation.like, FilterOperation.eq],
-    widgetBuilder: StringFilterWidgetBuilder(),
-  ),
-  FilterOption(
-    displayName: 'Component Type Name',
-    objectName: 'componentTypeName',
-    databaseName: 'componentTypeName',
-    allowedFilteringOperations: [FilterOperation.like, FilterOperation.eq],
-    widgetBuilder: StringFilterWidgetBuilder(),
-  ),
-];

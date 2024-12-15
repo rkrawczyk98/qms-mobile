@@ -259,7 +259,7 @@ class _AddComponentScreenState extends ConsumerState<AddComponentScreen> {
 }
 
 class DeliverySelectionScreen extends ConsumerStatefulWidget {
-  const DeliverySelectionScreen({Key? key}) : super(key: key);
+  const DeliverySelectionScreen({super.key});
 
   @override
   _DeliverySelectionScreenState createState() =>

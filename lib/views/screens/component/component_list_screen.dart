@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:qms_mobile/data/providers/component_module/component_list_params_provider.dart';
 import 'package:qms_mobile/data/providers/component_module/component_provider.dart';
 import 'package:qms_mobile/routes/app_routes.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
@@ -40,32 +41,63 @@ class _ComponentListState extends ConsumerState<ComponentList> {
     super.dispose();
   }
 
+  String buildFilterQuery(Map<String, dynamic> filters) {
+    final filterStrings = filters.entries.map((entry) {
+      final operation = entry.value['operation'];
+      final value = entry.value['value'];
+      if (operation == 'between' && value is List) {
+        return '${entry.key}:$operation|${value[0]}|${value[1]}';
+      }
+      return '${entry.key}:$operation|$value';
+    });
+    return filterStrings.join(';');
+  }
+
   void _navigateToFilterScreen() async {
+    final currentParams = ref.read(componentListParamsProvider);
+
     final selectedFilter = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const ComponentFilterScreen(),
+        builder: (context) => ComponentFilterScreen(
+          initialFilters: currentParams.filters,
+        ),
       ),
     );
 
     if (selectedFilter != null) {
-      ref
-          .read(advancedComponentProvider.notifier)
-          .resetAndFetch(filter: selectedFilter);
+      ref.read(componentListParamsProvider.notifier).setFilters(selectedFilter);
+      ref.read(advancedComponentProvider.notifier).resetAndFetch(
+            filter: buildFilterQuery(selectedFilter),
+            sort: currentParams.sortColumn,
+            order: currentParams.sortOrder,
+          );
     }
   }
 
   void _navigateToSortScreen() async {
+    final currentParams = ref.read(componentListParamsProvider);
+
     final selectedSort = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const ComponentSortScreen(),
+        builder: (context) => ComponentSortScreen(
+          initialSortColumn: currentParams.sortColumn,
+          initialSortOrder: currentParams.sortOrder,
+        ),
       ),
     );
 
     if (selectedSort != null) {
+      ref.read(componentListParamsProvider.notifier).setSort(
+            selectedSort['column'],
+            selectedSort['order'],
+          );
       ref.read(advancedComponentProvider.notifier).resetAndFetch(
-          sort: selectedSort['column'], order: selectedSort['order']);
+            filter: buildFilterQuery(currentParams.filters),
+            sort: selectedSort['column'],
+            order: selectedSort['order'],
+          );
     }
   }
 
@@ -115,8 +147,7 @@ class _ComponentListState extends ConsumerState<ComponentList> {
               if (index == components.length) {
                 return ref.read(advancedComponentProvider.notifier).hasMore()
                     ? const Center(child: CircularProgressIndicator())
-                    : const SizedBox
-                        .shrink(); // Hide loader when no more data
+                    : const SizedBox.shrink(); // Hide loader when no more data
               }
 
               final component = components[index];
@@ -130,10 +161,10 @@ class _ComponentListState extends ConsumerState<ComponentList> {
                 AppLocalizations.of(context)!.type: component.componentTypeName,
                 AppLocalizations.of(context)!.status: component.statusName,
                 AppLocalizations.of(context)!.productionDate:
-                    component.productionDate?.formatNullableToDateTime() ??
+                    component.productionDate?.formatToNullableDateTime() ??
                         AppLocalizations.of(context)!.notAvailable,
                 AppLocalizations.of(context)!.controlDate:
-                    component.controlDate?.formatNullableToDateTime() ??
+                    component.controlDate?.formatToNullableDateTime() ??
                         AppLocalizations.of(context)!.notAvailable,
               };
 

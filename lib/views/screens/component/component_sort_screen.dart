@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
 
 class ComponentSortScreen extends StatefulWidget {
-  const ComponentSortScreen({super.key});
+  final String? initialSortColumn;
+  final String initialSortOrder;
+
+  const ComponentSortScreen({
+    this.initialSortColumn,
+    this.initialSortOrder = 'ASC',
+    super.key,
+  });
 
   @override
   State<ComponentSortScreen> createState() => _ComponentSortScreenState();
 }
 
 class _ComponentSortScreenState extends State<ComponentSortScreen> {
-  String? sortColumn = 'nameOne';
-  String sortOrder = 'ASC';
+  late String? sortColumn;
+  late String sortOrder;
+
+  @override
+  void initState() {
+    super.initState();
+    sortColumn = widget.initialSortColumn;
+    sortOrder = widget.initialSortOrder;
+  }
 
   void _applySort() {
     Navigator.pop(context, {'column': sortColumn, 'order': sortOrder});
@@ -38,8 +52,10 @@ class _ComponentSortScreenState extends State<ComponentSortScreen> {
               value: sortColumn,
               items: const [
                 DropdownMenuItem(value: 'nameOne', child: Text('Name One')),
-                DropdownMenuItem(value: 'creationDate', child: Text('Creation Date')),
-                DropdownMenuItem(value: 'statusName', child: Text('Status Name')),
+                DropdownMenuItem(
+                    value: 'creationDate', child: Text('Creation Date')),
+                DropdownMenuItem(
+                    value: 'statusName', child: Text('Status Name')),
               ],
               onChanged: (value) => setState(() => sortColumn = value),
             ),

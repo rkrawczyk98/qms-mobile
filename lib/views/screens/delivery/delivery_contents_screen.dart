@@ -89,8 +89,8 @@ class DeliveryContentsScreen extends ConsumerWidget {
                   fields: {
                     localization.type: component.componentType.name,
                     localization.status: component.status.name,
-                    localization.productionDate: component.productionDate.formatNullableToDateTime(),
-                    localization.controlDate: component.controlDate.formatNullableToDateTime(),
+                    localization.productionDate: component.productionDate.formatToNullableDateTime(),
+                    localization.controlDate: component.controlDate.formatToNullableDateTime(),
                     localization.warehouse: component.warehouse?.name,
                     localization.warehousePosition:
                         component.warehousePosition?.name,

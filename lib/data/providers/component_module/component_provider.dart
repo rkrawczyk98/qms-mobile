@@ -28,7 +28,8 @@ class ComponentNotifier extends AsyncNotifier<List<ComponentResponseDto>> {
   }
 
   /// Add a new component
-  Future<ComponentResponseDto> addComponent(CreateComponentDto component) async {
+  Future<ComponentResponseDto> addComponent(
+      CreateComponentDto component) async {
     try {
       final response = await _componentService.createComponent(component);
       // Update the UI state
@@ -41,9 +42,11 @@ class ComponentNotifier extends AsyncNotifier<List<ComponentResponseDto>> {
   }
 
   /// Update an existing component
-  Future<void> updateComponent(int id, UpdateComponentDto updatedComponent) async {
+  Future<void> updateComponent(
+      int id, UpdateComponentDto updatedComponent) async {
     try {
-      final response = await _componentService.updateComponent(id, updatedComponent);
+      final response =
+          await _componentService.updateComponent(id, updatedComponent);
       // Update the UI state
       state = AsyncValue.data([
         for (final component in state.value ?? [])
@@ -72,7 +75,8 @@ class ComponentNotifier extends AsyncNotifier<List<ComponentResponseDto>> {
   }
 }
 
-class AdvancedComponentNotifier extends AsyncNotifier<List<AdvencedFindComponentResponseDto>> {
+class AdvancedComponentNotifier
+    extends AsyncNotifier<List<AdvencedFindComponentResponseDto>> {
   late final ComponentService _componentService;
 
   // Pagination, sorting and filtering management parameters
@@ -118,11 +122,13 @@ class AdvancedComponentNotifier extends AsyncNotifier<List<AdvencedFindComponent
         filter: _filter,
       );
 
-      final components = result['data'] as List<AdvencedFindComponentResponseDto>;
+      final components =
+          result['data'] as List<AdvencedFindComponentResponseDto>;
       _hasMore = result['hasNextPage'] as bool;
 
       final currentState = state.value ?? [];
-      final updatedState = reset ? components : [...currentState, ...components];
+      final updatedState =
+          reset ? components : [...currentState, ...components];
 
       state = AsyncValue.data(updatedState);
 
@@ -140,7 +146,16 @@ class AdvancedComponentNotifier extends AsyncNotifier<List<AdvencedFindComponent
     String? order,
     String? filter,
   }) async {
-    await fetchComponents(reset: true, sort: sort, order: order, filter: filter);
+    final currentSort = _sortColumn;
+    final currentOrder = _sortOrder;
+    final currentFilter = _filter;
+
+    await fetchComponents(
+      reset: true,
+      sort: sort ?? currentSort,
+      order: order ?? currentOrder,
+      filter: filter ?? currentFilter,
+    );
   }
 
   /// Are there any more pages to load
@@ -154,8 +169,8 @@ final componentProvider =
   return ComponentNotifier();
 });
 
-final advancedComponentProvider =
-    AsyncNotifierProvider<AdvancedComponentNotifier, List<AdvencedFindComponentResponseDto>>(() {
+final advancedComponentProvider = AsyncNotifierProvider<
+    AdvancedComponentNotifier, List<AdvencedFindComponentResponseDto>>(() {
   return AdvancedComponentNotifier();
 });
 

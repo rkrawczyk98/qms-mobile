@@ -41,6 +41,7 @@ class _ComponentScreenState extends ConsumerState<ComponentScreen> {
               onPressed: () async {
                 try {
                   await ref.read(componentProvider.notifier).fetchComponents();
+                  await ref.read(advancedComponentProvider.notifier).fetchComponents();
                   if (!mounted) return;
                   CustomSnackbar.showSuccessSnackbar(
                     context,
