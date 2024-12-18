@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qms_mobile/data/providers/component_module/delivery_list_params_provider.dart';
+import 'package:qms_mobile/data/providers/delivery_module/delivery_list_params_provider.dart';
 import 'package:qms_mobile/data/providers/delivery_module/delivery_provider.dart';
 import 'package:qms_mobile/routes/app_routes.dart';
 import 'package:qms_mobile/routes/navigation_service.dart';
@@ -133,68 +133,81 @@ class _DeliveryListScreenState extends ConsumerState<DeliveryListScreen> {
           ],
         ),
       ),
-      body: deliveriesAsync.when(
-        data: (deliveries) {
-          if (deliveries.isEmpty) {
-            return Center(
-              child: Text(AppLocalizations.of(context)!.noDeliveriesFound),
-            );
-          }
-
-          return ListView.builder(
-            controller: _scrollController,
-            padding: const EdgeInsets.all(16),
-            itemCount: deliveries.length + 1, // +1 for the loader
-            itemBuilder: (context, index) {
-              if (index == deliveries.length) {
-                return ref.read(advancedDeliveryProvider.notifier).hasMore()
-                    ? const Center(child: CircularProgressIndicator())
-                    : const SizedBox.shrink(); // No more data
-              }
-
-              final delivery = deliveries[index];
-              final fields = {
-                AppLocalizations.of(context)!.componentType:
-                    delivery.componentType?.name,
-                AppLocalizations.of(context)!.status: delivery.status?.name,
-                AppLocalizations.of(context)!.customer: delivery.customer?.name,
-                AppLocalizations.of(context)!.lastModified:
-                    delivery.lastModified.formatToDateTime(),
-              };
-
-              return InfoCard(
-                title: delivery.number,
-                titleLabel: AppLocalizations.of(context)!.deliveryNumber,
-                icon: const Icon(
-                  Icons.local_shipping_outlined,
-                  size: 35,
-                  color: Colors.blue,
-                ),
-                fields: fields,
-                onRightTap: () {
-                  navigationService.navigateTo(
-                    AppRoutes.deliveryContents,
-                    arguments: delivery.id,
-                  );
-                },
-                onLeftTap: () {
-                  navigationService.navigateTo(
-                    AppRoutes.deliveryDetails,
-                    arguments: delivery.id,
-                  );
-                },
-                leadingColor: Colors.blue,
-                leftTapText: AppLocalizations.of(context)!.details,
-                rightTapText: AppLocalizations.of(context)!.contents,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          // Reset and fetch new deliveries
+          ref.read(deliveryProvider.notifier).fetchDeliveries();
+          final currentParams = ref.read(deliveryListParamsProvider);
+          await ref.read(advancedDeliveryProvider.notifier).resetAndFetch(
+                filter: buildFilterQuery(currentParams.filters),
+                sort: currentParams.sortColumn,
+                order: currentParams.sortOrder,
               );
-            },
-          );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        error: (error, stackTrace) => Center(
-          child: Text(AppLocalizations.of(context)!.unknownError),
+        child: deliveriesAsync.when(
+          data: (deliveries) {
+            if (deliveries.isEmpty) {
+              return Center(
+                child: Text(AppLocalizations.of(context)!.noDeliveriesFound),
+              );
+            }
+
+            return ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(16),
+              itemCount: deliveries.length + 1, // +1 for the loader
+              itemBuilder: (context, index) {
+                if (index == deliveries.length) {
+                  return ref.read(advancedDeliveryProvider.notifier).hasMore()
+                      ? const Center(child: CircularProgressIndicator())
+                      : const SizedBox.shrink(); // No more data
+                }
+
+                final delivery = deliveries[index];
+                final fields = {
+                  AppLocalizations.of(context)!.componentType:
+                      delivery.componentType?.name,
+                  AppLocalizations.of(context)!.status: delivery.status?.name,
+                  AppLocalizations.of(context)!.customer:
+                      delivery.customer?.name,
+                  AppLocalizations.of(context)!.lastModified:
+                      delivery.lastModified.formatToDateTime(),
+                };
+
+                return InfoCard(
+                  title: delivery.number,
+                  titleLabel: AppLocalizations.of(context)!.deliveryNumber,
+                  icon: const Icon(
+                    Icons.local_shipping_outlined,
+                    size: 35,
+                    color: Colors.blue,
+                  ),
+                  fields: fields,
+                  onRightTap: () {
+                    navigationService.navigateTo(
+                      AppRoutes.deliveryContents,
+                      arguments: delivery.id,
+                    );
+                  },
+                  onLeftTap: () {
+                    navigationService.navigateTo(
+                      AppRoutes.deliveryDetails,
+                      arguments: delivery.id,
+                    );
+                  },
+                  leadingColor: Colors.blue,
+                  leftTapText: AppLocalizations.of(context)!.details,
+                  rightTapText: AppLocalizations.of(context)!.contents,
+                );
+              },
+            );
+          },
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
+          error: (error, stackTrace) => Center(
+            child: Text(AppLocalizations.of(context)!.unknownError),
+          ),
         ),
       ),
     );

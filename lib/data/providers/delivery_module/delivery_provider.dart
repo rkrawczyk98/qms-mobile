@@ -4,7 +4,8 @@ import 'package:qms_mobile/data/models/DTOs/delivery_module/delivery/delivery_re
 import 'package:qms_mobile/data/providers/api_service_provider.dart';
 import 'package:qms_mobile/data/services/delivery_module/delivery_service.dart';
 
-class DeliveryNotifier extends StateNotifier<AsyncValue<List<DeliveryResponseDto>>> {
+class DeliveryNotifier
+    extends StateNotifier<AsyncValue<List<DeliveryResponseDto>>> {
   final DeliveryService deliveryService;
 
   DeliveryNotifier(this.deliveryService) : super(const AsyncValue.loading());
@@ -114,8 +115,7 @@ class AdvancedDeliveryNotifier
         filter: _filter,
       );
 
-      final deliveries =
-          result['data'] as List<DeliveryResponseDto>;
+      final deliveries = result['data'] as List<DeliveryResponseDto>;
       _hasMore = result['hasNextPage'] as bool;
 
       final currentState = state.value ?? [];
@@ -125,7 +125,7 @@ class AdvancedDeliveryNotifier
       state = AsyncValue.data(updatedState);
 
       _currentPage++;
-      return updatedState;
+      return updatedState; 
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
       rethrow;
@@ -161,12 +161,14 @@ final deliveryServiceProvider = Provider<DeliveryService>((ref) {
   return DeliveryService(apiService.dio);
 });
 
-final advancedDeliveryProvider = AsyncNotifierProvider<
-    AdvancedDeliveryNotifier, List<DeliveryResponseDto>>(() {
+final advancedDeliveryProvider =
+    AsyncNotifierProvider<AdvancedDeliveryNotifier, List<DeliveryResponseDto>>(
+        () {
   return AdvancedDeliveryNotifier();
 });
 
-final deliveryProvider = StateNotifierProvider<DeliveryNotifier, AsyncValue<List<DeliveryResponseDto>>>((ref) {
+final deliveryProvider = StateNotifierProvider<DeliveryNotifier,
+    AsyncValue<List<DeliveryResponseDto>>>((ref) {
   final deliveryService = ref.read(deliveryServiceProvider);
   return DeliveryNotifier(deliveryService);
 });

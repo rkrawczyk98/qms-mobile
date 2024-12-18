@@ -137,70 +137,84 @@ class _ComponentListState extends ConsumerState<ComponentList> {
           ],
         ),
       ),
-      body: componentsAsync.when(
-        data: (components) {
-          if (components.isEmpty) {
-            return Center(
-              child: Text(AppLocalizations.of(context)!.noComponentsFound),
-            );
-          }
-
-          return ListView.builder(
-            controller: _scrollController,
-            padding: const EdgeInsets.all(16),
-            itemCount: components.length + 1, // +1 for loader
-            itemBuilder: (context, index) {
-              if (index == components.length) {
-                return ref.read(advancedComponentProvider.notifier).hasMore()
-                    ? const Center(child: CircularProgressIndicator())
-                    : const SizedBox.shrink(); // Hide loader when no more data
-              }
-
-              final component = components[index];
-
-              // Mapping component fields to InfoCard
-              final fields = {
-                AppLocalizations.of(context)!.deliveryNumber:
-                    component.deliveryNumber,
-                AppLocalizations.of(context)!.componentNumber:
-                    component.nameOne,
-                AppLocalizations.of(context)!.type: component.componentTypeName,
-                AppLocalizations.of(context)!.status: component.statusName,
-                AppLocalizations.of(context)!.productionDate:
-                    component.productionDate?.formatToNullableDateTime() ??
-                        AppLocalizations.of(context)!.notAvailable,
-                AppLocalizations.of(context)!.controlDate:
-                    component.controlDate?.formatToNullableDateTime() ??
-                        AppLocalizations.of(context)!.notAvailable,
-              };
-
-              return InfoCard(
-                title: component.insideNumber,
-                titleLabel: AppLocalizations.of(context)!.insideNumber,
-                fields: fields,
-                icon: const Icon(
-                  Icons.view_in_ar,
-                  color: Colors.green,
-                  size: 35,
-                ),
-                onRightTap: () => navigationService.navigateTo(
-                  AppRoutes.componentManage,
-                  arguments: component.id,
-                ),
-                onLeftTap: () => navigationService.navigateTo(
-                  AppRoutes.componentEdit,
-                  arguments: component.id,
-                ),
-                leadingColor: Colors.green,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          // Reset and fetch new deliveries
+          ref.read(componentProvider.notifier).fetchComponents();
+          final currentParams = ref.read(componentListParamsProvider);
+          await ref.read(advancedComponentProvider.notifier).resetAndFetch(
+                filter: buildFilterQuery(currentParams.filters),
+                sort: currentParams.sortColumn,
+                order: currentParams.sortOrder,
               );
-            },
-          );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        error: (error, stackTrace) => Center(
-          child: Text(AppLocalizations.of(context)!.unknownError),
+        child: componentsAsync.when(
+          data: (components) {
+            if (components.isEmpty) {
+              return Center(
+                child: Text(AppLocalizations.of(context)!.noComponentsFound),
+              );
+            }
+
+            return ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(16),
+              itemCount: components.length + 1, // +1 for loader
+              itemBuilder: (context, index) {
+                if (index == components.length) {
+                  return ref.read(advancedComponentProvider.notifier).hasMore()
+                      ? const Center(child: CircularProgressIndicator())
+                      : const SizedBox
+                          .shrink(); // Hide loader when no more data
+                }
+
+                final component = components[index];
+
+                // Mapping component fields to InfoCard
+                final fields = {
+                  AppLocalizations.of(context)!.deliveryNumber:
+                      component.deliveryNumber,
+                  AppLocalizations.of(context)!.componentNumber:
+                      component.nameOne,
+                  AppLocalizations.of(context)!.type:
+                      component.componentTypeName,
+                  AppLocalizations.of(context)!.status: component.statusName,
+                  AppLocalizations.of(context)!.productionDate:
+                      component.productionDate?.formatToNullableDateTime() ??
+                          AppLocalizations.of(context)!.notAvailable,
+                  AppLocalizations.of(context)!.controlDate:
+                      component.controlDate?.formatToNullableDateTime() ??
+                          AppLocalizations.of(context)!.notAvailable,
+                };
+
+                return InfoCard(
+                  title: component.insideNumber,
+                  titleLabel: AppLocalizations.of(context)!.insideNumber,
+                  fields: fields,
+                  icon: const Icon(
+                    Icons.view_in_ar,
+                    color: Colors.green,
+                    size: 35,
+                  ),
+                  onRightTap: () => navigationService.navigateTo(
+                    AppRoutes.componentManage,
+                    arguments: component.id,
+                  ),
+                  onLeftTap: () => navigationService.navigateTo(
+                    AppRoutes.componentEdit,
+                    arguments: component.id,
+                  ),
+                  leadingColor: Colors.green,
+                );
+              },
+            );
+          },
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
+          error: (error, stackTrace) => Center(
+            child: Text(AppLocalizations.of(context)!.unknownError),
+          ),
         ),
       ),
     );

@@ -69,7 +69,7 @@ class _DeliveryScreenState extends ConsumerState<DeliveryScreen>
                   await ref.read(deliveryProvider.notifier).fetchDeliveries();
                   await ref
                       .read(advancedDeliveryProvider.notifier)
-                      .fetchDeliveries();
+                      .resetAndFetch();
                   if (!mounted) return;
                   CustomSnackbar.showSuccessSnackbar(
                     context,
