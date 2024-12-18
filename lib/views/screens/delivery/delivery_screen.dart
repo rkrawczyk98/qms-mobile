@@ -25,11 +25,15 @@ class _DeliveryScreenState extends ConsumerState<DeliveryScreen>
     // Collection of deliveries during initialization
     final deliveryNotifier = ref.read(deliveryProvider.notifier);
     deliveryNotifier.fetchDeliveries();
+    final advencedDeliveryNotifier =
+        ref.read(advancedDeliveryProvider.notifier);
+    advencedDeliveryNotifier.fetchDeliveries();
 
     // Tab change support
     tabController.addListener(() {
       if (tabController.index == 0) {
         deliveryNotifier.fetchDeliveries();
+        advencedDeliveryNotifier.fetchDeliveries();
       }
     });
   }
@@ -42,7 +46,7 @@ class _DeliveryScreenState extends ConsumerState<DeliveryScreen>
 
   @override
   Widget build(BuildContext context) {
-    final deliveriesAsync = ref.watch(deliveryProvider);
+    // final deliveriesAsync = ref.watch(deliveryProvider);
     final localizations = AppLocalizations.of(context)!;
 
     return DefaultTabController(
@@ -63,6 +67,9 @@ class _DeliveryScreenState extends ConsumerState<DeliveryScreen>
               onPressed: () async {
                 try {
                   await ref.read(deliveryProvider.notifier).fetchDeliveries();
+                  await ref
+                      .read(advancedDeliveryProvider.notifier)
+                      .fetchDeliveries();
                   if (!mounted) return;
                   CustomSnackbar.showSuccessSnackbar(
                     context,
@@ -80,27 +87,12 @@ class _DeliveryScreenState extends ConsumerState<DeliveryScreen>
         ),
         body: TabBarView(
           controller: tabController,
-          children: [
-            deliveriesAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(
-                child: Text('${localizations.refreshError}: $error'),
-              ),
-              data: (deliveries) {
-                if (deliveries.isEmpty) {
-                  return Center(
-                    child: Text(localizations.noDeliveriesFound),
-                  );
-                }
-                return DeliveryList(deliveries: deliveries);
-              },
-            ),
-            const AddDeliveryScreen(),
+          children: const [
+            DeliveryListScreen(),
+            AddDeliveryScreen(),
           ],
         ),
       ),
     );
   }
 }
-
-

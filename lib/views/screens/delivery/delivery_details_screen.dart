@@ -72,9 +72,9 @@ class DeliveryDetailsScreen extends ConsumerWidget {
                   titleLabel: localization.deliveryNumber,
                   fields: {
                     localization.status: delivery.status?.name ?? localization.unknown,
-                    localization.deliveryStatus: delivery.deliveryDate.formatToDateTime()!,
+                    localization.deliveryStatus: delivery.deliveryDate.formatToDateTime(),
                     localization.client: delivery.customer?.name ?? localization.unknown,
-                    localization.deliveryDate: delivery.creationDate.formatToDateTime()!,
+                    localization.deliveryDate: delivery.creationDate.formatToDateTime(),
                     localization.createdByUser: delivery.createdByUser?.username ?? localization.unknown,
                     localization.componentType: delivery.componentType?.name ?? localization.unknown,
                     localization.lastModified: delivery.lastModified.formatToDateTime(),

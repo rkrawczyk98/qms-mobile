@@ -67,9 +67,103 @@ class DeliveryNotifier extends StateNotifier<AsyncValue<List<DeliveryResponseDto
   }
 }
 
+class AdvancedDeliveryNotifier
+    extends AsyncNotifier<List<DeliveryResponseDto>> {
+  late final DeliveryService _deliveryService;
+
+  // Pagination, sorting and filtering management parameters
+  int _currentPage = 1;
+  final int _pageSize = 10;
+  String? _sortColumn;
+  String _sortOrder = 'ASC';
+  String? _filter;
+  bool _hasMore = true;
+
+  @override
+  Future<List<DeliveryResponseDto>> build() async {
+    _deliveryService = ref.read(deliveryServiceProvider);
+    return fetchDeliveries(reset: true);
+  }
+
+  /// Gets deliveries from backend
+  Future<List<DeliveryResponseDto>> fetchDeliveries({
+    bool reset = false,
+    String? sort,
+    String? order,
+    String? filter,
+  }) async {
+    try {
+      if (reset) {
+        _currentPage = 1;
+        _sortColumn = sort;
+        _sortOrder = order ?? 'ASC';
+        _filter = filter;
+        _hasMore = true;
+        state = const AsyncValue.loading();
+      }
+
+      if (!_hasMore) {
+        return state.value ?? [];
+      }
+
+      final result = await _deliveryService.advancedFind(
+        page: _currentPage,
+        limit: _pageSize,
+        sort: _sortColumn,
+        order: _sortOrder,
+        filter: _filter,
+      );
+
+      final deliveries =
+          result['data'] as List<DeliveryResponseDto>;
+      _hasMore = result['hasNextPage'] as bool;
+
+      final currentState = state.value ?? [];
+      final updatedState =
+          reset ? deliveries : [...currentState, ...deliveries];
+
+      state = AsyncValue.data(updatedState);
+
+      _currentPage++;
+      return updatedState;
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+      rethrow;
+    }
+  }
+
+  /// Resets the list and gets new data
+  Future<void> resetAndFetch({
+    String? sort,
+    String? order,
+    String? filter,
+  }) async {
+    final currentSort = _sortColumn;
+    final currentOrder = _sortOrder;
+    final currentFilter = _filter;
+
+    await fetchDeliveries(
+      reset: true,
+      sort: sort ?? currentSort,
+      order: order ?? currentOrder,
+      filter: filter ?? currentFilter,
+    );
+  }
+
+  /// Are there any more pages to load
+  bool hasMore() {
+    return _hasMore;
+  }
+}
+
 final deliveryServiceProvider = Provider<DeliveryService>((ref) {
   final apiService = ref.read(apiServiceProvider);
   return DeliveryService(apiService.dio);
+});
+
+final advancedDeliveryProvider = AsyncNotifierProvider<
+    AdvancedDeliveryNotifier, List<DeliveryResponseDto>>(() {
+  return AdvancedDeliveryNotifier();
 });
 
 final deliveryProvider = StateNotifierProvider<DeliveryNotifier, AsyncValue<List<DeliveryResponseDto>>>((ref) {

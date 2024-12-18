@@ -3,16 +3,16 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qms_mobile/utils/externsions/date_formater_extensions.dart';
 import 'package:qms_mobile/utils/helpers/filters/filter_operation.dart';
 
-class ComponentFilterScreen extends StatefulWidget {
+class DeliveryFilterScreen extends StatefulWidget {
   final Map<String, dynamic> initialFilters;
 
-  const ComponentFilterScreen({required this.initialFilters, super.key});
+  const DeliveryFilterScreen({required this.initialFilters, super.key});
 
   @override
-  _ComponentFilterScreenState createState() => _ComponentFilterScreenState();
+  _DeliveryFilterScreenState createState() => _DeliveryFilterScreenState();
 }
 
-class _ComponentFilterScreenState extends State<ComponentFilterScreen> {
+class _DeliveryFilterScreenState extends State<DeliveryFilterScreen> {
   String? selectedField;
   String? selectedOperation;
   dynamic fieldValue;
@@ -40,7 +40,7 @@ class _ComponentFilterScreenState extends State<ComponentFilterScreen> {
       FilterOption(
         displayName: AppLocalizations.of(context)!.id,
         objectName: 'id',
-        databaseName: 'component.id',
+        databaseName: 'delivery.id',
         allowedFilteringOperations: [
           FilterOperation.eq,
           FilterOperation.lt,
@@ -50,75 +50,16 @@ class _ComponentFilterScreenState extends State<ComponentFilterScreen> {
         widgetBuilder: IntNumberFilterWidgetBuilder(context: context),
       ),
       FilterOption(
-        displayName: localizations!.insideNumber,
-        objectName: 'insideNumber',
-        databaseName: 'component.insideNumber',
+        displayName: localizations!.deliveryNumber,
+        objectName: 'number',
+        databaseName: 'delivery.number',
         allowedFilteringOperations: [FilterOperation.like, FilterOperation.eq],
         widgetBuilder: StringFilterWidgetBuilder(context: context),
       ),
       FilterOption(
-        displayName: localizations.outsideNumber,
-        objectName: 'outsideNumber',
-        databaseName: 'component.outsideNumber',
-        allowedFilteringOperations: [FilterOperation.like, FilterOperation.eq],
-        widgetBuilder: StringFilterWidgetBuilder(context: context),
-      ),
-      FilterOption(
-        displayName: localizations.name,
-        objectName: 'nameOne',
-        databaseName: 'component.nameOne',
-        allowedFilteringOperations: [FilterOperation.like, FilterOperation.eq],
-        widgetBuilder: StringFilterWidgetBuilder(context: context),
-      ),
-      FilterOption(
-        displayName: localizations.size,
-        objectName: 'size',
-        databaseName: 'component.size',
-        allowedFilteringOperations: [
-          FilterOperation.eq,
-          FilterOperation.lt,
-          FilterOperation.gt,
-          FilterOperation.between,
-        ],
-        widgetBuilder: DoubleNumberFilterWidgetBuilder(context: context),
-      ),
-      FilterOption(
-        displayName: localizations.productionDate,
-        objectName: 'productionDate',
-        databaseName: 'component.productionDate',
-        allowedFilteringOperations: [
-          FilterOperation.lt,
-          FilterOperation.gt,
-          FilterOperation.between,
-        ],
-        widgetBuilder: DateFilterWidgetBuilder(context: context),
-      ),
-      FilterOption(
-        displayName: localizations.controlDate,
-        objectName: 'controlDate',
-        databaseName: 'component.controlDate',
-        allowedFilteringOperations: [
-          FilterOperation.lt,
-          FilterOperation.gt,
-          FilterOperation.between,
-        ],
-        widgetBuilder: DateFilterWidgetBuilder(context: context),
-      ),
-      FilterOption(
-        displayName: localizations.shippingDate,
-        objectName: 'shippingDate',
-        databaseName: 'component.shippingDate',
-        allowedFilteringOperations: [
-          FilterOperation.lt,
-          FilterOperation.gt,
-          FilterOperation.between,
-        ],
-        widgetBuilder: DateFilterWidgetBuilder(context: context),
-      ),
-      FilterOption(
-        displayName: localizations.creationDate,
-        objectName: 'creationDate',
-        databaseName: 'component.creationDate',
+        displayName: localizations.deliveryDate,
+        objectName: 'deliveryDate',
+        databaseName: 'delivery.deliveryDate',
         allowedFilteringOperations: [
           FilterOperation.lt,
           FilterOperation.gt,
@@ -129,7 +70,7 @@ class _ComponentFilterScreenState extends State<ComponentFilterScreen> {
       FilterOption(
         displayName: localizations.lastModified,
         objectName: 'lastModified',
-        databaseName: 'component.lastModified',
+        databaseName: 'delivery.lastModified',
         allowedFilteringOperations: [
           FilterOperation.lt,
           FilterOperation.gt,
@@ -138,16 +79,23 @@ class _ComponentFilterScreenState extends State<ComponentFilterScreen> {
         widgetBuilder: DateFilterWidgetBuilder(context: context),
       ),
       FilterOption(
-        displayName: localizations.createdByUsername,
-        objectName: 'createdByUsername',
-        databaseName: 'createdByUser.username',
+        displayName: localizations.statusName,
+        objectName: 'statusName',
+        databaseName: 'status.name',
         allowedFilteringOperations: [FilterOperation.like, FilterOperation.eq],
         widgetBuilder: StringFilterWidgetBuilder(context: context),
       ),
       FilterOption(
-        displayName: localizations.modifiedByUsername,
-        objectName: 'modifiedByUsername',
-        databaseName: 'componentModifiedByUser.username',
+        displayName: localizations.customerName,
+        objectName: 'customerName',
+        databaseName: 'customer.name',
+        allowedFilteringOperations: [FilterOperation.like, FilterOperation.eq],
+        widgetBuilder: StringFilterWidgetBuilder(context: context),
+      ),
+      FilterOption(
+        displayName: localizations.createdByUsername,
+        objectName: 'createdByUsername',
+        databaseName: 'createdByUser.username',
         allowedFilteringOperations: [FilterOperation.like, FilterOperation.eq],
         widgetBuilder: StringFilterWidgetBuilder(context: context),
       ),
@@ -263,7 +211,7 @@ class _ComponentFilterScreenState extends State<ComponentFilterScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(localization.filterComponents),
+        title: Text(localization.filterDeliveries),
         actions: [
           TextButton(
             onPressed: () {
@@ -293,7 +241,7 @@ class _ComponentFilterScreenState extends State<ComponentFilterScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    localization.filterComponents,
+                    localization.filterDeliveries,
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

@@ -381,5 +381,7 @@
   "selectedOrder": "Selected Order",
   "clear": "Clear",
   "appliedFilters": "Applied Filters",
-  "clearFilters": "Clear Filters"
+  "clearFilters": "Clear Filters",
+  "sortDeliveries": "Sort Deliveries",
+  "customerName": "Customer name"
 }

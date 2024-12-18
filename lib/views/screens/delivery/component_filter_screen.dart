@@ -230,16 +230,16 @@ class _ComponentFilterScreenState extends State<ComponentFilterScreen> {
         selectedOperation != null &&
         fieldValue != null) {
       setState(() {
-        // Initializing the list for the selected column
+        // Inicjalizacja listy dla wybranej kolumny
         appliedFilters.putIfAbsent(selectedField!, () => []);
 
-        // Adding a new filter to the list
+        // Dodanie nowego filtra do listy
         appliedFilters[selectedField!]!.add({
           'operation': selectedOperation,
           'value': fieldValue,
         });
 
-        // Field reset
+        // Reset pól
         selectedField = null;
         selectedOperation = null;
         fieldValue = null;
@@ -441,7 +441,7 @@ class _ComponentFilterScreenState extends State<ComponentFilterScreen> {
                   ElevatedButton.icon(
                     onPressed: _applyFilters,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: Colors.green, // Kolor zastosowania
                       padding: const EdgeInsets.symmetric(
                           horizontal: 32, vertical: 12),
                       shape: RoundedRectangleBorder(
@@ -449,7 +449,7 @@ class _ComponentFilterScreenState extends State<ComponentFilterScreen> {
                       ),
                     ),
                     icon: const Icon(Icons.check,
-                        color: Colors.white),
+                        color: Colors.white), // Ikona zatwierdzania
                     label: Text(
                       localization.apply,
                       style: const TextStyle(color: Colors.white),

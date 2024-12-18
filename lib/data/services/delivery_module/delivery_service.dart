@@ -32,4 +32,53 @@ class DeliveryService {
   Future<void> deleteDelivery(int id) async {
     await dio.delete('/deliveries/$id');
   }
+
+    Future<Map<String, dynamic>> advancedFind({
+    int page = 1,
+    int limit = 10,
+    String? sort,
+    String order = 'ASC',
+    String? filter,
+  }) async {
+    try {
+      final response = await dio.get(
+        '/deliveries/with-filtration-and-pagination',
+        queryParameters: {
+          'page': page,
+          'limit': limit,
+          if (sort != null) 'sort': sort,
+          'order': order,
+          if (filter != null) 'filter': filter,
+        },
+      );
+
+      // Read data
+      final responseData = response.data as Map<String, dynamic>;
+
+      // Verify that the response contains all the required fields
+      if (!responseData.containsKey('data') ||
+          !responseData.containsKey('page') ||
+          !responseData.containsKey('totalPages') ||
+          !responseData.containsKey('hasNextPage') ||
+          !responseData.containsKey('hasPreviousPage')) {
+        throw Exception('Unexpected response format from backend.');
+      }
+
+      // Data Mapping to DTO
+      final deliveries = (responseData['data'] as List)
+          .map((json) => DeliveryResponseDto.fromJson(json))
+          .toList();
+
+      // We return the data as a map to maintain access to metadata
+      return {
+        'data': deliveries,
+        'page': responseData['page'],
+        'totalPages': responseData['totalPages'],
+        'hasNextPage': responseData['hasNextPage'],
+        'hasPreviousPage': responseData['hasPreviousPage'],
+      };
+    } catch (e) {
+      throw Exception('Failed to fetch deliveries with filtration: $e');
+    }
+  }
 }

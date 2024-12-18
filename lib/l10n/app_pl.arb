@@ -381,5 +381,7 @@
   "selectedOrder": "Wybrane sortowanie",
   "clear": "Wyczyść",
   "appliedFilters": "Zastosowane filtry",
-  "clearFilters": "Wyczyść filtry"
+  "clearFilters": "Wyczyść filtry",
+  "sortDeliveries": "Sortuj dostawy",
+  "customerName": "Nazwa klienta"
 }
