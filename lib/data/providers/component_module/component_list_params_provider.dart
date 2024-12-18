@@ -1,18 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ComponentListParams {
-  final Map<String, dynamic> filters;
+  final Map<String, List<Map<String, dynamic>>> filters;
   final String? sortColumn;
   final String sortOrder;
 
   ComponentListParams({
     this.filters = const {},
-    this.sortColumn,
+    this.sortColumn = 'component.insideNumber',
     this.sortOrder = 'ASC',
   });
 
   ComponentListParams copyWith({
-    Map<String, dynamic>? filters,
+    Map<String, List<Map<String, dynamic>>>? filters,
     String? sortColumn,
     String? sortOrder,
   }) {
@@ -27,7 +27,7 @@ class ComponentListParams {
 class ComponentListParamsNotifier extends StateNotifier<ComponentListParams> {
   ComponentListParamsNotifier() : super(ComponentListParams());
 
-  void setFilters(Map<String, dynamic> filters) {
+  void setFilters(Map<String, List<Map<String, dynamic>>> filters) {
     state = state.copyWith(filters: filters);
   }
 

@@ -41,22 +41,26 @@ class _ComponentListState extends ConsumerState<ComponentList> {
     super.dispose();
   }
 
-  String buildFilterQuery(Map<String, dynamic> filters) {
-    final filterStrings = filters.entries.map((entry) {
-      final operation = entry.value['operation'];
-      final value = entry.value['value'];
-      if (operation == 'between' && value is List) {
-        return '${entry.key}:$operation|${value[0]}|${value[1]}';
-      }
-      return '${entry.key}:$operation|$value';
-    });
+  String buildFilterQuery(Map<String, List<Map<String, dynamic>>> filters) {
+    final filterStrings = filters.entries.expand((entry) {
+      final column = entry.key;
+      return entry.value.map((filter) {
+        final operation = filter['operation'];
+        final value = filter['value'];
+        if (operation == 'between' && value is List) {
+          return '$column:$operation|${value[0]}|${value[1]}';
+        }
+        return '$column:$operation|$value';
+      });
+    }).toList();
+
     return filterStrings.join(';');
   }
 
   void _navigateToFilterScreen() async {
     final currentParams = ref.read(componentListParamsProvider);
 
-    final selectedFilter = await Navigator.push(
+    final selectedFilters = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ComponentFilterScreen(
@@ -65,10 +69,12 @@ class _ComponentListState extends ConsumerState<ComponentList> {
       ),
     );
 
-    if (selectedFilter != null) {
-      ref.read(componentListParamsProvider.notifier).setFilters(selectedFilter);
+    if (selectedFilters != null) {
+      ref
+          .read(componentListParamsProvider.notifier)
+          .setFilters(selectedFilters);
       ref.read(advancedComponentProvider.notifier).resetAndFetch(
-            filter: buildFilterQuery(selectedFilter),
+            filter: buildFilterQuery(selectedFilters),
             sort: currentParams.sortColumn,
             order: currentParams.sortOrder,
           );
@@ -169,8 +175,8 @@ class _ComponentListState extends ConsumerState<ComponentList> {
               };
 
               return InfoCard(
-                title: component.nameOne,
-                titleLabel: AppLocalizations.of(context)!.componentNumber,
+                title: component.insideNumber,
+                titleLabel: AppLocalizations.of(context)!.insideNumber,
                 fields: fields,
                 icon: const Icon(
                   Icons.view_in_ar,

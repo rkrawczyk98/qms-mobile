@@ -252,7 +252,7 @@
   "enterCustomerNameError": "Please enter a valid customer name",
   "customerCreationError": "Failed to create customer. Please try again.",
   "customerUpdateError": "Failed to update customer. Please try again.",
-  "refreshError": "Failed to refresh customers.",
+  "refreshError": "Failed to refresh.",
   "customerDeleteError": "Failed to delete the customer. Please try again.",
   "createDeliveryStatus": "Create Delivery Status",
   "addDeliveryStatus": "Add Delivery Status",
@@ -371,5 +371,15 @@
   "selectDate": "Select Date",
   "startDate": "Start Date",
   "endDate": "End Date",
-  "and": "and"
+  "and": "and",
+  "sortComponents": "Sort Components",
+  "selectColumn": "Select Column",
+  "ascending": "Ascending",
+  "descending": "Descending",
+  "statusName": "Status",
+  "selectedSortColumn": "Selected Column",
+  "selectedOrder": "Selected Order",
+  "clear": "Clear",
+  "appliedFilters": "Applied Filters",
+  "clearFilters": "Clear Filters"
 }

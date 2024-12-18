@@ -252,7 +252,7 @@
   "enterCustomerNameError": "Proszę wprowadzić poprawną nazwę klienta",
   "customerCreationError": "Nie udało się utworzyć klienta. Spróbuj ponownie.",
   "customerUpdateError": "Nie udało się zaktualizować klienta. Spróbuj ponownie.",
-  "refreshError": "Nie udało się odświeżyć listy klientów.",
+  "refreshError": "Wystąpił błąd podczas odświeżania.",
   "customerDeleteError": "Nie udało się usunąć klienta. Spróbuj ponownie.",
   "createDeliveryStatus": "Utwórz Status Dostawy",
   "addDeliveryStatus": "Dodaj Status Dostawy",
@@ -371,5 +371,15 @@
   "selectDate": "Wybierz datę",
   "startDate": "Data rozpoczęcia",
   "endDate": "Data zakończenia",
-  "and": "i"
+  "and": "i",
+  "sortComponents": "Sortuj komponenty",
+  "selectColumn": "Wybierz kolumnę",
+  "ascending": "Rosnąco",
+  "descending": "Malejąco",
+  "statusName": "Status",
+  "selectedSortColumn": "Wybrana kolumna",
+  "selectedOrder": "Wybrane sortowanie",
+  "clear": "Wyczyść",
+  "appliedFilters": "Zastosowane filtry",
+  "clearFilters": "Wyczyść filtry"
 }
