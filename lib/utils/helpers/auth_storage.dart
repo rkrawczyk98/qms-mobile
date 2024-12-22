@@ -17,6 +17,11 @@ class AuthStorage {
     await _storage.delete(key: _keyPassword);
   }
 
+  // Delete only the password
+  static Future<void> deletePassword() async {
+    await _storage.delete(key: _keyPassword);
+  }
+
   // Get login details
   static Future<Map<String, String?>> getLoginData() async {
     final username = await _storage.read(key: _keyUsername);

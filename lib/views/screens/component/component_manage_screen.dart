@@ -122,78 +122,100 @@ class _ComponentDetailsScreenState
     );
   }
 
-  Widget _buildSubcomponentsList(
-      BuildContext context, ComponentResponseDto component) {
-    final localization = AppLocalizations.of(context)!;
-    final componentSubcomponents = ref
-        .watch(componentSubcomponentProvider)
-        .maybeWhen(
-          data: (subcomponents) =>
-              subcomponents.where((cs) => cs.componentId == component.id).toList(),
-          orElse: () => [],
-        );
-    final subcomponents = ref.watch(subcomponentProvider).maybeWhen(
-          data: (subs) => subs,
-          orElse: () => [],
-        );
-    final statuses = ref.watch(subcomponentStatusProvider).maybeWhen(
-          data: (stats) => stats,
-          orElse: () => [],
-        );
+Widget _buildSubcomponentsList(
+    BuildContext context, ComponentResponseDto component) {
+  final localization = AppLocalizations.of(context)!;
 
-    if (componentSubcomponents.isEmpty) {
-      return Text(localization.noSubcomponents);
-    }
+  // Getting related subcomponents for a given component
+  final componentSubcomponents = ref
+      .watch(componentSubcomponentProvider)
+      .maybeWhen(
+        data: (subcomponents) =>
+            subcomponents.where((cs) => cs.componentId == component.id).toList(),
+        orElse: () => [],
+      );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          localization.subcomponents,
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-        const SizedBox(height: 8),
-        ...componentSubcomponents.map((componentSubcomponent) {
-          final subcomponent = subcomponents.firstWhereOrNull(
-              (sub) => sub.id == componentSubcomponent.subcomponentId);
-          final status = statuses.firstWhereOrNull(
-              (stat) => stat.id == componentSubcomponent.statusId);
+  // Downloading and sorting subcomponents
+  final subcomponents = ref.watch(subcomponentProvider).maybeWhen(
+        data: (subs) => [...subs]..sort((a, b) => a.sortOrder.compareTo(b.sortOrder)),
+        orElse: () => [],
+      );
 
-          if (subcomponent == null || status == null) {
-            return const SizedBox.shrink();
-          }
+  // Downloading statuses
+  final statuses = ref.watch(subcomponentStatusProvider).maybeWhen(
+        data: (stats) => stats,
+        orElse: () => [],
+      );
 
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            child: ListTile(
-              leading: const Icon(Icons.extension),
-              title: Text(subcomponent.name),
-              trailing: DropdownButton<int>(
-                value: componentSubcomponent.statusId,
-                onChanged: (newValue) {
-                  if (newValue != null) {
-                    _updateSubcomponentStatus(
-                      componentSubcomponent.id,
-                      newValue,
-                    );
-                  }
-                },
-                items: statuses.map((status) {
-                  return DropdownMenuItem<int>(
-                    value: status.id,
-                    child: Text(status.name),
-                  );
-                }).toList(),
-              ),
-            ),
-          );
-        }),
-      ],
-    );
+  if (componentSubcomponents.isEmpty || subcomponents.isEmpty) {
+    return Text(localization.noSubcomponents);
   }
 
+  // Mapping and sorting component Subcomponents by sort Order in subcomponents
+  final sortedComponentSubcomponents = componentSubcomponents
+      .map((componentSubcomponent) {
+        final subcomponent = subcomponents.firstWhereOrNull(
+            (sub) => sub.id == componentSubcomponent.subcomponentId);
+        return {
+          'componentSubcomponent': componentSubcomponent,
+          'subcomponent': subcomponent
+        };
+      })
+      .where((entry) => entry['subcomponent'] != null)
+      .toList()
+    ..sort((a, b) {
+      final subA = a['subcomponent'];
+      final subB = b['subcomponent'];
+      return subA.sortOrder.compareTo(subB.sortOrder);
+    });
+
+  // Creating a card list
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        localization.subcomponents,
+        style: Theme.of(context).textTheme.headlineSmall,
+      ),
+      const SizedBox(height: 8),
+      ...sortedComponentSubcomponents.map((entry) {
+        final componentSubcomponent = entry['componentSubcomponent']
+            as dynamic;
+        final subcomponent = entry['subcomponent'];
+
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          child: ListTile(
+            leading: const Icon(Icons.extension),
+            title: Text(subcomponent.name),
+            trailing: DropdownButton<int>(
+              value: componentSubcomponent.statusId,
+              onChanged: (newValue) {
+                if (newValue != null) {
+                  _updateSubcomponentStatus(
+                    componentSubcomponent.id,
+                    newValue,
+                    componentSubcomponent.componentId,
+                  );
+                }
+              },
+              items: statuses.map((status) {
+                return DropdownMenuItem<int>(
+                  value: status.id,
+                  child: Text(status.name),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      }),
+    ],
+  );
+}
+
+
   Future<void> _updateSubcomponentStatus(
-      int subcomponentId, int newStatusId) async {
+      int subcomponentId, int newStatusId, int componentId) async {
     try {
       if (!mounted) return;
       await ref
@@ -202,6 +224,8 @@ class _ComponentDetailsScreenState
             subcomponentId,
             UpdateComponentSubcomponentDto(statusId: newStatusId),
           );
+      await ref.read(componentProvider.notifier).refreshComponentById(componentId);
+      await ref.read(advancedComponentProvider.notifier).refreshComponentById(componentId);
 
       if (!mounted) return;
       CustomSnackbar.showSuccessSnackbar(

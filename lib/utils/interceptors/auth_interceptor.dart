@@ -101,7 +101,7 @@ class AuthInterceptor extends Interceptor {
       );
       if (response.statusCode == 200) {
         await _tokenManager.deleteAccessToken();
-        await AuthStorage.deleteLoginData();
+        await AuthStorage.deletePassword();
         _refreshCompleter = null; // We set it to null after logging out
         navigationService.navigateAndClearStack(AppRoutes.login);
       }

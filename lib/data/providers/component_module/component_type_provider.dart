@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qms_mobile/data/models/DTOs/component_module/component_type/component_type_response_dto.dart';
 import 'package:qms_mobile/data/models/DTOs/component_module/component_type/create_with_details_dto.dart';
+import 'package:qms_mobile/data/models/DTOs/component_module/component_type/update_component_type_dto.dart';
 import 'package:qms_mobile/data/services/component_module/component_type_service.dart';
 import 'package:qms_mobile/data/providers/api_service_provider.dart';
 
@@ -28,14 +29,29 @@ class ComponentTypeNotifier
     state = state.whenData((types) => [...types, componentType]);
   }
 
-  // Updating component in state
-  void updateComponentType(int id, ComponentTypeResponseDto updatedType) {
-    state = state.whenData((types) {
-      return [
-        for (final type in types)
-          if (type.id == id) updatedType else type,
-      ];
-    });
+// Updating component in state and database
+  Future<void> updateComponentType(
+      int id, ComponentTypeResponseDto updatedType) async {
+    try {
+      // Update in database
+      final updatedComponent = await componentTypeService.updateComponentType(
+        id,
+        UpdateComponentTypeDto(
+          name: updatedType.name,
+          sortOrder: updatedType.sortOrder
+        ),
+      );
+
+      // Update in state
+      state = state.whenData((types) {
+        return types.map((type) {
+          return type.id == id ? updatedComponent : type;
+        }).toList();
+      });
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
+    }
   }
 
   // Removing a component from the list

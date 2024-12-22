@@ -320,30 +320,30 @@ class _SubcomponentCardState extends State<SubcomponentCard> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  _buildStatusChips<PrimaryStatusDto>(
-                    title: localization.primaryStatuses,
-                    statuses: widget.subcomponent.primaryStatuses,
-                    allStatuses: widget.statuses,
-                    createStatus: (id) =>
-                        PrimaryStatusDto(statusId: id, sortOrder: 0),
-                    copyWith: (updatedStatuses) => widget.subcomponent.copyWith(
-                      primaryStatuses: updatedStatuses,
-                    ),
-                    onUpdate: widget.onUpdate,
-                  ),
-                  const SizedBox(height: 16),
-                  _buildStatusChips<SecondaryStatusDto>(
-                    title: localization.secondaryStatuses,
-                    statuses: widget.subcomponent.secondaryStatuses,
-                    allStatuses: widget.statuses,
-                    createStatus: (id) =>
-                        SecondaryStatusDto(statusId: id, sortOrder: 0),
-                    copyWith: (updatedStatuses) => widget.subcomponent.copyWith(
-                      secondaryStatuses: updatedStatuses,
-                    ),
-                    onUpdate: widget.onUpdate,
-                  ),
+                  // const SizedBox(height: 16),
+                  // _buildStatusChips<PrimaryStatusDto>(
+                  //   title: localization.primaryStatuses,
+                  //   statuses: widget.subcomponent.primaryStatuses,
+                  //   allStatuses: widget.statuses,
+                  //   createStatus: (id) =>
+                  //       PrimaryStatusDto(statusId: id, sortOrder: 0),
+                  //   copyWith: (updatedStatuses) => widget.subcomponent.copyWith(
+                  //     primaryStatuses: updatedStatuses,
+                  //   ),
+                  //   onUpdate: widget.onUpdate,
+                  // ),
+                  // const SizedBox(height: 16),
+                  // _buildStatusChips<SecondaryStatusDto>(
+                  //   title: localization.secondaryStatuses,
+                  //   statuses: widget.subcomponent.secondaryStatuses,
+                  //   allStatuses: widget.statuses,
+                  //   createStatus: (id) =>
+                  //       SecondaryStatusDto(statusId: id, sortOrder: 0),
+                  //   copyWith: (updatedStatuses) => widget.subcomponent.copyWith(
+                  //     secondaryStatuses: updatedStatuses,
+                  //   ),
+                  //   onUpdate: widget.onUpdate,
+                  // ),
                   const SizedBox(height: 16),
                   CustomSwitchListTile(
                     title: localization.isActivity,

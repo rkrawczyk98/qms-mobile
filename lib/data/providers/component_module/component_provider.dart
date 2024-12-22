@@ -27,6 +27,22 @@ class ComponentNotifier extends AsyncNotifier<List<ComponentResponseDto>> {
     }
   }
 
+  /// Fetch and update a single component by ID
+  Future<void> refreshComponentById(int id) async {
+    try {
+      final updatedComponent = await _componentService.getComponentById(id);
+
+      // Update the state with the refreshed component
+      state = AsyncValue.data([
+        for (final component in state.value ?? [])
+          if (component.id == id) updatedComponent else component,
+      ]);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
+    }
+  }
+
   /// Add a new component
   Future<ComponentResponseDto> addComponent(
       CreateComponentDto component) async {
@@ -134,6 +150,37 @@ class AdvancedComponentNotifier
 
       _currentPage++;
       return updatedState;
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+      rethrow;
+    }
+  }
+
+  /// Fetch and update a single component by ID
+  Future<void> refreshComponentById(int id) async {
+    try {
+      // Use advancedFind with filtering to fetch the specific component
+      final result = await _componentService.advancedFind(
+        page: 1, // Fetch only the first page
+        limit: 1, // Limit to a single result
+        filter: 'component.id:eq|$id', // Filter by the ID of the component
+      );
+
+      final components =
+          result['data'] as List<AdvencedFindComponentResponseDto>;
+
+      if (components.isNotEmpty) {
+        final updatedComponent = components.first;
+
+        // Update the state with the refreshed component
+        state = AsyncValue.data([
+          for (final component in state.value ?? [])
+            if (component.id == id) updatedComponent else component,
+        ]);
+      } else {
+        // Handle the case where the component is not found
+        throw Exception('Component with ID $id not found');
+      }
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
       rethrow;

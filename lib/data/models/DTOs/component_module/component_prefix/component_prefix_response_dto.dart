@@ -22,7 +22,8 @@ class ComponentPrefixResponseDto {
       componentTypeId: json['componentTypeId'],
       creationDate: DateTime.parse(json['creationDate']),
       lastModified: DateTime.parse(json['lastModified']),
-      deletedAt: json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
+      deletedAt:
+          json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
     );
   }
 
@@ -35,5 +36,21 @@ class ComponentPrefixResponseDto {
       'lastModified': lastModified.toIso8601String(),
       if (deletedAt != null) 'deletedAt': deletedAt!.toIso8601String(),
     };
+  }
+
+  ComponentPrefixResponseDto copyWith({
+    String? prefix,
+    DateTime? creationDate,
+    DateTime? lastModified,
+    DateTime? deletedAt,
+  }) {
+    return ComponentPrefixResponseDto(
+      id: id,
+      prefix: prefix ?? this.prefix,
+      componentTypeId: componentTypeId,
+      creationDate: creationDate ?? this.creationDate,
+      lastModified: lastModified ?? this.lastModified,
+      deletedAt: deletedAt ?? this.deletedAt,
+    );
   }
 }

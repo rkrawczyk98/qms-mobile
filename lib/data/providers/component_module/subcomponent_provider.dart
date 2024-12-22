@@ -17,6 +17,7 @@ class SubcomponentNotifier extends AsyncNotifier<List<SubcomponentResponseDto>> 
   Future<List<SubcomponentResponseDto>> fetchAllSubcomponents() async {
     try {
       final data = await _service.getAllSubcomponents();
+      data.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
       state = AsyncValue.data(data);
       return data;
     } catch (e) {

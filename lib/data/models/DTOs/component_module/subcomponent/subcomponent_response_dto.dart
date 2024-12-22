@@ -15,7 +15,7 @@ class SubcomponentResponseDto {
     required this.sortOrder,
     required this.creationDate,
     required this.lastModified,
-    this.deletedAt,
+    required this.deletedAt,
     required this.isActivity,
   });
 
@@ -27,7 +27,8 @@ class SubcomponentResponseDto {
       sortOrder: json['sortOrder'],
       creationDate: DateTime.parse(json['creationDate']),
       lastModified: DateTime.parse(json['lastModified']),
-      deletedAt: json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
+      deletedAt:
+          json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
       isActivity: json['isActivity'],
     );
   }
@@ -43,5 +44,27 @@ class SubcomponentResponseDto {
       'deletedAt': deletedAt?.toIso8601String(),
       'isActivity': isActivity,
     };
+  }
+
+  SubcomponentResponseDto copyWith({
+    int? id,
+    String? name,
+    int? componentTypeId,
+    int? sortOrder,
+    DateTime? creationDate,
+    DateTime? lastModified,
+    DateTime? deletedAt,
+    bool? isActivity,
+  }) {
+    return SubcomponentResponseDto(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      componentTypeId: componentTypeId ?? this.componentTypeId,
+      sortOrder: sortOrder ?? this.sortOrder,
+      creationDate: creationDate ?? this.creationDate,
+      lastModified: lastModified ?? this.lastModified,
+      isActivity: isActivity ?? this.isActivity,
+      deletedAt: deletedAt ?? this.deletedAt,
+    );
   }
 }

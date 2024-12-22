@@ -22,9 +22,8 @@ class ComponentTypeResponseDto {
       sortOrder: json['sortOrder'],
       creationDate: DateTime.parse(json['creationDate']),
       lastModified: DateTime.parse(json['lastModified']),
-      deletedAt: json['deletedAt'] != null
-          ? DateTime.parse(json['deletedAt'])
-          : null,
+      deletedAt:
+          json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
     );
   }
 
@@ -37,5 +36,23 @@ class ComponentTypeResponseDto {
       'lastModified': lastModified.toIso8601String(),
       if (deletedAt != null) 'deletedAt': deletedAt!.toIso8601String(),
     };
+  }
+
+  ComponentTypeResponseDto copyWith({
+    int? id,
+    String? name,
+    int? sortOrder,
+    DateTime? creationDate,
+    DateTime? lastModified,
+    DateTime? deletedAt,
+  }) {
+    return ComponentTypeResponseDto(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      sortOrder: sortOrder ?? this.sortOrder,
+      creationDate: creationDate ?? this.creationDate,
+      lastModified: lastModified ?? this.lastModified,
+      deletedAt: deletedAt ?? this.deletedAt,
+    );
   }
 }

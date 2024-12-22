@@ -28,23 +28,24 @@ class ComponentManagementScreen extends StatelessWidget {
             leading: const Icon(Icons.edit),
             title: Text(localizations.editComponentType),
             onTap: () {
+              navigationService.navigateTo(AppRoutes.manageComponentType);
               // TODO: Add functionality to edit component type
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.delete),
-            title: Text(localizations.deleteComponentType),
-            onTap: () {
-              // TODO: Add functionality to delete component type
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.sync),
-            title: Text(localizations.manageSubcomponents),
-            onTap: () {
-              // TODO: Add functionality to manage subcomponents
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.delete),
+          //   title: Text(localizations.deactiveComponentType),
+          //   onTap: () {
+          //     // TODO: Add functionality to delete component type
+          //   },
+          // ),
+          // ListTile(
+          //   leading: const Icon(Icons.auto_fix_high),
+          //   title: Text(localizations.manageAutoStatuses),
+          //   onTap: () {
+          //     // TODO: Add functionality to manage subcomponents
+          //   },
+          // ),
         ],
       ),
     );

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:qms_mobile/views/screens/admin_panel/component_managment/component_type/edit_component_type_screen.dart';
+import 'package:qms_mobile/views/screens/admin_panel/component_managment/component_type/manage_component_type_screen.dart';
 import 'package:qms_mobile/views/screens/component/add_component_screen.dart';
 import 'package:qms_mobile/views/screens/component/component_manage_screen.dart';
 import 'package:qms_mobile/views/screens/component/component_edit_screen.dart';
@@ -72,6 +74,8 @@ class AppRoutes {
   static const String componentEdit = '/component-edit';
   static const String addComponent = '/add-component';
   static const String deliveryContents = '/delivery-contents';
+  static const String editComponentType = '/component-type/edit';
+  static const String manageComponentType = '/component-type/manage';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -131,6 +135,12 @@ class AppRoutes {
           deliveryId: deliveryId,
         );
       },
+      editComponentType: (context) {
+        final componentTypeId =
+            ModalRoute.of(context)!.settings.arguments as int;
+        return EditComponentTypeScreen(componentTypeId: componentTypeId);
+      },
+      manageComponentType: (context) => const ManageComponentTypesScreen(),
     };
   }
 }
